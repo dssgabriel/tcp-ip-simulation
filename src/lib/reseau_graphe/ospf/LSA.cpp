@@ -4,11 +4,10 @@ LSA::LSA(
     const std::bitset<32>& idLSA,
     const uint8_t& idRouteur,
     const std::vector<IPv4>& sousAdressesRouteur
-) : m_IdLSA(idLSA),
-    m_IdRouteur(idRouteur)
+) : m_IdLSA(idLSA), m_IdRouteur(idRouteur)
 {
     for (auto adresse: sousAdressesRouteur) {
-        m_SousAdressesRouteur.push_back(adresse);
+        m_SousAdressesRouteur.emplace_back(adresse);
     }
 }
 

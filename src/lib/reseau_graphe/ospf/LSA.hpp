@@ -1,7 +1,10 @@
 #pragma once
 
-#include <cstdint>
 #include <bitset>
+#include <cstdint>
+#include <vector>
+
+#include "../../../include/IPv4.hpp"
 
 class LSA {
     private:
