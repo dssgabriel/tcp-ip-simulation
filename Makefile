@@ -1,9 +1,6 @@
 all:
-	@mkdir -p build
-	@cd build
-	cmake ..
-	make
-	./Interface
+	mkdir -p build
+	cd build; cmake ..; make; ./Interface
 
 clean:
 	@rm -Rf build
