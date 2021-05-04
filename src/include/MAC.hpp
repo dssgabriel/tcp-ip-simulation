@@ -8,3 +8,6 @@ struct MAC {
     std::bitset<8> e;
     std::bitset<8> f;
 };
+
+extern MAC macZero;
+extern MAC macMax;
