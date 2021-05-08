@@ -12,14 +12,7 @@
 #include <string>
 #include <stack>
 
-struct MAC {
-std::bitset<8> a;
-std::bitset<8> b;
-std::bitset<8> c;
-std::bitset<8> d;
-std::bitset<8> e;
-std::bitset<8> f;
-};
+#include "MAC.hpp"
 
 class Physique {
     private :
@@ -44,7 +37,14 @@ class Physique {
         void setMacDest(MAC dest);
         
         // Methodes
+        MAC convetirBitsEnMac(
+            const std::bitset<16>& adrPartAB, 
+            const std::bitset<16>& adrPartCD,
+            const std::bitset<16>& adrPartEF    
+        );
         std::bitset<48> convertirMacEnBits(const MAC& adresse);
+        std::stack<std::bitset<16>> decoupageMac(const std::bitset<48>& adresse);
+        
         std::stack<std::bitset<16>> encapsuler(std::stack<std::bitset<16>>& paquet);
         std::stack<std::bitset<16>> desencapsuler(std::stack<std::bitset<16>>& trame);
 };

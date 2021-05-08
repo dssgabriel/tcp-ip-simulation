@@ -54,5 +54,5 @@ class Routeur : public Machine {
     
         void envoyer();
         void recevoir();
-        void traitement();
+        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
 };

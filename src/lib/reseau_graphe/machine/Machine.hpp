@@ -20,9 +20,9 @@ class Machine {
         std::string m_Nom;
         
         IPv4 m_Ip;
+        MAC m_Mac;
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
-        MAC m_Mac;
         
         // TODO : Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
@@ -55,11 +55,17 @@ class Machine {
         
         void setVoisin(Machine& voisin);
 
+        void setDonnee(std::stack<std::bitset<16>>* donnee);
+        std::stack<std::bitset<16>>* suppDonnee();
+
         // Overloading
-        friend std::ostream& operator<<(std::ostream& flux, const Machine& machine);
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const Machine& machine
+        );
 
         // Methodes
         virtual void envoyer() {};
         virtual void recevoir() {};
-        virtual void traitement() {};
+        virtual void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest) {};
 };

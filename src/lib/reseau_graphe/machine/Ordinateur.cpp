@@ -3,13 +3,16 @@
 uint8_t Ordinateur::m_NbrOrdinateur = 0;
 
 // Constructeurs
-Ordinateur::Ordinateur() {
+Ordinateur::Ordinateur() : Machine() {
     m_NbrOrdinateur++;
     m_IdOrdinateur = m_NbrOrdinateur;
+
+    m_Nom = "Ordinateur" + std::to_string(m_IdOrdinateur);
 
     m_ControleCongestion.clear();
     m_TempsTraitementPaquet.clear();
 }
+
 // // Ordinateur(const std::string& nom) {}
 
 // Destructeur
@@ -56,7 +59,16 @@ double Ordinateur::getTempsTraitementPaquet(const uint16_t& cle) const {
 
 // Methodes
 void Ordinateur::remplirFileDonnees(const ParamInterface& config, const MAC& destination) {
-    // TODO : A faire
+    
+    // Initialisation
+    Internet coucheInt;
+    Transport coucheTrans;
+    Physique couchePhy;
+
+    // Preparation des donnees
+    for(size_t i = 0; i < config.m_NbPaquet; ++i) {
+        
+    }
 }
 
 void Ordinateur::synchroniser() {
@@ -68,15 +80,70 @@ void Ordinateur::finDeSession() {
 }
 
 void Ordinateur::envoyer() {
-    // TODO : A faire
+    // Vide la file de donnees.
+    std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
+    m_FileDonnees.pop();
+
+    // Traitement de la donnee.
+    Machine* voisine = m_Voisins.front();
+    voisine->suppDonnee();
+    traitement(*donneeRecu, voisine->getMac());
+
+    // Trouver la machine voisine.
+    // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
+    voisine->setDonnee(donneeRecu);
+    voisine->recevoir();
 }
 
 void Ordinateur::recevoir() {
-    // TODO : A faire
+    envoyer();
 }
 
-void Ordinateur::traitement() {
-    // TODO : A faire
+template <size_t N1>
+void inverser(std::stack<std::bitset<N1>> &pile) {
+    std::stack<std::bitset<N1>> pileInv;
+
+    for(size_t i = 0; i < pile.size(); ++i) {
+        pileInv.push(pile.top());
+        pile.pop();
+    }
+}
+
+void Ordinateur::traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest) {
+    // Recuperation du paquet.
+    Physique couchePhy;
+    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donnee);
+    
+    // Recuperation adresse MAC destination.
+    std::bitset<16> macDestAB, macDestCD, macDestEF;
+    macDestAB = paquet.top();
+    paquet.pop();
+    macDestCD = paquet.top();
+    paquet.pop();
+    macDestAB = paquet.top();
+    paquet.pop();
+    MAC ancienneDest = couchePhy.convetirBitsEnMac(macDestAB, macDestCD, macDestEF);
+
+    // Recuperation adresse MAC source.
+    std::bitset<16> macSrcAB, macSrcCD, macSrcEF;
+    macSrcAB = paquet.top();
+    paquet.pop();
+    macSrcCD = paquet.top();
+    paquet.pop();
+    macSrcAB = paquet.top();
+    paquet.pop();
+    MAC ancienneSrc = couchePhy.convetirBitsEnMac(macSrcAB, macSrcCD, macSrcEF);
+
+    // Changement adresse MAC.
+    std::bitset<48> nouvelleDestBit = couchePhy.convertirMacEnBits(nouvelleDest);
+    std::bitset<48> nouvelleSrcBit = couchePhy.convertirMacEnBits(ancienneDest);
+    std::stack<std::bitset<16>> pileNouvelleDestBit = couchePhy.decoupageMac(nouvelleDestBit);
+    std::stack<std::bitset<16>> pileNouvelleSrcBit = couchePhy.decoupageMac(nouvelleSrcBit);
+    inverser(pileNouvelleDestBit);
+    for(size_t i = 0; i < pileNouvelleDestBit.size(); ++i) {
+        pileNouvelleSrcBit.push(pileNouvelleDestBit.top());
+        pileNouvelleDestBit.pop();
+    }
 }
 
 /*
