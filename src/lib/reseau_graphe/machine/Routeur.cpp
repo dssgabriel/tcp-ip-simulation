@@ -7,6 +7,8 @@ Routeur::Routeur() : Machine() {
     m_NbRouteur++;
     m_IdRouteur = m_NbRouteur;
 
+    m_Nom = "Routeur" + std::to_string(m_IdRouteur);
+
     m_TableRoutage.clear();
     m_TableLSADemandes.clear();
     m_TableLSAEnvoyes.clear();
@@ -24,14 +26,14 @@ uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
-std::vector<Routeur&>& Routeur::getRouteursVoisins() {
+// std::vector<Routeur&>& Routeur::getRouteursVoisins() {
     // TODO : A faire
-}
+// }
 
 // Methodes
-const std::vector<Liaison>& Routeur::getPlusCourtChemin(const Routeur& dest) {
+// const std::vector<Liaison>& Routeur::getPlusCourtChemin(const Routeur& dest) {
     // TODO : A faire
-}
+// }
 
 void Routeur::envoyer() {
     // TODO : A faire
@@ -41,6 +43,6 @@ void Routeur::recevoir() {
     // TODO : A faire
 }
 
-void Routeur::traitement() {
+void Routeur::traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest) {
     // TODO : A faire
 }

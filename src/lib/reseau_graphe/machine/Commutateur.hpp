@@ -3,6 +3,7 @@
 #include <map>
 
 #include "Machine.hpp"
+#include "../../protocole_tcp_ip/internet/Internet.hpp"
 
 class Commutateur : public Machine {
     private:
@@ -26,6 +27,6 @@ class Commutateur : public Machine {
         // Methode
         void envoyer();
         void recevoir();
-        void traitement();
+        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
         MAC trouverMacDest(const IPv4& ip);
 };

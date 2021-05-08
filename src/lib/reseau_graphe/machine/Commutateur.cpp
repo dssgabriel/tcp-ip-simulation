@@ -3,7 +3,13 @@
 uint8_t Commutateur::m_NbrCommutateur = 0;
 
 // Constructeurs
-Commutateur::Commutateur() : Machine() {}
+Commutateur::Commutateur() : Machine() {
+    m_NbrCommutateur++;
+    m_IdCommutateur = m_NbrCommutateur;
+
+
+    m_Nom = "Commutateur" + std::to_string(m_IdCommutateur);
+}
 
 // Destructeur
 Commutateur::~Commutateur() {}
@@ -19,14 +25,18 @@ uint8_t Commutateur::getIdCommutateur() {
 
 // Methode
 void Commutateur::envoyer() {
-    // TODO : A faire
+
+
+    // traitement();
+
+    // machineSuivante.recevoir();
 }
 
 void Commutateur::recevoir() {
     // TODO : A faire
 }
 
-void Commutateur::traitement() {
+void Commutateur::traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest) {
     // TODO : A faire
 }
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <bitset>
 
 struct IPv4 {

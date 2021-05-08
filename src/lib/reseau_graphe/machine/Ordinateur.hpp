@@ -2,9 +2,12 @@
 
 #include <map>
 
-#include "../../../include/ElementControleCongestion.hpp"
-#include "../../../include/ParamInterface.hpp"
 #include "Machine.hpp"
+#include "../../../include/ParamInterface.hpp"
+#include "../../protocole_tcp_ip/internet/Internet.hpp"
+#include "../../protocole_tcp_ip/physique/Physique.hpp"
+#include "../../protocole_tcp_ip/transport/Transport.hpp"
+#include "../../../include/ElementControleCongestion.hpp"
 
 class Ordinateur : public Machine {
     private:
@@ -50,5 +53,5 @@ class Ordinateur : public Machine {
         
         void envoyer();
         void recevoir();
-        void traitement();
+        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
 };

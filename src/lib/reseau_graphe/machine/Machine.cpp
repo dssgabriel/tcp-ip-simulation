@@ -14,7 +14,7 @@ IPv4 ipMax = {
     .d = std::bitset<8>(255)
 };
 
-MAC macMax = {
+MAC macZero = {
     .a = std::bitset<8>(0),
     .b = std::bitset<8>(0),
     .c = std::bitset<8>(0),
@@ -23,7 +23,7 @@ MAC macMax = {
     .f = std::bitset<8>(0)
 };
 
-MAC macZero = {
+MAC macMax = {
     .a = std::bitset<8>(255),
     .b = std::bitset<8>(255),
     .c = std::bitset<8>(255),
@@ -42,9 +42,9 @@ Machine::Machine() {
     m_Nom = "Machine" + std::to_string(m_IdMachine);
 
     m_Ip = ipZero;
+    m_Mac = macZero;
     m_Masque = ipZero;
     m_SousReseau.clear();
-    m_Mac = macZero;
 
     m_Voisins.clear();
     
@@ -101,11 +101,21 @@ void Machine::setSousReseau(const IPv4& sousReseau) {
 void Machine::setVoisin(Machine& voisin) {
     m_Voisins.push_back(&voisin);
 }
+
+void Machine::setDonnee(std::stack<std::bitset<16>>* donnee) {
+    m_FileDonnees.push(donnee);
+}
+
+std::stack<std::bitset<16>>* Machine::suppDonnee() {
+    std::stack<std::bitset<16>>* donnee = m_FileDonnees.front();
+    m_FileDonnees.pop();
+    return donnee;
+}
 // Fin getters et setters
 
 // Overloading
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {
-    flux << "Machine numero : " << m.getIdMachine() << "/" << m.getNbMachine() << "\n";
+    flux << "Numero : " << m.getIdMachine() << "/" << m.getNbMachine() << "\n";
     flux << "Nom : " << m.getNom() << "\n";
     IPv4 tmp = m.getIp();
     flux << "Ip : " << tmp.a.to_ulong() << "." << tmp.b.to_ulong() << ".";

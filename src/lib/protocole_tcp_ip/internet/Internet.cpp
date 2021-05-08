@@ -3,7 +3,7 @@
  * Auteur : Quentin GRUCHET & Fadi MECHRI.
  **/
 
-#include "internet.hpp"
+#include "Internet.hpp"
 
 /**
   * Description :
