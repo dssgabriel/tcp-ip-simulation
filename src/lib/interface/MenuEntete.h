@@ -39,20 +39,20 @@ Q_OBJECT
         // Destructeur
         ~MenuEntete();
 
-        /*// Méthode
-        void activeExporter(bool m_export);
+        // Méthode
+        //void activeExporter(bool m_export);
 
     private slots :
         // Méthodes Slots
-        void charger();
+        /*void charger();
         void sauvegarder();
         void exporterGraphe();
         void quitter();
 
         void rafraichir();
-        void stop();
+        void stop();*/
         void changerMode();
-        void afficheTuto();*/
+        //void afficheTuto();
 
 };
 
