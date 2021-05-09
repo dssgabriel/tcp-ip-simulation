@@ -14,11 +14,11 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
 
     m_Image = new QPushButton("");
     m_Image ->setStyleSheet(s);
-    QPixmap pixmap("../src/lib/interface/ressources/Chips.png");
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Square.png");
     QIcon ButtonIcon(pixmap);
     m_Image->setIcon(ButtonIcon);
-    m_Image->setIconSize(pixmap.rect().size());
-    m_Image->setMaximumSize(QSize(480, 480));
+    m_Image->setMaximumSize(QSize(347, 700));
+    m_Image->setIconSize(QSize(550, 550));
     addWidget(m_Image);
 
     m_Vue = new QChartView();
