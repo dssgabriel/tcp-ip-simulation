@@ -3,7 +3,6 @@
 #include <map>
 
 #include "Machine.hpp"
-#include "../../protocole_tcp_ip/internet/Internet.hpp"
 
 class Commutateur : public Machine {
     private:

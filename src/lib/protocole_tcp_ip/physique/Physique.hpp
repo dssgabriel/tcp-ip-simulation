@@ -37,16 +37,25 @@ class Physique {
         void setMacDest(MAC dest);
         
         // Methodes
-        MAC convetirBitsEnMac(
-            const std::bitset<16>& adrPartAB, 
-            const std::bitset<16>& adrPartCD,
-            const std::bitset<16>& adrPartEF    
+        MAC convetir(
+            const std::bitset<16>& adrPartBA, 
+            const std::bitset<16>& adrPartDC,
+            const std::bitset<16>& adrPartFE
         );
-        std::bitset<48> convertirMacEnBits(const MAC& adresse);
-        std::stack<std::bitset<16>> decoupageMac(const std::bitset<48>& adresse);
+
+        std::bitset<48> convertir(const MAC& adresse);
+
+        std::stack<std::bitset<16>> decoupageMac(
+            const std::bitset<48>& adresse
+        );
         
-        std::stack<std::bitset<16>> encapsuler(std::stack<std::bitset<16>>& paquet);
-        std::stack<std::bitset<16>> desencapsuler(std::stack<std::bitset<16>>& trame);
+        std::stack<std::bitset<16>> encapsuler(
+            std::stack<std::bitset<16>>& paquet
+        );
+
+        std::stack<std::bitset<16>> desencapsuler(
+            std::stack<std::bitset<16>>& trame
+        );
 };
 
 #endif

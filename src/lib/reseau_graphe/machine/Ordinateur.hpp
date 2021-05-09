@@ -5,8 +5,6 @@
 
 #include "Machine.hpp"
 #include "../../../include/ParamInterface.hpp"
-#include "../../protocole_tcp_ip/internet/Internet.hpp"
-#include "../../protocole_tcp_ip/physique/Physique.hpp"
 #include "../../protocole_tcp_ip/transport/Transport.hpp"
 #include "../../../include/ElementControleCongestion.hpp"
 

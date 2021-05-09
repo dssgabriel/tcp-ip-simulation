@@ -71,7 +71,7 @@ MAC Physique::getMacDest() {
   * Parametres : 
   * Sortie :
   **/
-std::bitset<48> Physique::convertirMacEnBits(const MAC& adresse) {
+std::bitset<48> Physique::convertir(const MAC& adresse) {
 	std::string s1 = adresse.a.to_string();
 	std::string s2 = adresse.b.to_string();
 	std::string s3 = adresse.c.to_string();
@@ -87,8 +87,8 @@ std::bitset<48> Physique::convertirMacEnBits(const MAC& adresse) {
   * Parametres : 
   * Sortie :
   **/
-MAC Physique::convetirBitsEnMac(const std::bitset<16>& adrPartAB, 
-    const std::bitset<16>& adrPartCD, const std::bitset<16>& adrPartEF) 
+MAC Physique::convetir(const std::bitset<16>& adrPartBA, 
+    const std::bitset<16>& adrPartDC, const std::bitset<16>& adrPartFE) 
 {
   // Initialisation de l'adress MAC.
   MAC mac;
@@ -96,15 +96,15 @@ MAC Physique::convetirBitsEnMac(const std::bitset<16>& adrPartAB,
   //
   std::bitset<8> gauche, droite;
 
-  diviser(adrPartAB, gauche, droite);
+  diviser(adrPartBA, droite, gauche);
   mac.a = gauche;
   mac.b = droite;
 
-  diviser(adrPartCD, gauche, droite);
+  diviser(adrPartDC, droite, gauche);
   mac.c = gauche;
   mac.d = droite;
 
-  diviser(adrPartEF, gauche, droite);
+  diviser(adrPartFE, droite, gauche);
   mac.e = gauche; 
   mac.f = droite;
 

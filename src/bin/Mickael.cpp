@@ -29,10 +29,5 @@ int main(void) {
 
     pc.remplirFileDonnees(p, pc2.getMac());
 
-    std::queue<std::stack<std::bitset<16>>*> tmp = pc.getDonnees();
-    for(size_t i = 0; i < tmp.size(); ++i) {
-        
-    }
-
     return 0;
 }

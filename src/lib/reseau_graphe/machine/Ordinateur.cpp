@@ -111,18 +111,22 @@ void Ordinateur::envoyer() {
     std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
     m_FileDonnees.pop();
 
-    // Traitement de la donnee.
-    Machine* voisine = m_Voisins.front();
-    voisine->suppDonnee();
-    traitement(*donneeRecu, voisine->getMac());
-
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
+    Machine* voisine = m_Voisins.front();
+
+    // Traitement de la donnee.
+    traitement(*donneeRecu, voisine->getMac());
+
+    // La machine suivante recois le paquet
     voisine->setDonnee(donneeRecu);
     voisine->recevoir();
 }
 
 void Ordinateur::recevoir() {
+    // Si y a tout les ack
+        // return
+    // else
     envoyer();
 }
 
@@ -192,14 +196,14 @@ void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest
     Physique couchePhy;
     
     // Recuperation adresse MAC destination.
-    std::bitset<16> macDestAB, macDestCD, macDestEF;
-    macDestAB = trame.top();
+    std::bitset<16> macDestBA, macDestBD, macDestFE;
+    macDestFE = trame.top();
     trame.pop();
-    macDestCD = trame.top();
+    macDestBD = trame.top();
     trame.pop();
-    macDestEF = trame.top();
+    macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convetirBitsEnMac(macDestAB, macDestCD, macDestEF);
+    MAC ancienneDest = couchePhy.convetir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
