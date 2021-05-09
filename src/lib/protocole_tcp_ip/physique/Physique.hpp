@@ -37,7 +37,7 @@ class Physique {
         void setMacDest(MAC dest);
         
         // Methodes
-        MAC convetir(
+        MAC convertir(
             const std::bitset<16>& adrPartBA, 
             const std::bitset<16>& adrPartDC,
             const std::bitset<16>& adrPartFE
