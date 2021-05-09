@@ -12,7 +12,6 @@
   * Sortie :
   **/
 Internet::Internet() {
-
 }
 
  /**

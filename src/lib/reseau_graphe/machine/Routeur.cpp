@@ -57,7 +57,10 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.pop();
     macDestEF = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convetir(macDestAB, macDestCD, macDestEF);
+
+    MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
+
+    MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
