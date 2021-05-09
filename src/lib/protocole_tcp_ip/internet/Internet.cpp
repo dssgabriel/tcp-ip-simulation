@@ -133,6 +133,8 @@ IPv4& convertir(const std::bitset<16>& ipPartBA,
     // Decoupage, et convertion en IPv4.
     diviser(ipPartBA, ip.b, ip.a);
     diviser(ipPartDC, ip.d, ip.c);
+
+    return ip;
 }
 
  /**
