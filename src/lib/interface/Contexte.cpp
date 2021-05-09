@@ -42,6 +42,7 @@ std::string Contexte::informationsReseau() {
 
 void Contexte::chargerConfig(int numConfig) {
     numConfig = 2;
+    int a = 3;
 }
 
 void Contexte::executerSimulation() {
