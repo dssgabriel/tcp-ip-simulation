@@ -27,3 +27,19 @@ std::bitset<N1 + N2> concat(const std::bitset <N1> b1, const std::bitset <N2> b2
     std::string s2 = b2.to_string();
     return std::bitset <N1 + N2>(s1 + s2);
 }
+
+/**
+  * Description :
+  * Fonction :
+  * Parametres : 
+  * Sortie :
+  **/
+template <size_t N1>
+void inverser(std::stack<std::bitset<N1>> &pile) {
+    std::stack<std::bitset<N1>> pileInv;
+
+    for(size_t i = 0; i < pile.size(); ++i) {
+        pileInv.push(pile.top());
+        pile.pop();
+    }
+}

@@ -218,7 +218,7 @@ uint16_t Transport::portAlea() {
   * Parametres : 
   * Sortie :
   **/
-std::bitset<16> Transport::convertirPortEnBit(const uint16_t& val) {  
+std::bitset<16> Transport::convertir(const uint16_t& val) {  
 	std::bitset<16> tmp(val);
 	return tmp;
 }
@@ -251,8 +251,8 @@ void Transport::verifierChecksum() {
   **/
 std::stack<std::bitset<16>> Transport::encapsuler() {
     std::stack<std::bitset<16>> segment;
-    segment.push(convertirPortEnBit(m_PortSrc));
-    segment.push(convertirPortEnBit(m_PortDest));
+    segment.push(convertir(m_PortSrc));
+    segment.push(convertir(m_PortDest));
     segment.push(m_Cwnd);
     segment.push(m_Checksum);
     segment.push(m_Syn);

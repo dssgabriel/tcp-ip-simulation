@@ -9,6 +9,9 @@
 #include "../../../include/MAC.hpp"
 #include "../../../include/IPv4.hpp"
 
+#include "../../protocole_tcp_ip/internet/Internet.hpp"
+#include "../../protocole_tcp_ip/physique/Physique.hpp"
+
 class Machine {
     private:
         // Attributs prives

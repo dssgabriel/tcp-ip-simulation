@@ -64,7 +64,7 @@ class Transport {
 
         // Methodes
         uint16_t portAlea() ;
-        std::bitset<16> convertirPortEnBit(const uint16_t &);
+        std::bitset<16> convertir(const uint16_t &);
 
         void calculerChecksum();
         void verifierChecksum();
