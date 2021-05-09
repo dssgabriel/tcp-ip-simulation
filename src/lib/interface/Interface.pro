@@ -3,6 +3,7 @@ QT = core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets charts
 
 SOURCES += \
+	Contexte.cpp \
     AffichageReseau.cpp \
     ChoixReseau.cpp \
     ConfigReseau.cpp \
@@ -13,6 +14,7 @@ SOURCES += \
     main.cpp \
 
 HEADERS += \
+	Contexte.h \
     AffichageReseau.h \
     ChoixReseau.h \
     ConfigReseau.h \
