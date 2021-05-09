@@ -1,5 +1,8 @@
+# Directories to ignore
 build/
+target/
 .vscode/
+
+# Files to ignore
 CMakeLists.txt.user
 *.o
-src/bin/Mickael
