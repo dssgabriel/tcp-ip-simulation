@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Routeur.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
@@ -46,7 +48,7 @@ void Routeur::recevoir() {
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Recuperation du paquet.
     Physique couchePhy;
-    
+
     // Recuperation adresse MAC destination.
     std::bitset<16> macDestAB, macDestCD, macDestEF;
     macDestAB = trame.top();
@@ -55,6 +57,9 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.pop();
     macDestEF = trame.top();
     trame.pop();
+
+    MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
+
     MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
@@ -66,4 +71,38 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     couchePhy.setMacSrc(ancienneDest);
     couchePhy.setMacDest(nouvelleDest);
     couchePhy.encapsuler(trame);
+}
+
+void Routeur::traitementPaquetOSPF() {
+    PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
+
+    switch (paquet.getType()) {
+        case 1:
+            traitementPaquetHello(dynamic_cast<PaquetHello&>(paquet));
+            break;
+        case 2:
+            traitementPaquetDBD(dynamic_cast<PaquetDBD&>(paquet));
+            break;
+        case 3:
+            traitementPaquetLSR(dynamic_cast<PaquetLSR&>(paquet));
+            break;
+        case 4:
+            traitementPaquetLSU(dynamic_cast<PaquetLSU&>(paquet));
+            break;
+        case 5:
+            traitementPaquetLSAck(dynamic_cast<PaquetLSAck&>(paquet));
+            break;
+        default:
+            std::cout << "Type de PaquetOSPF inconnu\n";
+            return;
+    }
+}
+
+// Methodes privees
+void Routeur::traitementPaquetHello(const PaquetHello& hello) {
+    if (hello.getIdVoisin() != m_IdRouteur) {
+        return;
+    }
+
+    if (hello.getIdRouteur()) {}
 }
