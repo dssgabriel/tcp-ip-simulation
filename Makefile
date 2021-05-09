@@ -3,6 +3,7 @@ all:
 	cd build; cmake ..; make; ./Interface
 
 Mickael:
+	mkdir -p target/
 	g++ -c -std=c++17 -Wall -Wextra -g test/Mickael.cpp -o target/Mickael.o
 	g++ -c -std=c++17 -Wall -Wextra -g src/lib/protocole_tcp_ip/internet/Internet.cpp -o target/Internet.o
 	g++ -c -std=c++17 -Wall -Wextra -g src/lib/protocole_tcp_ip/physique/Physique.cpp -o target/Physique.o
@@ -15,4 +16,4 @@ Mickael:
 	g++ target/*.o -o test/Mickael
 
 clean:
-	@rm -Rf build
+	@rm -Rf build/ target/
