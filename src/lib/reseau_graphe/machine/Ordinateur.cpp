@@ -130,6 +130,68 @@ void Ordinateur::recevoir() {
     envoyer();
 }
 
+template <size_t N1>
+void inverser(std::stack<std::bitset<N1>> &pile) {
+    std::stack<std::bitset<N1>> pileInv;
+
+    for(size_t i = 0; i < pile.size(); ++i) {
+        pileInv.push(pile.top());
+        pile.pop();
+    }
+}
+
+std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stack<std::bitset<16>>*> queue) {
+    std::deque<std::stack<std::bitset<16>>> dequeu;
+    for (int i = 0; i < queue.size(); i++)
+    {
+        dequeu.push_back(*queue.front());
+        queue.pop();
+    }
+
+    return dequeu;
+    
+}
+
+int tripleACK(Machine machine) {
+    Physique phy;
+    Internet inter;
+    Transport trans;
+    std::queue<std::stack<std::bitset<16>>*> donnees;
+    donnees = machine.getDonnees();
+    std::deque<std::stack<std::bitset<16>>> donneesDeque;
+    donneesDeque = convertirQueueDeque(donnees);
+    for (int i = 0; i < donneesDeque.size() - 1; ++i) {
+        
+        std::stack<std::bitset<16>> tmp = phy.desencapsuler(donneesDeque[i]);
+        tmp = inter.desencapsuler(tmp);
+        std::bitset<16> tmpAck1 = tmp.top();
+        tmp.pop();
+        std::bitset<16> tmpAck2 = tmp.top();
+        std::bitset<32> ack = concat(tmpAck1, tmpAck2);
+        
+        for (int j = i + 1; j < donneesDeque.size(); ++j) {
+            std::stack<std::bitset<16>> tmp2 = phy.desencapsuler(donneesDeque[j]);
+            tmp2 = inter.desencapsuler(tmp2);
+            std::bitset<16> tmpAck3 = tmp2.top();
+            tmp2.pop();
+            std::bitset<16> tmpAck4 = tmp2.top();
+            std::bitset<32> ack2 = concat(tmpAck3, tmpAck4);
+            if (ack == ack2) {
+                std::stack<std::bitset<16>> tmp3 = phy.desencapsuler(donneesDeque[j + 1]);
+                tmp3 = inter.desencapsuler(tmp3);
+                std::bitset<16> tmpAck5 = tmp3.top();
+                tmp3.pop();
+                std::bitset<16> tmpAck6 = tmp3.top();
+                std::bitset<32> ack3 = concat(tmpAck5, tmpAck6);
+                if (ack == ack3) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Recuperation du paquet.
     Physique couchePhy;

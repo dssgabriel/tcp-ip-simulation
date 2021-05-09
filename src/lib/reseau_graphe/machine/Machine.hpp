@@ -62,9 +62,7 @@ class Machine {
         std::stack<std::bitset<16>>* suppDonnee();
 
         // A ENLEVER
-        const std::queue<std::stack<std::bitset<16>>*>& getDonnees() {
-            return m_FileDonnees;
-        }
+        const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
 
         // Overloading
         friend std::ostream& operator<<(

@@ -106,6 +106,10 @@ void Machine::setDonnee(std::stack<std::bitset<16>>* donnee) {
     m_FileDonnees.push(donnee);
 }
 
+const std::queue<std::stack<std::bitset<16>>*>& Machine::getDonnees() {
+    return m_FileDonnees;
+}
+
 std::stack<std::bitset<16>>* Machine::suppDonnee() {
     std::stack<std::bitset<16>>* donnee = m_FileDonnees.front();
     m_FileDonnees.pop();
