@@ -13,6 +13,9 @@
 #include <stack>
 #include <time.h>
 
+#include "../../../include/Commun.hpp"
+#include "../../../include/ParamInterface.hpp"
+
 class Transport {
     private :
        
@@ -38,7 +41,7 @@ class Transport {
         void setPortSrc(const uint16_t & src);
         uint16_t & getPortSrc();
 
-        void setPortDest(const uint16_t & dst);
+        void setPortDest(TypeFichier num) ;
         uint16_t & getPortDest();
         
         void setCwnd(const std::bitset<16>& cwnd);

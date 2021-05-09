@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <queue>
 #include <stack>
 #include <bitset>
+#include <vector>
 #include <iostream>
 
-#include "../../../include/IPv4.hpp"
 #include "../../../include/MAC.hpp"
+#include "../../../include/IPv4.hpp"
 
 class Machine {
     private:
@@ -58,6 +58,11 @@ class Machine {
         void setDonnee(std::stack<std::bitset<16>>* donnee);
         std::stack<std::bitset<16>>* suppDonnee();
 
+        // A ENLEVER
+        const std::queue<std::stack<std::bitset<16>>*>& getDonnees() {
+            return m_FileDonnees;
+        }
+
         // Overloading
         friend std::ostream& operator<<(
             std::ostream& flux, 
@@ -67,5 +72,6 @@ class Machine {
         // Methodes
         virtual void envoyer() {};
         virtual void recevoir() {};
-        virtual void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest) {};
+        // NE PAS NOMMER LES VARIABLES.
+        virtual void traitement(std::stack<std::bitset<16>>&, MAC) {};
 };

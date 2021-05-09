@@ -11,20 +11,6 @@
   * Parametres : 
   * Sortie :
   **/
-template <size_t N1, size_t N2 >
-std::bitset<N1 + N2> concat(const std::bitset <N1> b1, const std::bitset <N2> b2){
-    std::string s1 = b1.to_string();
-    std::string s2 = b2.to_string();
-    return std::bitset <N1 + N2>(s1 + s2);
-}
-
-
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
 Physique::Physique(){
     
 }
@@ -104,31 +90,26 @@ std::bitset<48> Physique::convertirMacEnBits(const MAC& adresse) {
 MAC Physique::convetirBitsEnMac(const std::bitset<16>& adrPartAB, 
     const std::bitset<16>& adrPartCD, const std::bitset<16>& adrPartEF) 
 {
+  // Initialisation de l'adress MAC.
   MAC mac;
 
   //
-  size_t i;
-  for(i = 0; i < 8; ++i) {
-    mac.a[i] = adrPartAB[i];
-  }
-  for(i = 0; i < 8; ++i) {
-    mac.b[i] = adrPartAB[8+i];
-  }
-  for(i = 0; i < 8; ++i) {
-    mac.c[i] = adrPartCD[i];
-  }
-  for(i = 0; i < 8; ++i) {
-    mac.d[i] = adrPartCD[8+i];
-  }
-  for(i = 0; i < 8; ++i) {
-    mac.e[i] = adrPartEF[i];
-  }
-  for(i = 0; i < 8; ++i) {
-    mac.f[i] = adrPartEF[8+i];
-  }
+  std::bitset<8> gauche, droite;
+
+  diviser(adrPartAB, gauche, droite);
+  mac.a = gauche;
+  mac.b = droite;
+
+  diviser(adrPartCD, gauche, droite);
+  mac.c = gauche;
+  mac.d = droite;
+
+  diviser(adrPartEF, gauche, droite);
+  mac.e = gauche; 
+  mac.f = droite;
+
   return mac;
 }
-
  /**
   * Description :
   * Fonction :

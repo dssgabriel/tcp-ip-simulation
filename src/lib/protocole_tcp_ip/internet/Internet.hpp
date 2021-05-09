@@ -13,10 +13,10 @@
 #include <stack>
 
 #include "../../../include/IPv4.hpp"
+#include "../../../include/Commun.hpp"
 
 class Internet {
     private :
-     
        // Attributs
         IPv4 m_IpSrc ;
         IPv4 m_IpDest ;
@@ -42,7 +42,7 @@ class Internet {
         void setTTL(const std::bitset<8>& ttl);
         std::bitset<8>& getTTL();
 
-        void setProtocoleId(const std::bitset<8>& protocoleId);
+        void setProtocoleId();
         std::bitset<8>& getProtocoleId();
         
         // Methodes

@@ -11,18 +11,6 @@
   * Parametres : 
   * Sortie :
   **/
-template <size_t N3>
-void diviser(const std::bitset <N3>& original, std::bitset <N3/2>& gauche, std::bitset <N3/2>& droite){
-	droite = std::bitset<N3/2> ((original).to_ulong());
-	gauche = std::bitset<N3/2> ((original >> N3/2).to_ulong());
-}
-
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
 Transport::Transport() {
 	
 }
@@ -63,8 +51,23 @@ uint16_t &Transport::getPortSrc() {
   * Parametres : 
   * Sortie :
   **/
-void Transport::setPortDest(const uint16_t& dst) {
-    m_PortDest = dst;
+void Transport::setPortDest(TypeFichier num) {
+    switch(num){
+        case 0:
+            m_PortDest = 20;
+            break;
+        case 1:
+            m_PortDest = 80;
+            break;
+        case 2:
+            m_PortDest = 465;
+            break;
+        case 3:
+            m_PortDest = 69;
+            break;
+        default:
+            m_PortDest = 666;
+    }
 }
 
 /**
@@ -163,6 +166,26 @@ std::bitset<16> &Transport::getAck1() {
   * Parametres : 
   * Sortie :
   **/
+void Transport::setSeq(const std::bitset<32>& numSeq) {
+    m_Seq = numSeq;
+}
+
+/**
+  * Description :
+  * Fonction :
+  * Parametres : 
+  * Sortie :
+  **/
+std::bitset<32>& Transport::getSeq() {
+    return m_Seq;
+}
+
+/**
+  * Description :
+  * Fonction :
+  * Parametres : 
+  * Sortie :
+  **/
 void Transport::setAck2(const std::bitset<32>& ack2) {
     m_Ack2 = ack2;
 }
@@ -241,7 +264,7 @@ std::stack<std::bitset<16>> Transport::encapsuler() {
     segment.push(seqDroite);
 
     std::bitset<16> ack2Gauche, ack2Droite;
-    diviser(m_Seq, ack2Gauche, ack2Droite);
+    diviser(m_Ack2, ack2Gauche, ack2Droite);
     segment.push(ack2Gauche);
     segment.push(ack2Droite);
 
@@ -255,26 +278,35 @@ std::stack<std::bitset<16>> Transport::encapsuler() {
   * Sortie :
   **/
 std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
-
+    
+    //
     std::bitset<16> ack2Droite = segment.top();
     segment.pop();
     std::bitset<16> ack2Gauche = segment.top();
     segment.pop();
+    m_Ack2 = concat(ack2Droite, ack2Gauche);
+
+    //
     std::bitset<16> seqDroite = segment.top();
     segment.pop();
     std::bitset<16> seqGauche = segment.top();
     segment.pop();
-    std::bitset<16> m_Ack1 = segment.top();
+    m_Seq = concat(seqDroite, seqGauche);
+    
+    //
+    m_Ack1 = segment.top();
     segment.pop();
-    std::bitset<16> m_Syn = segment.top();
+    m_Syn = segment.top();
     segment.pop();
-    std::bitset<16> m_Checksum = segment.top();
+    m_Checksum = segment.top();
     segment.pop();
-    std::bitset<16> m_Cwnd = segment.top();
+    m_Cwnd = segment.top();
     segment.pop();
-    std::bitset<16> m_PortDest = segment.top();
+
+    //
+    m_PortDest = segment.top().to_ulong();
     segment.pop();
-    std::bitset<16> m_PortSrc = segment.top();
+    m_PortSrc = segment.top().to_ulong();
     segment.pop();
 
     return std::bitset<16>(segment.top());
