@@ -11,7 +11,7 @@
   * Parametres : 
   * Sortie :
   **/
-Physique::Physique(){
+Physique::Physique() {
     
 }
 
