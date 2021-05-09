@@ -193,7 +193,7 @@ void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convetir(macDestBA, macDestBD, macDestFE);
+    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
