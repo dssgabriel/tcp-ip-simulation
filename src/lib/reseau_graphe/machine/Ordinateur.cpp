@@ -130,16 +130,6 @@ void Ordinateur::recevoir() {
     envoyer();
 }
 
-template <size_t N1>
-void inverser(std::stack<std::bitset<N1>> &pile) {
-    std::stack<std::bitset<N1>> pileInv;
-
-    for(size_t i = 0; i < pile.size(); ++i) {
-        pileInv.push(pile.top());
-        pile.pop();
-    }
-}
-
 std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stack<std::bitset<16>>*> queue) {
     std::deque<std::stack<std::bitset<16>>> dequeu;
     for (int i = 0; i < queue.size(); i++)
