@@ -111,12 +111,29 @@ std::bitset<8> &Internet::getProtocoleId() {
   * Parametres : 
   * Sortie :
   **/
-std::bitset<32> Internet::convertirIpEnBits(const IPv4& adresse) {
+std::bitset<32> Internet::convertir(const IPv4& adresse) {
 	std::string s1 = adresse.a.to_string();
 	std::string s2 = adresse.b.to_string();
 	std::string s3 = adresse.c.to_string();
 	std::string s4 = adresse.d.to_string();
 	return std::bitset<32>(s1 + s2 + s3 + s4);
+}
+
+ /**
+  * Description :
+  * Fonction :
+  * Parametres : 
+  * Sortie :
+  **/
+IPv4& convertir(const std::bitset<16>& ipPartBA, 
+    const std::bitset<16>& ipPartDC)
+{
+    // Initialisation.
+    IPv4 ip;
+
+    // Decoupage, et convertion en IPv4.
+    diviser(ipPartBA, ip.b, ip.a);
+    diviser(ipPartDC, ip.d, ip.c);
 }
 
  /**

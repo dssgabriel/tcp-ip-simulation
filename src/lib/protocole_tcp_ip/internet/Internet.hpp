@@ -46,7 +46,11 @@ class Internet {
         std::bitset<8>& getProtocoleId();
         
         // Methodes
-        std::bitset<32> convertirIpEnBits(const IPv4& adresse);
+        std::bitset<32> convertir(const IPv4& adresse);
+        IPv4& convertir(
+            const std::bitset<16>& ipPartBA, 
+            const std::bitset<16>& ipPartDC
+        );
         
         void calculerChecksum();
         void verifierChecksum();
