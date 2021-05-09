@@ -8,7 +8,7 @@
 
 #include "../../../include/MAC.hpp"
 #include "../../../include/IPv4.hpp"
-
+#include "../../horloge/Horloge.hpp"
 #include "../../protocole_tcp_ip/internet/Internet.hpp"
 #include "../../protocole_tcp_ip/physique/Physique.hpp"
 
@@ -27,7 +27,7 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
         
-        // TODO : Horloge m_Chrono;
+        Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::queue<std::stack<std::bitset<16>>*> m_FileDonnees;
     

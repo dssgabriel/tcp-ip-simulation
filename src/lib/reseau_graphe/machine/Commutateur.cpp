@@ -53,6 +53,10 @@ void Commutateur::envoyer() {
     // Traitement de la donnee.
     traitement(*donneeRecu, prochainStop);
 
+    // TODO : re encapsuler checksun et ttlProtole
+    // TODO : set la machine voisine
+
+
     // La machine suivante recois le paquet
     voisine->setDonnee(donneeRecu);
     voisine->recevoir();

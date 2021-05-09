@@ -1,6 +1,5 @@
 build/
-<<<<<<< HEAD
 .vscode/
-=======
->>>>>>> main
 CMakeLists.txt.user
+*.o
+src/bin/Mickael
