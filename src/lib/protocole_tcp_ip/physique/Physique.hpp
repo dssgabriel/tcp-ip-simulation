@@ -12,11 +12,11 @@
 #include <string>
 #include <stack>
 
-#include "MAC.hpp"
+#include "../../../include/MAC.hpp"
+#include "../../../include/Commun.hpp"
 
 class Physique {
     private :
-
         // Attributs
         MAC m_SrcMac;
         MAC m_DestMac;

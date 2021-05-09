@@ -11,19 +11,6 @@
   * Parametres : 
   * Sortie :
   **/
-template <size_t N1, size_t N2 >
-std::bitset<N1 + N2> concat(const std::bitset <N1> b1, const std::bitset <N2> b2){
-    std::string s1 = b1.to_string();
-    std::string s2 = b2.to_string();
-    return std::bitset <N1 + N2>(s1 + s2);
-}
-
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
 Internet::Internet() {
 
 }
@@ -104,8 +91,8 @@ std::bitset<8> &Internet::getTTL() {
   * Parametres : 
   * Sortie :
   **/
-void Internet::setProtocoleId(const std::bitset<8>& protocoleId) {
-    m_ProtocoleId = protocoleId;
+void Internet::setProtocoleId() {
+    m_ProtocoleId = std::bitset<8> (6);
 }
 
  /**
@@ -159,14 +146,14 @@ void Internet::verifierChecksum() {
   * Sortie :
   **/
  std::stack<std::bitset<16>> Internet::encapsuler(std::stack<std::bitset<16>>& segment) {
-     segment.push(concat(m_IpSrc.a, m_IpSrc.b));
-     segment.push(concat(m_IpSrc.c, m_IpSrc.d));
-     segment.push(concat(m_IpDest.a, m_IpDest.b));
-     segment.push(concat(m_IpDest.c, m_IpDest.d));
-     segment.push(concat(m_TTL, m_ProtocoleId));
-     segment.push(m_Checksum);
+    segment.push(concat(m_IpSrc.a, m_IpSrc.b));
+    segment.push(concat(m_IpSrc.c, m_IpSrc.d));
+    segment.push(concat(m_IpDest.a, m_IpDest.b));
+    segment.push(concat(m_IpDest.c, m_IpDest.d));
+    segment.push(concat(m_TTL, m_ProtocoleId));
+    segment.push(m_Checksum);
 
-     return segment;
+    return segment;
  }
 
  /**
@@ -175,9 +162,10 @@ void Internet::verifierChecksum() {
   * Parametres : 
   * Sortie :
   **/
- std::stack<std::bitset<16>> Internet::desencapsuler(std::stack<std::bitset<16>>& paquet) {
-
-    std::bitset<16> m_Checksum = paquet.top();
+ std::stack<std::bitset<16>> Internet::desencapsuler(
+   std::stack<std::bitset<16>>& paquet)
+{
+    m_Checksum = paquet.top();
     paquet.pop();
     paquet.pop();
     for (size_t i = 0; i < 8; i++)

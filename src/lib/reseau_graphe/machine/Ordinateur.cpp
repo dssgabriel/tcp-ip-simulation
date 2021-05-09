@@ -61,14 +61,41 @@ double Ordinateur::getTempsTraitementPaquet(const uint16_t& cle) const {
 void Ordinateur::remplirFileDonnees(const ParamInterface& config, const MAC& destination) {
     
     // Initialisation
-    Internet coucheInt;
     Transport coucheTrans;
+    Internet coucheInt;
     Physique couchePhy;
 
     // Preparation des donnees
     for(size_t i = 0; i < config.m_NbPaquet; ++i) {
+
+        // Encapsulation couche Transport
+        coucheTrans.setPortSrc(coucheTrans.portAlea());
+        coucheTrans.setPortDest(config.m_TypeFichier);
+        coucheTrans.setCwnd(std::bitset<16>(0));
+        coucheTrans.setSyn(std::bitset<16>(1));
+        coucheTrans.setAck1(std::bitset<16>(0));
+        coucheTrans.setSeq(std::bitset<32>(i));
+        coucheTrans.setAck2(std::bitset<32>(0));
+        coucheTrans.setChecksum(std::bitset<16>(0));
+        std::stack<std::bitset<16>> segment = coucheTrans.encapsuler();
+
+        // Encapsulation couche Internet
+        coucheInt.setIpSrc(config.m_Source);
+        coucheInt.setIpDest(config.m_Destination);
+        coucheInt.setTTL(std::bitset<8> (100));
+        coucheInt.setProtocoleId();
+        std::stack<std::bitset<16>> paquet = coucheInt.encapsuler(segment);
+
+        // Encapsulation couche Physique
+        couchePhy.setMacSrc(m_Mac);
+        couchePhy.setMacDest(destination);
+        std::stack<std::bitset<16>> trame = couchePhy.encapsuler(paquet);
         
+        //
+        m_FileDonnees.push(&trame);
     }
+
+    // Appel tcp ip ?
 }
 
 void Ordinateur::synchroniser() {
@@ -120,7 +147,7 @@ void Ordinateur::traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDes
     paquet.pop();
     macDestCD = paquet.top();
     paquet.pop();
-    macDestAB = paquet.top();
+    macDestEF = paquet.top();
     paquet.pop();
     MAC ancienneDest = couchePhy.convetirBitsEnMac(macDestAB, macDestCD, macDestEF);
 
@@ -130,7 +157,7 @@ void Ordinateur::traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDes
     paquet.pop();
     macSrcCD = paquet.top();
     paquet.pop();
-    macSrcAB = paquet.top();
+    macSrcEF = paquet.top();
     paquet.pop();
     MAC ancienneSrc = couchePhy.convetirBitsEnMac(macSrcAB, macSrcCD, macSrcEF);
 

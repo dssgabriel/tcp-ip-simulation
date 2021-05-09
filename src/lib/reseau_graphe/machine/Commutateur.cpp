@@ -7,7 +7,6 @@ Commutateur::Commutateur() : Machine() {
     m_NbrCommutateur++;
     m_IdCommutateur = m_NbrCommutateur;
 
-
     m_Nom = "Commutateur" + std::to_string(m_IdCommutateur);
 }
 
@@ -25,8 +24,6 @@ uint8_t Commutateur::getIdCommutateur() {
 
 // Methode
 void Commutateur::envoyer() {
-
-
     // traitement();
 
     // machineSuivante.recevoir();
