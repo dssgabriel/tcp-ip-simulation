@@ -10,7 +10,7 @@ ReseauGraphe::~ReseauGraphe() {
 }
 
 // Getters & setters
-void ReseauGraphe::setNom(const std::string nom) {
+void setNom(const std::string nom) {
     m_Nom = nom;
 }
 
