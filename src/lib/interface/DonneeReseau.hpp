@@ -1,8 +1,8 @@
 #ifndef DONNEERESEAU_H
 #define DONNEERESEAU_H
 
-#include "AffichageReseau.h"
-#include "ConfigReseau.h"
+#include "AffichageReseau.hpp"
+#include "ConfigReseau.hpp"
 
 #include <QApplication>
 #include <QWidget>

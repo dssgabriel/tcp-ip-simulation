@@ -1,4 +1,4 @@
-#include "../lib/interface/MyWindow.h"
+#include "../lib/interface/MyWindow.hpp"
 #include <QApplication>
 
 int main(int argc, char **argv)
