@@ -108,6 +108,8 @@ Machine* Machine::getVoisin(MAC adresseVoisin) {
             return m_Voisins[i];
         }
     }
+
+    return nullptr;
 }
 
 void Machine::setDonnee(std::stack<std::bitset<16>>* donnee) {

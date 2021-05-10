@@ -27,7 +27,7 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
         
-        Horloge m_Chrono;
+        // Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::queue<std::stack<std::bitset<16>>*> m_FileDonnees;
     

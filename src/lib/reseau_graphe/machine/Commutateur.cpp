@@ -28,9 +28,6 @@ void Commutateur::envoyer() {
     std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
     m_FileDonnees.pop();
 
-    // Trouver la machine voisine.
-    Machine* voisine;
-
     Physique couchePhy;
     Internet coucheInt;
     std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(*donneeRecu);
@@ -58,7 +55,7 @@ void Commutateur::envoyer() {
     paquet.push(ttl_Protocole);
     paquet.push(checksum);
 
-    // Set la machine voisine.
+    // Trouver la machine voisine.
     Machine* voisine = getVoisin(prochainStop);
 
     // Traitement de la donnee.
