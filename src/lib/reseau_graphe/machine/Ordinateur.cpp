@@ -142,7 +142,7 @@ std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stac
     
 }
 
-int tripleACK(Machine machine) {
+bool tripleACK(Machine machine) {
     Physique phy;
     Internet inter;
     Transport trans;
@@ -173,12 +173,12 @@ int tripleACK(Machine machine) {
                 std::bitset<16> tmpAck6 = tmp3.top();
                 std::bitset<32> ack3 = concat(tmpAck5, tmpAck6);
                 if (ack == ack3) {
-                    return 1;
+                    return true;
                 }
             }
         }
     }
-    return 0;
+    return false;
 }
 
 void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {

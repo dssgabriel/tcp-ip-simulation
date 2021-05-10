@@ -14,13 +14,13 @@ SOURCES += \
     main.cpp \
 
 HEADERS += \
-	Contexte.h \
-    AffichageReseau.h \
-    ChoixReseau.h \
-    ConfigReseau.h \
-    DonneeReseau.h \
-    FenetreReseau.h \
-    MenuEntete.h \
-    MyWindow.h
+	Contexte.hpp \
+    AffichageReseau.hpp \
+    ChoixReseau.hpp \
+    ConfigReseau.hpp \
+    DonneeReseau.hpp \
+    FenetreReseau.hpp \
+    MenuEntete.hpp \
+    MyWindow.hpp
 
 DISTFILES +=

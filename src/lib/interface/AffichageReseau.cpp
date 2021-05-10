@@ -1,4 +1,4 @@
-#include "AffichageReseau.h"
+#include "AffichageReseau.hpp"
 
 AffichageReseau::AffichageReseau() : QHBoxLayout()
 {

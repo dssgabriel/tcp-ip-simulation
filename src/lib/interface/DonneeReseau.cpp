@@ -1,4 +1,4 @@
-#include "DonneeReseau.h"
+#include "DonneeReseau.hpp"
 
 DonneeReseau::DonneeReseau() : QVBoxLayout()
 {
