@@ -158,7 +158,6 @@ int tripleACK(Machine machine) {
         tmp.pop();
         std::bitset<16> tmpAck2 = tmp.top();
         std::bitset<32> ack = concat(tmpAck1, tmpAck2);
-        
         for (int j = i + 1; j < donneesDeque.size(); ++j) {
             std::stack<std::bitset<16>> tmp2 = phy.desencapsuler(donneesDeque[j]);
             tmp2 = inter.desencapsuler(tmp2);
@@ -194,7 +193,7 @@ void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convetir(macDestBA, macDestBD, macDestFE);
+    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
