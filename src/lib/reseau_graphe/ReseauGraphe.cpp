@@ -1,16 +1,15 @@
 #include "ReseauGraphe.hpp"
+#include "machine/Routeur.hpp"
+#include <cstdlib>
 
-ReseauGraphe::ReseauGraphe() :
-    m_Machines(nullptr),
-    m_Liaisons(nullptr)
-{
+ReseauGraphe::ReseauGraphe() {
 }
 
 ReseauGraphe::~ReseauGraphe() {
 }
 
 // Getters & setters
-void setNom(const std::string nom) {
+void ReseauGraphe::setNom(const std::string nom) {
     m_Nom = nom;
 }
 
@@ -19,12 +18,29 @@ std::string& ReseauGraphe::getNom() {
 }
 
 Machine& ReseauGraphe::getMachine(const IPv4& ip) {
-    return ip;
+    for (size_t i = 0; i < m_Machines.size(); i++) {
+        if (m_Machines[i].getIp() == ip) {
+            return m_Machines[i];
+        }
+    }
+
+    exit(1);
+}
+
+Routeur& ReseauGraphe::getRouteur(const uint8_t& idRouteur) {
+    for (size_t i = 0; i < m_Machines.size(); i++) {
+        auto routeur = dynamic_cast<Routeur&>(m_Machines[i]);
+        if (routeur.getIdRouteur() == idRouteur) {
+            return dynamic_cast<Routeur&>(m_Machines[i]);
+        }
+    }
+
+    exit(1);
 }
 
 // Methodes
 bool ReseauGraphe::estConnexe() {
-
+    return false;
 }
 
 void ReseauGraphe::ajouter(Machine m) {

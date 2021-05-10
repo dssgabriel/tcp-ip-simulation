@@ -29,12 +29,12 @@ uint8_t Routeur::getIdRouteur() {
 }
 
 // std::vector<Routeur&>& Routeur::getRouteursVoisins() {
-    // TODO : A faire
+// TODO : A faire
 // }
 
 // Methodes
 // const std::vector<Liaison>& Routeur::getPlusCourtChemin(const Routeur& dest) {
-    // TODO : A faire
+// TODO : A faire
 // }
 
 void Routeur::envoyer() {
@@ -45,10 +45,18 @@ void Routeur::recevoir() {
     // TODO : A faire
 }
 
+void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
+    dest.recevoir(ospf);
+}
+
+void Routeur::recevoir(PaquetOSPF& ospf) {
+    m_FilePaquetsOSPF.emplace(ospf);
+}
+
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Recuperation du paquet.
     Physique couchePhy;
-    
+
     // Recuperation adresse MAC destination.
     std::bitset<16> macDestBA, macDestBD, macDestFE;
     macDestFE = trame.top();
@@ -101,5 +109,26 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         return;
     }
 
-    if (hello.getIdRouteur()) {}
+    // TODO: Check for know router
+
+    PaquetHello reponse(hello.getIdRouteur());
+    reponse.setEntete(Hello, m_IdRouteur);
+
+    // envoyer(hello.getIdRouteur(), reponse);
+}
+
+void Routeur::traitementPaquetDBD(const PaquetDBD& dbd) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSR(const PaquetLSR& lsr) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
+    // TODO : A faire
 }
