@@ -1,4 +1,4 @@
-#include "MenuEntete.h"
+#include "MenuEntete.hpp"
 
 MenuEntete::MenuEntete() : QHBoxLayout()
 {
@@ -16,6 +16,7 @@ MenuEntete::MenuEntete() : QHBoxLayout()
     m_Barre = new QMenuBar();
     m_Fichier = new QMenu("Fichier");
     m_Barre->setStyleSheet("background-color: rgba(80, 80, 80, 255); color: White;");
+    m_Barre->setMinimumWidth(1920);
     m_Barre->setMaximumHeight(30);
     m_Barre->addMenu(m_Fichier);
     setMenuBar(m_Barre);
@@ -46,13 +47,25 @@ MenuEntete::MenuEntete() : QHBoxLayout()
     QSpacerItem *item = new QSpacerItem(1,1, QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_Hlayout->addSpacerItem(item);
 
+    m_ModeActuel = Attente;
+
     // Boutons du QHBoxLayout
-    m_ChangerMode = new QPushButton("Play");
+    m_ChangerMode = new QPushButton();
     m_ChangerMode->setStyleSheet(s);
+    m_ChangerMode->setMaximumHeight(50);
+    m_ChangerMode->setMaximumWidth(50);
+    m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
+    m_ChangerMode->setIconSize(QSize(20,20));
     m_Hlayout->addWidget(m_ChangerMode);
 
-    m_Stop = new QPushButton("Stop");
+    connect(m_ChangerMode,SIGNAL(clicked()),this, SLOT(changerMode()));
+
+    m_Stop = new QPushButton();
     m_Stop->setStyleSheet(s);
+    m_Stop->setMaximumHeight(50);
+    m_Stop->setMaximumWidth(50);
+    m_Stop->setIcon(QIcon("../src/lib/interface/ressources/Stop.png"));
+    m_Stop->setIconSize(QSize(20,20));
     m_Hlayout->addWidget(m_Stop);
 
     m_Montre = new QLabel("00:00:00");
@@ -73,4 +86,15 @@ MenuEntete::MenuEntete() : QHBoxLayout()
 // Destructeur //
 MenuEntete::~MenuEntete() {
 
+}
+
+void MenuEntete::changerMode(){
+    if(m_ModeActuel == Attente || m_ModeActuel == Pause) {
+        m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Pause.png"));
+        m_ModeActuel = Lecture;
+    }
+    else if(m_ModeActuel == Lecture) {
+        m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
+        m_ModeActuel = Pause;
+    }
 }

@@ -1,4 +1,4 @@
-#include "FenetreReseau.h"
+#include "FenetreReseau.hpp"
 
 FenetreReseau::FenetreReseau() : QHBoxLayout()
 {

@@ -1,4 +1,4 @@
-#include "ChoixReseau.h"
+#include "ChoixReseau.hpp"
 
 ChoixReseau::ChoixReseau() : QVBoxLayout()
 {
