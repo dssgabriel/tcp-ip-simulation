@@ -48,19 +48,16 @@ void Routeur::recevoir() {
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Recuperation du paquet.
     Physique couchePhy;
-
+    
     // Recuperation adresse MAC destination.
-    std::bitset<16> macDestAB, macDestCD, macDestEF;
-    macDestAB = trame.top();
+    std::bitset<16> macDestBA, macDestBD, macDestFE;
+    macDestFE = trame.top();
     trame.pop();
-    macDestCD = trame.top();
+    macDestBD = trame.top();
     trame.pop();
-    macDestEF = trame.top();
+    macDestBA = trame.top();
     trame.pop();
-
-    MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
-
-    MAC ancienneDest = couchePhy.convertir(macDestAB, macDestCD, macDestEF);
+    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){

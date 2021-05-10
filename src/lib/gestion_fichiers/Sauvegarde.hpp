@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <fstream>
 #include <iomanip>
@@ -33,6 +35,7 @@ void sauvegarderConfig(const std::string& cheminFichier,
 
     // Ecriture.
     std::ofstream ecriture(cheminFichier);
+
     // setw pout l'affichage jolie de JSON.
     ecriture << std::setw(4) << j << std::endl;
 }
