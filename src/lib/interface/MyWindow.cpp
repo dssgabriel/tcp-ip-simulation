@@ -1,4 +1,4 @@
-#include "MyWindow.h"
+#include "MyWindow.hpp"
 
 // Constructeur //
 MyWindow::MyWindow() : QWidget()

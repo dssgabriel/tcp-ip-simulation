@@ -1,4 +1,4 @@
-#include "MenuEntete.h"
+#include "MenuEntete.hpp"
 
 MenuEntete::MenuEntete() : QHBoxLayout()
 {

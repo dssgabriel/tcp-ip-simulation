@@ -1,8 +1,8 @@
 #ifndef FENETRERESEAU_H
 #define FENETRERESEAU_H
 
-#include "ChoixReseau.h"
-#include "DonneeReseau.h"
+#include "ChoixReseau.hpp"
+#include "DonneeReseau.hpp"
 
 #include <QApplication>
 #include <QWidget>

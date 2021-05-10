@@ -132,7 +132,7 @@ void Ordinateur::recevoir() {
 
 std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stack<std::bitset<16>>*> queue) {
     std::deque<std::stack<std::bitset<16>>> dequeu;
-    for (int i = 0; i < queue.size(); i++)
+    for (size_t i = 0; i < queue.size(); i++)
     {
         dequeu.push_back(*queue.front());
         queue.pop();
@@ -142,7 +142,7 @@ std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stac
     
 }
 
-int tripleACK(Machine machine) {
+bool tripleACK(Machine machine) {
     Physique phy;
     Internet inter;
     Transport trans;
@@ -150,7 +150,7 @@ int tripleACK(Machine machine) {
     donnees = machine.getDonnees();
     std::deque<std::stack<std::bitset<16>>> donneesDeque;
     donneesDeque = convertirQueueDeque(donnees);
-    for (int i = 0; i < donneesDeque.size() - 1; ++i) {
+    for (size_t i = 0; i < donneesDeque.size() - 1; ++i) {
         
         std::stack<std::bitset<16>> tmp = phy.desencapsuler(donneesDeque[i]);
         tmp = inter.desencapsuler(tmp);
@@ -158,7 +158,7 @@ int tripleACK(Machine machine) {
         tmp.pop();
         std::bitset<16> tmpAck2 = tmp.top();
         std::bitset<32> ack = concat(tmpAck1, tmpAck2);
-        for (int j = i + 1; j < donneesDeque.size(); ++j) {
+        for (size_t j = i + 1; j < donneesDeque.size(); ++j) {
             std::stack<std::bitset<16>> tmp2 = phy.desencapsuler(donneesDeque[j]);
             tmp2 = inter.desencapsuler(tmp2);
             std::bitset<16> tmpAck3 = tmp2.top();
@@ -173,12 +173,12 @@ int tripleACK(Machine machine) {
                 std::bitset<16> tmpAck6 = tmp3.top();
                 std::bitset<32> ack3 = concat(tmpAck5, tmpAck6);
                 if (ack == ack3) {
-                    return 1;
+                    return true;
                 }
             }
         }
     }
-    return 0;
+    return false;
 }
 
 void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {

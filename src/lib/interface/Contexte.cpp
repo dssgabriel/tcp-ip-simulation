@@ -1,4 +1,4 @@
-#include "Contexte.h"
+#include "Contexte.hpp"
 
 // Constructeur //
 Contexte::Contexte()
