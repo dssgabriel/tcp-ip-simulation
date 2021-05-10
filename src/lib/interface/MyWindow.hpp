@@ -1,8 +1,8 @@
 #ifndef MYWINDOW_H
 #define MYWINDOW_H
 
-#include "MenuEntete.h"
-#include "FenetreReseau.h"
+#include "MenuEntete.hpp"
+#include "FenetreReseau.hpp"
 
 #include <QApplication>
 #include <QWidget>

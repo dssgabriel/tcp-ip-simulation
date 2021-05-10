@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "../src/lib/reseau_graphe/machine/Ordinateur.hpp"
-#include "../src/lib/reseau_graphe/machine/Commutateur.hpp"
-#include "../src/lib/reseau_graphe/machine/Routeur.hpp"
+#include "../../src/lib/reseau_graphe/machine/Ordinateur.hpp"
+#include "../../src/lib/reseau_graphe/machine/Commutateur.hpp"
+#include "../../src/lib/reseau_graphe/machine/Routeur.hpp"
 
 int main(void) {
     Machine m;

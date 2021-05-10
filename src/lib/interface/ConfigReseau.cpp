@@ -1,4 +1,4 @@
-#include "ConfigReseau.h"
+#include "ConfigReseau.hpp"
 
 ConfigReseau::ConfigReseau() : QHBoxLayout()
 {
