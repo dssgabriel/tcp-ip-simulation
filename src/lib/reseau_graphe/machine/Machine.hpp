@@ -27,7 +27,7 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
         
-        Horloge m_Chrono;
+        // Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::queue<std::stack<std::bitset<16>>*> m_FileDonnees;
     
@@ -57,6 +57,7 @@ class Machine {
         void setSousReseau(const IPv4& sousReseau);
         
         void setVoisin(Machine& voisin);
+        Machine* getVoisin(MAC adresseVoisin);
 
         void setDonnee(std::stack<std::bitset<16>>* donnee);
         std::stack<std::bitset<16>>* suppDonnee();

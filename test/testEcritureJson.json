@@ -1,0 +1,18 @@
+{
+    "IP destination": [
+        168,
+        4,
+        125,
+        6
+    ],
+    "IP source": [
+        192,
+        240,
+        20,
+        1
+    ],
+    "Nom sauvegarde": "configTest",
+    "Nombre de paquets": 500,
+    "Type de fichier": 0,
+    "ssthresh": 136
+}
