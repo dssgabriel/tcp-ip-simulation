@@ -14,12 +14,14 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
 
     m_Image = new QPushButton("");
     m_Image ->setStyleSheet(s);
-    QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Square.png");
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png");
     QIcon ButtonIcon(pixmap);
     m_Image->setIcon(ButtonIcon);
     m_Image->setMaximumSize(QSize(347, 700));
-    m_Image->setIconSize(QSize(550, 550));
+    m_Image->setIconSize(QSize(347, 550));
     addWidget(m_Image);
+
+    connect(m_Image,SIGNAL(clicked()),this,SLOT(informationsReseau()));
 
     m_Vue = new QChartView();
     m_Vue->setRenderHint(QPainter::Antialiasing);
@@ -35,18 +37,84 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Lignes.push_back(initial);
     m_Graphique->addSeries(initial);
 
+
     m_Graphique->createDefaultAxes();
     m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+
+
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 21);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 6);
 
+    m_Lignes[0]->setColor(QColor(255,105,180,255));
     m_Lignes[0]->append(0, 0);
     m_Lignes[0]->append(20, 5);
+
+    QLineSeries* cong_avoid = new QLineSeries();
+    cong_avoid->setName("Congestion Avoidance");
+    m_Lignes.push_back(cong_avoid);
+    m_Graphique->addSeries(cong_avoid);
+
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 30);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 10);
+    m_Lignes[1]->setColor(QColor(Qt::cyan));
+    m_Lignes[1]->append(20, 5);
+    m_Lignes[1]->append(22,5);
+    m_Lignes[1]->append(26, 4);
+
+    m_Lignes[0]->append(20, 5);
+    m_Lignes[0]->append(22,5);
+    m_Lignes[0]->append(26, 4);
+
+    /*QLineSeries* slow2 = new QLineSeries();
+    slow2->setName("Slow Start");
+    m_Lignes.push_back(slow2);
+    m_Graphique->addSeries(slow2);
+
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 40);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 10);*/
+
+    m_Lignes[0]->append(27,6);
+
     addWidget(m_Vue);
 }
 
 // Destructeur //
 AffichageReseau::~AffichageReseau() {
 
+}
+
+void AffichageReseau::configSimple()
+{
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau1_Rectangle.png");
+    QIcon ButtonIcon(pixmap);
+    m_Image->setIcon(ButtonIcon);
+
+}
+
+void AffichageReseau::configMaison()
+{
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau2_Rectangle.png");
+    QIcon ButtonIcon(pixmap);
+    m_Image->setIcon(ButtonIcon);
+}
+
+void AffichageReseau::configPme()
+{
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau3_Rectangle.png");
+    QIcon ButtonIcon(pixmap);
+    m_Image->setIcon(ButtonIcon);
+}
+
+void AffichageReseau::configEntreprise()
+{
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png");
+    QIcon ButtonIcon(pixmap);
+    m_Image->setIcon(ButtonIcon);
 }
