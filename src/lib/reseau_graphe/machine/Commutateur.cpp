@@ -38,7 +38,7 @@ void Commutateur::envoyer() {
     // On enleve le checksum, le ttl et le protocoleId. 
     std::bitset<16> checksum = paquet.top();
     paquet.pop();
-    std::bitset<16> ttlProtocole = paquet.top();
+    std::bitset<16> ttl_Protocole = paquet.top();
     paquet.pop();
 
     // On recupere l'adresse de destination.
@@ -50,12 +50,19 @@ void Commutateur::envoyer() {
     // Trouver l'adresse MAC de la prochaine machine.
     MAC prochainStop = trouverMacDest(coucheInt.convertir(ipDestBA, ipDestDC));
 
+    // Encapsulation adresse IP de destination.
+    paquet.push(ipDestBA);
+    paquet.push(ipDestDC);
+
+    // Encapsulation du checksun et de ttl_Protole.
+    paquet.push(ttl_Protocole);
+    paquet.push(checksum);
+
+    // Set la machine voisine.
+    Machine* voisine = getVoisin(prochainStop);
+
     // Traitement de la donnee.
     traitement(*donneeRecu, prochainStop);
-
-    // TODO : re encapsuler checksun et ttlProtole
-    // TODO : set la machine voisine
-
 
     // La machine suivante recois le paquet
     voisine->setDonnee(donneeRecu);
@@ -78,7 +85,7 @@ void Commutateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDes
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convetir(macDestBA, macDestDC, macDestFE);
+    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestDC, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){

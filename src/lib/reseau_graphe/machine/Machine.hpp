@@ -57,6 +57,7 @@ class Machine {
         void setSousReseau(const IPv4& sousReseau);
         
         void setVoisin(Machine& voisin);
+        Machine* getVoisin(MAC adresseVoisin);
 
         void setDonnee(std::stack<std::bitset<16>>* donnee);
         std::stack<std::bitset<16>>* suppDonnee();

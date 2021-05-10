@@ -102,6 +102,14 @@ void Machine::setVoisin(Machine& voisin) {
     m_Voisins.push_back(&voisin);
 }
 
+Machine* Machine::getVoisin(MAC adresseVoisin) {
+    for(size_t i = 0; i < m_Voisins.size(); ++i) {
+        if(m_Voisins[i]->getMac() == adresseVoisin) {
+            return m_Voisins[i];
+        }
+    }
+}
+
 void Machine::setDonnee(std::stack<std::bitset<16>>* donnee) {
     m_FileDonnees.push(donnee);
 }

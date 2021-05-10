@@ -87,7 +87,7 @@ std::bitset<48> Physique::convertir(const MAC& adresse) {
   * Parametres : 
   * Sortie :
   **/
-MAC Physique::convetir(const std::bitset<16>& adrPartBA, 
+MAC Physique::convertir(const std::bitset<16>& adrPartBA, 
     const std::bitset<16>& adrPartDC, const std::bitset<16>& adrPartFE) 
 {
   // Initialisation de l'adress MAC.
