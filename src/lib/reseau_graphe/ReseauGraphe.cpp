@@ -15,7 +15,7 @@ void ReseauGraphe::setNom(const std::string nom) {
     m_Nom = nom;
 }
 
-std::string& ReseauGraphe::getNom() {
+const std::string& ReseauGraphe::getNom() const{
     return m_Nom;
 }
 
@@ -28,6 +28,31 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
 
     std::cout << "ERREUR : Adresse IP introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
+}
+
+const std::vector<Machine>& ReseauGraphe::getMachines() const {
+    return m_Machines;
+}
+
+const std::vector<Liaison>& ReseauGraphe::getLiaisons() const {
+    return m_Liaisons;
+}
+
+// Overloading
+std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
+    flux << "Nom de réseau : " << reseau.getNom();
+
+    std::vector<Machine> cpyMachines = reseau.getMachines();
+    std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
+
+    for(Machine m : cpyMachines) {
+        flux << m;
+    }
+    for(Liaison l : cpyLiaisons) {
+        flux << l;
+    }
+
+    return flux;
 }
 
 // Methodes

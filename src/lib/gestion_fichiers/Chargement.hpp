@@ -60,6 +60,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         }
         else {
             std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Type de machine inconnu\n.";
+            exit(EXIT_FAILURE);
         }
             
         // Initialisation des attributs la machine.

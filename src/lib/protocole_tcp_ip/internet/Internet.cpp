@@ -116,6 +116,7 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
 	std::string s2 = adresse.b.to_string();
 	std::string s3 = adresse.c.to_string();
 	std::string s4 = adresse.d.to_string();
+
 	return std::bitset<32>(s1 + s2 + s3 + s4);
 }
 
@@ -125,22 +126,17 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
   * Après désencapsulation, les adresses IP sont contenues dans deux std::bitset<16> ou chaque 8 bits représente un champ de l'IP.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir l'IP.
   * 
+  * @param ip : L'adresse IP a remplir.
   * @param ipPartBa : Premier bitset contenant les champs a et b de l'IP.
   * @param ipPartDC : Second bitset contenant les champs c et d de l'IP.
-  * 
-  * @return Une structure IPv4 avec les champs remplie.
   **/
-IPv4& Internet::convertir(const std::bitset<16>& ipPartBA, 
+void Internet::convertir(IPv4& ip,
+    const std::bitset<16>& ipPartBA, 
     const std::bitset<16>& ipPartDC)
 {
-    // Initialisation.
-    IPv4 ip;
-
     // Decoupage, et convertion en IPv4.
     diviser(ipPartBA, ip.b, ip.a);
     diviser(ipPartDC, ip.d, ip.c);
-
-    return ip;
 }
 
  /**

@@ -17,6 +17,7 @@ void test1() {
 
 void test2() {
     std::unique_ptr<ReseauGraphe> reseau = chargerReseau("../../src/include/configReseau/ReseauSimple.json");
+    std::cout << *reseau;
 }
 
 int main(void) {
