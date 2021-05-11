@@ -144,9 +144,9 @@ IPv4& convertir(const std::bitset<16>& ipPartBA,
 }
 
  /**
-  * @brief 
-  * @param
-  * @return void
+  * @brief Permet de calculer le Checksum.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourne rien.
   **/
 void Internet::calculerChecksum() {
 
@@ -174,9 +174,9 @@ void Internet::calculerChecksum() {
 }
 
  /**
-  * @brief 
-  * @param
-  * @return
+  * @brief Permet de verifier si tous les bits du Checksum sont a 1.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourn rien.
   **/
 void Internet::verifierChecksum() {
 
