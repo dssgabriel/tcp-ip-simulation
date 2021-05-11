@@ -50,14 +50,13 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     Physique couchePhy;
     
     // Recuperation adresse MAC destination.
-    std::bitset<16> macDestBA, macDestBD, macDestFE;
+    std::bitset<16> macDestBA, macDestDC, macDestFE;
     macDestFE = trame.top();
     trame.pop();
-    macDestBD = trame.top();
+    macDestDC = trame.top();
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
@@ -65,9 +64,18 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     }
 
     // Changement adresse MAC.
-    couchePhy.setMacSrc(ancienneDest);
-    couchePhy.setMacDest(nouvelleDest);
-    couchePhy.encapsuler(trame);
+    // La destination devient la source.
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
+
+    // Ajout nouvelle destination
+    std::bitset<48> nouvelleDestBit = couchePhy.convertir(nouvelleDest);
+    macDestBA = macDestDC = macDestFE = 0;
+    diviser(nouvelleDestBit, macDestFE, macDestDC, macDestBA);
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
 }
 
 void Routeur::traitementPaquetOSPF() {
@@ -101,5 +109,21 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         return;
     }
 
-    if (hello.getIdRouteur()) {}
+    // if (hello.getIdRouteur()) {}
+}
+
+void Routeur::traitementPaquetDBD(const PaquetDBD& dbd) {
+
+}
+
+void Routeur::traitementPaquetLSR(const PaquetLSR& lsr) {
+
+}
+
+void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
+
+}
+
+void Routeur::traitementPaquetLSAck(const PaquetLSAck& lsack) {
+
 }

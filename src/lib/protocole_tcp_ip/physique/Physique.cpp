@@ -110,37 +110,6 @@ MAC Physique::convertir(const std::bitset<16>& adrPartBA,
 
   return mac;
 }
- /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
-std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adresse) {
-  std::stack<std::bitset<16>> pile;
-  std::bitset<16> eltPile;
-
-  //
-  size_t i;
-  size_t posAdr = 0;
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-
-  return pile;
-}
 
  /**
   * Description :
