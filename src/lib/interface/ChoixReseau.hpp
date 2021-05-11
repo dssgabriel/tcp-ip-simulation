@@ -9,6 +9,7 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QMessageBox>
+#include "Contexte.hpp"
 
 class ChoixReseau : public QVBoxLayout
 {
