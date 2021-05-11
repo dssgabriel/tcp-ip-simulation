@@ -130,7 +130,7 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
   * 
   * @return Une structure IPv4 avec les champs remplie.
   **/
-IPv4& convertir(const std::bitset<16>& ipPartBA, 
+IPv4& Internet::convertir(const std::bitset<16>& ipPartBA, 
     const std::bitset<16>& ipPartDC)
 {
     // Initialisation.

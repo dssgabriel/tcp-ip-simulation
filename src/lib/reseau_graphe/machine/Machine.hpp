@@ -62,7 +62,6 @@ class Machine {
         void setDonnee(std::stack<std::bitset<16>>* donnee);
         std::stack<std::bitset<16>>* suppDonnee();
 
-        // A ENLEVER
         const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
 
         // Overloading
