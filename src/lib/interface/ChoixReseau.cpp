@@ -21,7 +21,8 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 
     QLabel* m_LabelDepart = new QLabel("Machine de depart");
     m_LabelDepart->setStyleSheet("color : white;");
-    QComboBox* m_Depart = new QComboBox();
+    m_Depart = new QComboBox();
+
     for(int i = 0; i<15; i++){
         m_Depart->addItem("Machine "+ QString::number(i));
     }
@@ -30,7 +31,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 
     QLabel* m_LabelArriver = new QLabel("Machine d'arriver");
     m_LabelArriver->setStyleSheet("color : white;");
-    QComboBox* m_Arrive = new QComboBox();
+    m_Arrive = new QComboBox();
     for(int i = 0; i<15; i++){
         m_Arrive->addItem("Machine "+ QString::number(i));
     }
@@ -44,7 +45,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     QLabel* m_LabelSsthresh = new QLabel("Entrez la taille de la fenetre");
     m_LabelSsthresh->setStyleSheet("color : white;");
     m_Vlayout->addWidget(m_LabelSsthresh);
-    QSpinBox* m_Ssthresh = new QSpinBox;
+    m_Ssthresh = new QSpinBox;
     m_Ssthresh->setRange(128,256);
     m_Ssthresh->setMinimum(128);
     m_Ssthresh->setMaximum(256);
@@ -54,7 +55,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     QLabel* m_LabelPaquetNombre = new QLabel("Entrez le nombre de paquet a envoyer");
     m_LabelPaquetNombre->setStyleSheet("color : white;");
     m_Vlayout->addWidget(m_LabelPaquetNombre);
-    QSpinBox* m_PaquetNombre = new QSpinBox;
+    m_PaquetNombre = new QSpinBox;
     m_PaquetNombre->setRange(1,65536);
     m_PaquetNombre->setMaximum(65536);
     m_PaquetNombre->setStyleSheet("color : white;");
@@ -64,7 +65,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 
     QLabel* m_LabelPaquetTypes = new QLabel("types de paquets a envoyer");
     m_LabelPaquetTypes->setStyleSheet("color : white;");
-    QComboBox* m_PaquetType = new QComboBox();
+    m_PaquetType = new QComboBox();
     m_PaquetType->addItem("FTP");
     m_PaquetType->addItem("HTTP");
     m_PaquetType->addItem("SMTP");
@@ -145,55 +146,166 @@ ChoixReseau::~ChoixReseau()
 
 void ChoixReseau::verifConfigMessage(){
 
-    QMessageBox m_VerifConfig;
-    m_VerifConfig.setText("Etes vous sure des choix selectioner ");
-    m_VerifConfig.setStandardButtons(QMessageBox::Yes);
-    m_VerifConfig.addButton(QMessageBox::No);
-    m_VerifConfig.setDefaultButton(QMessageBox::No);
-    if(m_VerifConfig.exec() == QMessageBox::Yes){
-        //appel de contexte pour faire le lien avec le restes
-        //du projet
+    if("contexte" == 0){
+        QMessageBox m_Information;
+        m_Information.setText("vous devez selectionner le reseau desire avant de faire les differents choix dans le reseaux");
+        m_Information.exec();
+
     }
     else{
-       QMessageBox m_Information;
-       m_Information.setText("veuillez rentrer les parametres desirer");
-       m_Information.exec();
+        QMessageBox m_VerifConfig;
+        m_VerifConfig.setText("Etes vous sure des choix selectioner ");
+        m_VerifConfig.setStandardButtons(QMessageBox::Yes);
+        m_VerifConfig.addButton(QMessageBox::No);
+        m_VerifConfig.setDefaultButton(QMessageBox::No);
+        if(m_VerifConfig.exec() == QMessageBox::Yes){
+
+            Contexte::GetInstance().getConfig().m_Source;
+            Contexte::GetInstance().getConfig().m_Destination;
+            Contexte::GetInstance().getConfig().m_Ssthresh;
+            Contexte::GetInstance().getConfig().m_NbPaquet;
+            Contexte::GetInstance().getConfig().m_TypeFichier;
+        }
+        else{
+            QMessageBox m_Information;
+            m_Information.setText("veuillez rentrer les parametres desirer");
+            m_Information.exec();
+        }
     }
 }
 
 void ChoixReseau::selectConfigSimple(){
-
-    QMessageBox msgbox;
-    msgbox.setText("configuration simple");
-    msgbox.exec();
+    QMessageBox m_Simple;
+    m_Simple.setText("choix du reseau simple");
+    m_Simple.setStandardButtons(QMessageBox::Yes);
+    m_Simple.addButton(QMessageBox::No);
+    m_Simple.setDefaultButton(QMessageBox::No);
+    if(m_Simple.exec() == QMessageBox::Yes){
+        Contexte::GetInstance().chargerConfig(1);
+    }
+    else{
+        QMessageBox m_Simple;
+        m_Simple.setText("choix du reseau");
+        m_Simple.exec();
+    }
 }
 
 void ChoixReseau::selectConfigMaison(){
 
-    QMessageBox msgbox;
-    msgbox.setText("configuration maison");
-    msgbox.exec();
+    QMessageBox m_Maison;
+    m_Maison.setText("choix du reseau simple");
+    m_Maison.setStandardButtons(QMessageBox::Yes);
+    m_Maison.addButton(QMessageBox::No);
+    m_Maison.setDefaultButton(QMessageBox::No);
+    if(m_Maison.exec() == QMessageBox::Yes){
+        Contexte::GetInstance().chargerConfig(1);
+    }
+    else{
+        QMessageBox m_Maison;
+        m_Maison.setText("choix du reseau");
+        m_Maison.exec();
+    }
 
 }
 
 void ChoixReseau::selectConfigPme(){
 
-    QMessageBox msgbox;
-    msgbox.setText("configuration pme");
-    msgbox.exec();
+    QMessageBox m_Pme;
+    m_Pme.setText("choix du reseau simple");
+    m_Pme.setStandardButtons(QMessageBox::Yes);
+    m_Pme.addButton(QMessageBox::No);
+    m_Pme.setDefaultButton(QMessageBox::No);
+    if(m_Pme.exec() == QMessageBox::Yes){
+        Contexte::GetInstance().chargerConfig(1);
+    }
+    else{
+        QMessageBox m_Pme;
+        m_Pme.setText("choix du reseau");
+        m_Pme.exec();
+    }
 
 }
 
 void ChoixReseau::selectConfigEntreprise(){
 
-    QMessageBox msgbox;
-    msgbox.setText("configuration entreprise");
-    msgbox.exec();
+    QMessageBox m_Entreprise;
+    m_Entreprise.setText("choix du reseau simple");
+    m_Entreprise.setStandardButtons(QMessageBox::Yes);
+    m_Entreprise.addButton(QMessageBox::No);
+    m_Entreprise.setDefaultButton(QMessageBox::No);
+    if(m_Entreprise.exec() == QMessageBox::Yes){
+        Contexte::GetInstance().chargerConfig(1);
+    }
+    else{
+        QMessageBox m_Entreprise;
+        m_Entreprise.setText("choix du reseau");
+        m_Entreprise.exec();
+    }
 
 }
 
-void analyseConfig(){
+// void ChoixReseau::analyseConfig(){
+
+//     m_Depart->clear();
+//     m_Arrive->clear();
+
+//     if(Contexte::GetInstance().getReseau()->nom == "simple"){
+        
+//         for(int i = 0; i<4; i++){
+//             m_Depart->addItem("ordinateur "+ QString::number(i));
+//             m_Arrive->addItem("ordinateur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<2; i++){
+//             m_Depart->addItem("routeur "+ QString::number(i));
+//             m_Arrive->addItem("routeur "+ QString::number(i));
+//         }
+//     }
+//     else if(Contexte::GetInstance().getReseau()->nom == "maison"){
+
+//         for(int i = 0; i<6; i++){
+//             m_Depart->addItem("ordinateur "+ QString::number(i));
+//             m_Arrive->addItem("ordinateur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<2; i++){
+//             m_Depart->addItem("routeur "+ QString::number(i));
+//             m_Arrive->addItem("routeur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<2; i++){
+//             m_Depart->addItem("commutateur "+ QString::number(i));
+//             m_Arrive->addItem("commutateur "+ QString::number(i));
+//         }
+//     }
+//     else if(Contexte::GetInstance().getReseau()->nom == "pme"){
+        
+//         for(int i = 0; i<10; i++){
+//             m_Depart->addItem("ordinateur "+ QString::number(i));
+//             m_Arrive->addItem("ordinateur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<5; i++){
+//             m_Depart->addItem("routeur "+ QString::number(i));
+//             m_Arrive->addItem("routeur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<3; i++){
+//             m_Depart->addItem("commutateur "+ QString::number(i));
+//             m_Arrive->addItem("commutateur "+ QString::number(i));
+//         }
+//     }
+//     else if(Contexte::GetInstance().getReseau()->nom == "entreprise"){
+        
+//         for(int i = 0; i<14; i++){
+//             m_Depart->addItem("ordinateur "+ QString::number(i));
+//             m_Arrive->addItem("ordinateur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<10; i++){
+//             m_Depart->addItem("routeur "+ QString::number(i));
+//             m_Arrive->addItem("routeur "+ QString::number(i));
+//         }
+//         for(int i = 0; i<5; i++){
+//             m_Depart->addItem("commutateur "+ QString::number(i));
+//             m_Arrive->addItem("commutateur "+ QString::number(i));
+//         }
+//     }
     
-}
+// }
 
 
