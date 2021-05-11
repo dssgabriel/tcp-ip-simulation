@@ -217,9 +217,9 @@ std::bitset<16> Transport::convertir(const uint16_t& val) {
 }
 
 /**
-  * @brief
-  * @param
-  * @return 
+  * @brief Permert de claculer le Checksum en bitset de 16 bits.
+  * @param Ne Prend aucun parametre.
+  * @return Ne retourne rien.
   **/
 void Transport::calculerChecksum() {
     std::bitset<16> portSrc(m_PortSrc);
@@ -254,9 +254,9 @@ void Transport::calculerChecksum() {
 }
 
 /**
-  * @brief
-  * @param
-  * @return 
+  * @brief Verifie si tous les bits sont a 1.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourne rien.
   **/
 void Transport::verifierChecksum() {
 
