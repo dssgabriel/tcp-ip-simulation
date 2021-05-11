@@ -15,20 +15,10 @@ void sauvegarderConfig(const std::string& cheminFichier,
 {
     // Initialisation du JSON.
     json j;
-    j["Nom sauvegarde"] = nom;
+    j["Nom du reseau"] = nom;
 
-    j["IP source"] = {
-        param.m_Source.a.to_ulong(),
-        param.m_Source.b.to_ulong(),
-        param.m_Source.c.to_ulong(),
-        param.m_Source.d.to_ulong()
-    };
-    j["IP destination"] = {
-        param.m_Destination.a.to_ulong(),
-        param.m_Destination.b.to_ulong(),
-        param.m_Destination.c.to_ulong(),
-        param.m_Destination.d.to_ulong()
-    };
+    j["IP source"] = {param.m_Source.a.to_ulong(), param.m_Source.b.to_ulong(), param.m_Source.c.to_ulong(), param.m_Source.d.to_ulong()};
+    j["IP destination"] = {param.m_Destination.a.to_ulong(), param.m_Destination.b.to_ulong(), param.m_Destination.c.to_ulong(), param.m_Destination.d.to_ulong()};
     j["ssthresh"] = param.m_Ssthresh;
     j["Nombre de paquets"] = param.m_NbPaquet;
     j["Type de fichier"] = param.m_TypeFichier;
