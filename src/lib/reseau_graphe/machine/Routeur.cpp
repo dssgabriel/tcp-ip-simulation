@@ -29,12 +29,12 @@ uint8_t Routeur::getIdRouteur() {
 }
 
 // std::vector<Routeur&>& Routeur::getRouteursVoisins() {
-    // TODO : A faire
+// TODO : A faire
 // }
 
 // Methodes
 // const std::vector<Liaison>& Routeur::getPlusCourtChemin(const Routeur& dest) {
-    // TODO : A faire
+// TODO : A faire
 // }
 
 void Routeur::envoyer() {
@@ -45,19 +45,26 @@ void Routeur::recevoir() {
     // TODO : A faire
 }
 
+void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
+    dest.recevoir(ospf);
+}
+
+void Routeur::recevoir(PaquetOSPF& ospf) {
+    m_FilePaquetsOSPF.emplace(ospf);
+}
+
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Recuperation du paquet.
     Physique couchePhy;
-    
+
     // Recuperation adresse MAC destination.
-    std::bitset<16> macDestBA, macDestBD, macDestFE;
+    std::bitset<16> macDestBA, macDestDC, macDestFE;
     macDestFE = trame.top();
     trame.pop();
-    macDestBD = trame.top();
+    macDestDC = trame.top();
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestBD, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
@@ -65,9 +72,18 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     }
 
     // Changement adresse MAC.
-    couchePhy.setMacSrc(ancienneDest);
-    couchePhy.setMacDest(nouvelleDest);
-    couchePhy.encapsuler(trame);
+    // La destination devient la source.
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
+
+    // Ajout nouvelle destination
+    std::bitset<48> nouvelleDestBit = couchePhy.convertir(nouvelleDest);
+    macDestBA = macDestDC = macDestFE = 0;
+    diviser(nouvelleDestBit, macDestFE, macDestDC, macDestBA);
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
 }
 
 void Routeur::traitementPaquetOSPF() {
@@ -101,5 +117,39 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         return;
     }
 
-    if (hello.getIdRouteur()) {}
+    for (auto iter = m_TableRoutage.begin(); iter != m_TableRoutage.end(); iter++) {
+        auto routeur = iter->first;
+
+        if (routeur->getIdRouteur() == hello.getIdRouteur()) {
+            return;
+        }
+    }
+
+    for (auto iter: m_Voisins) {
+        auto machine = dynamic_cast<Routeur*>(iter);
+
+        if (machine->getIdRouteur() == hello.getIdRouteur()) {
+            PaquetHello reponse(hello.getIdRouteur());
+            reponse.setEntete(Hello, m_IdRouteur);
+            envoyer(*machine, reponse);
+        }
+    }
+
+    exit(1);
+}
+
+void Routeur::traitementPaquetDBD(const PaquetDBD& dbd) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSR(const PaquetLSR& lsr) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
+    // TODO : A faire
 }
