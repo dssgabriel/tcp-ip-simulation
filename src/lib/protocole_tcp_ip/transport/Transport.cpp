@@ -222,7 +222,35 @@ std::bitset<16> Transport::convertir(const uint16_t& val) {
   * @return 
   **/
 void Transport::calculerChecksum() {
+    std::bitset<16> portSrc(m_PortSrc);
+    std::bitset<16> portDest(m_PortDest);
 
+    std::bitset<16> seqGauche, seqDroite;
+    diviser(m_Seq, seqGauche, seqDroite);
+
+    std::bitset<16> ack2Gauche, ack2Droite;
+    diviser(m_Ack2, ack2Gauche, ack2Droite);
+
+    int somme;
+    somme = portSrc.to_ulong();
+    somme += portDest.to_ulong();
+    somme += m_cwnd.to_ulong();
+    somme += m_Syn.to_ulong();
+    somme += seqGauche.to_ulong();
+    somme += seqDroite.to_ulong();
+    somme += ack2Gauche.to_ulong();
+    somme += ack2Droite.to_ulong();
+
+    std::bitset<32> sommeBit(somme);
+    std::bitset<16> retenuBit, sommeFinaleBit;
+    diviser(sommeBit, retenuBit, sommeFinaleBit);
+
+    int retenu, sommeFinale;
+    retenu = retenuBit.to_ulong();
+    sommeFinale = sommeFinaleBit.to_ulong();
+    sommeFinale += retenu;    
+
+    m_Checksum = std::bitset<16>(sommeFinale);
 }
 
 /**
@@ -232,6 +260,12 @@ void Transport::calculerChecksum() {
   **/
 void Transport::verifierChecksum() {
 
+    if(m_Checksum.all()) {
+      std::cout << "validé" << std::endl;
+    }
+    else {
+      std::cout << "refusé" << std::endl;
+    }
 }
 
 /**
