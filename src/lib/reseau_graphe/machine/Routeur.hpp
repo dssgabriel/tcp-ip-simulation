@@ -27,7 +27,7 @@ class Routeur : public Machine {
         void traitementPaquetDBD(const PaquetDBD& dbd);
         void traitementPaquetLSR(const PaquetLSR& lsr);
         void traitementPaquetLSU(const PaquetLSU& lsu);
-        void traitementPaquetLSAck(const PaquetLSAck& lsack);
+        void traitementPaquetLSAck(const PaquetLSAck& ack);
 
     public:
         // Constructeurs

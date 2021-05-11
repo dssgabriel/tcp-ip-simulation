@@ -1,10 +1,8 @@
 #include "Contexte.hpp"
 
-// Constructeur //
-Contexte::Contexte()
-{
-    // Création de l'arbre
-    //m_Reseau = new ReseauGraphe();
+// Constructeur
+Contexte::Contexte() {
+    // m_Reseau = new ReseauGraphe();
     m_TabCongestion = new std::vector<ElementControleCongestion>();
 }
 

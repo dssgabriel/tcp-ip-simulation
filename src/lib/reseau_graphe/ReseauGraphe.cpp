@@ -1,4 +1,6 @@
 #include "ReseauGraphe.hpp"
+#include "machine/Routeur.hpp"
+#include <cstdlib>
 
 ReseauGraphe::ReseauGraphe() {
     m_Machines.clear();
@@ -30,7 +32,6 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
 
 // Methodes
 bool ReseauGraphe::estConnexe() {
-
     return false;
 }
 
