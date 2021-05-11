@@ -109,12 +109,25 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         return;
     }
 
-    // TODO: Check for know router
+    for (auto iter = m_TableRoutage.begin(); iter != m_TableRoutage.end(); iter++) {
+        auto routeur = iter->first;
 
-    PaquetHello reponse(hello.getIdRouteur());
-    reponse.setEntete(Hello, m_IdRouteur);
+        if (routeur->getIdRouteur() == hello.getIdRouteur()) {
+            return;
+        }
+    }
 
-    // envoyer(hello.getIdRouteur(), reponse);
+    for (auto iter: m_Voisins) {
+        auto machine = dynamic_cast<Routeur*>(iter);
+
+        if (machine->getIdRouteur() == hello.getIdRouteur()) {
+            PaquetHello reponse(hello.getIdRouteur());
+            reponse.setEntete(Hello, m_IdRouteur);
+            envoyer(*machine, reponse);
+        }
+    }
+
+    exit(1);
 }
 
 void Routeur::traitementPaquetDBD(const PaquetDBD& dbd) {
