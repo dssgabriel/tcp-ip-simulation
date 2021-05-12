@@ -118,8 +118,48 @@
     "Liste liaisons": [
         {
             "Depart": 0,
-            "Arrivee": 2,
+            "Arrivee": 3,
+            "Debit": 1000
+        }, 
+        {
+            "Depart": 1,
+            "Arrivee": 3, 
             "Debit": 100000
+        },
+        {
+            "Depart": 2,
+            "Arrivee": 3, 
+            "Debit": 100
+        },
+        {
+            "Depart": 3,
+            "Arrivee": 4, 
+            "Debit":1000
+        },
+        {
+            "Depart": 4,
+            "Arrivee": 5, 
+            "Debit": 25000
+        },
+        {
+            "Depart": 5,
+            "Arrivee": 6, 
+            "Debit":10000
+        },
+        {
+            "Depart": 5,
+            "Arrivee": 7, 
+            "Debit": 100000
+        },
+        {
+            "Depart": 7,
+            "Arrivee": 8, 
+            "Debit": 1000
+        },
+        {
+            "Depart": 7,
+            "Arrivee": 9, 
+            "Debit": 1000
         }
     ]
 }

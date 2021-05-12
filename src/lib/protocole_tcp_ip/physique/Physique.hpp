@@ -1,7 +1,12 @@
 /**
- * physique.hpp : Vous pouvez trouver ici la classe Physique.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
- **/
+ * @file        Physique.hpp
+ * @brief       Déclaration de la classe Physique.
+ * 
+ * @author      Quentin GRUCHET
+ * @author      Fadi MECHRI
+ * @date        2021
+ */
+
 
 #ifndef physique_HPP
 #define physique_HPP
