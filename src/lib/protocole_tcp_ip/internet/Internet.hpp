@@ -1,7 +1,14 @@
 /**
- * Internet.hpp : Vous trouverez ici la classe Internet.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+
+ * @file        Internet.hpp
+ * @brief       Déclaration de la classe Internet.
+ * 
+ * @author      Quentin GRUCHET 
+ * @author      Fadi MECHRI
+ * @date        2021
+
  **/
+
 
 #ifndef internet_HPP
 #define internet_HPP

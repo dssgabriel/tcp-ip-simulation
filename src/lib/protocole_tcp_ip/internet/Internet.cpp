@@ -1,6 +1,12 @@
 /**
- * Internet.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Internet.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+
+ * @file        Internet.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Internet.
+ * 
+ * @author      Quentin GRUCHET
+ * @author      Fadi MECHRI
+ * @date        2021
+
  **/
 
 #include "Internet.hpp"
