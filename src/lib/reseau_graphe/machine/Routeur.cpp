@@ -29,6 +29,8 @@ uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
+// TODO: A refaire
+/*
 std::vector<Routeur> Routeur::getRouteursVoisins() {
     std::vector<Routeur> voisins;
 
@@ -42,7 +44,10 @@ std::vector<Routeur> Routeur::getRouteursVoisins() {
 
     return voisins;
 }
+*/
 
+// TODO: A refaire
+/*
 const std::vector<Liaison> Routeur::getPlusCourtChemin(Routeur& dest) {
     std::vector<Liaison> chemin;
 
@@ -55,6 +60,7 @@ const std::vector<Liaison> Routeur::getPlusCourtChemin(Routeur& dest) {
 
     return chemin;
 }
+*/
 
 // Methodes
 void Routeur::envoyer() {
@@ -133,24 +139,31 @@ void Routeur::traitementPaquetOSPF() {
 
 // Methodes privees
 void Routeur::traitementPaquetHello(const PaquetHello& hello) {
+    // Si l'identifiant du voisin ne correspond pas avec l'identifiant
+    // du routeur, le paquet ne nous est pas destine
     if (hello.getIdVoisin() != m_IdRouteur) {
         return;
     }
 
+    // On parcourt la table de routage pour verifier si le routeur nous
+    // envoyant le paquet Hello est connu
     for (auto iter: m_TableRoutage) {
         auto routeur = iter.first;
 
+        // Si le routeur est connu, alors on lui envoie un paquet DBD
         if (routeur->getIdRouteur() == hello.getIdRouteur()) {
             std::vector<LSA> annonces;
 
+            // On initialise la liste des annonces LSA
             for (auto routeur: m_TableRoutage) {
-                LSA lsa(rand() % 1000,
+                LSA lsa(routeur.first->getIdRouteur(),
                         routeur.first->getIdRouteur(),
                         routeur.first->getSousReseau()
                 );
                 annonces.emplace_back(lsa);
             }
 
+            // On envoie un paquet DBD au routeur nous envoyant le paquet Hello
             PaquetDBD reponse(annonces);
             reponse.setEntete(DBD, m_IdRouteur);
             envoyer(*routeur, reponse);
@@ -159,6 +172,8 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         }
     }
 
+    // TODO : Revoir l'initialisation du reseau
+    /*
     for (auto iter: m_Voisins) {
         auto routeur = dynamic_cast<Routeur*>(iter);
 
@@ -172,6 +187,7 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
             }
         }
     }
+    */
 }
 
 void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
@@ -196,6 +212,7 @@ void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
 
                 if (!found) {
                     idLSADemandes.emplace_back(lsa.getIdLSA());
+                    m_TableLSADemandes.emplace(std::make_pair(routeur, lsa.getIdLSA()));
                 }
             }
         }
@@ -225,5 +242,4 @@ void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
 
 void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
     // TODO : A faire
-#include <cstdlib>
 }
