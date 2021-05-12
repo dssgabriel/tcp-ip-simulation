@@ -3,13 +3,12 @@ build/
 target/
 .vscode/
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # Executable
 test/testsJson/test
 test/testsMachine/test
-=======
-src/.vscode/
->>>>>>> 8490ade347eb2167924a2dbb1a1291caf72d259e
+**/.vscode/**
 
 # Files to ignore
 CMakeLists.txt.user
