@@ -1,6 +1,10 @@
 /**
- * transport.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Transport.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+ * @file        Transport.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Transport.
+ * 
+ * @author      Quentin GRUCHET
+ * @author      Fadi MECHRI
+ * @date        2021
  **/
 
 #include "Transport.hpp"
@@ -30,7 +34,7 @@ Transport::~Transport() {
 /**
   * @brief Setter de l'attribut de classe m_PortSrc.
   * 
-  * @param src : La valeur du port source souhaité.
+  * @param src La valeur du port source souhaité.
   * @return void.
   **/
 void Transport::setPortSrc(const uint16_t& src) {
@@ -49,7 +53,7 @@ uint16_t &Transport::getPortSrc() {
 /**
   * @brief Setter de l'attribut m_PortDest de la classe Transport
   * 
-  * @param num : La structure contenant le type de fichier que l'on va envoyer.
+  * @param num La structure contenant le type de fichier que l'on va envoyer.
   * @return void.
   **/
 void Transport::setPortDest(TypeFichier num) {

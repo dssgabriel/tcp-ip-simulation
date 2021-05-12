@@ -1,6 +1,10 @@
 /**
- * Transport.hpp : Vous trouverez ici la classe Transport.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+ * @file        Transport.hpp
+ * @brief       Déclaration de la classe Transport.
+ * 
+ * @author      Quentin GRUCHET 
+ * @author      Fadi MECHRI
+ * @date        2021
  **/
 
 #ifndef transport_HPP

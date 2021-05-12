@@ -1,6 +1,10 @@
 /**
- * Physique.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Physique.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+ * @file        Physique.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Physique.
+ * 
+ * @author      Quentin GRUCHET 
+ * @author      Fadi MECHRI
+ * @date        2021
  **/
 
 #include "Physique.hpp"
@@ -30,7 +34,7 @@ Physique::~Physique() {
 /**
   * @brief Setter de l'attribut de classe m_SrcMac.
   * 
-  * @param src : Adresse MAC source souhaitée.
+  * @param src Adresse MAC source souhaitée.
   * @return void.
   **/
 void Physique::setMacSrc(MAC src) {
@@ -49,7 +53,7 @@ MAC Physique::getMacSrc() {
 /**
   * @brief Setter de l'attribut de classe m_DestMac.
   * 
-  * @param dest : Adresse destination souhaitée.
+  * @param dest Adresse destination souhaitée.
   * @return void.
   **/
 void Physique::setMacDest(MAC dest) {
@@ -71,7 +75,7 @@ MAC Physique::getMacDest() {
   * On converti d'abord chaque champs de la structure MAC en chaine de caractère. 
   * Puis nous créeons un bitset de la concaténation de ces chaines de caractère. 
   * 
-  * @param adresse : L'adresse MAC que l'on souhaite convertir.
+  * @param adresse L'adresse MAC que l'on souhaite convertir.
   * @return Le bitset resultant de la convertion.
   **/
 std::bitset<48> Physique::convertir(const MAC& adresse) {
@@ -90,9 +94,9 @@ std::bitset<48> Physique::convertir(const MAC& adresse) {
   * Après désencapsulation, les adresses MAC sont contenues dans trois std::bitset<16> ou chaque 8 bits représente un champ de l'adresse MAC.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir la MAC.
   * 
-  * @param adrPartBA : Premier bitset contenant les champs a et b.
-  * @param adrPartDC : Second bitset contenant les champs c et d.
-  * @param adrPartFE : Troisième bitset contenant les champs e et f.
+  * @param adrPartBA Premier bitset contenant les champs a et b.
+  * @param adrPartDC Second bitset contenant les champs c et d.
+  * @param adrPartFE Troisième bitset contenant les champs e et f.
   * @return Une structure MAC avec les champs remplie.
   **/
 MAC Physique::convertir(const std::bitset<16>& adrPartBA, 
@@ -155,8 +159,8 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
 /**
   * @brief Permet l'encapsulation de la couche Physique.
   * 
-  * @param paquet : Resultat de l'encapsulation de la couche Internet.
-  * @return. Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
+  * @param paquet Resultat de l'encapsulation de la couche Internet.
+  * @return Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
   **/
  std::stack<std::bitset<16>> Physique::encapsuler(std::stack<std::bitset<16>>& paquet) {
     paquet.push(concat(m_SrcMac.a, m_SrcMac.b));
@@ -172,7 +176,7 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
 /**
   * @brief Permet la desencapsulation de la couche Physique.
   * 
-  * @param trame. Une pile qui contitent la couche Transport + Internet + Physique. 
+  * @param trame Une pile qui contitent la couche Transport + Internet + Physique. 
   * @return La même pile mais avec la couche Physique en moins.
   **/
 std::stack<std::bitset<16>> Physique::desencapsuler(std::stack<std::bitset<16>>& trame) {
