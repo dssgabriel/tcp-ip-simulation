@@ -1,5 +1,5 @@
 /**
- * internet.hpp : Vous trouverez ici la classe Internet.
+ * Internet.hpp : Vous trouverez ici la classe Internet.
  * Auteur : Quentin GRUCHET & Fadi MECHRI.
  **/
 

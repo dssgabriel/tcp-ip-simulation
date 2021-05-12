@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <iostream>
 
 struct Liaison {
     uint64_t m_Debit;
@@ -12,7 +13,7 @@ struct Liaison {
         const Liaison& liaison
     ) {
         flux << liaison.m_NumMachine1 << " <- " << liaison.m_Debit;
-        flux << "M -> " << liaison.m_NumMachine2;
+        flux << " M -> " << liaison.m_NumMachine2;
 
         return flux;
     }

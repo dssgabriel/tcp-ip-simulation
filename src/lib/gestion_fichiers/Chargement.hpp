@@ -1,5 +1,12 @@
+/**
+ * Chargement.hpp : Vous trouverez ici les fonctions permmetant l
+ * chargement d'informations depuis des fichiers.
+ * Auteur : Mickael LE DENMAT.
+ **/
+
 #pragma once
 
+#include <array>
 #include <string>
 #include <memory>
 #include <fstream>
@@ -19,7 +26,14 @@
 
 using json = nlohmann::json;
 
+/**
+ * @brief Lit le fichier indique en parametre, et renvoie un ReseauGraphe.
+ * 
+ * @param nomFichier : Le fichier contenant les informations du reseau.
+ * @return std::unique_ptr<ReseauGraphe> : Un pointeur sur le reseau initialise.
+ */
 std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
+
     // Initialisation du reseau.
     ReseauGraphe* reseau = new ReseauGraphe();
     if(!reseau) {
@@ -56,7 +70,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         else if(machineJ["type"] == "Commutateur") {
             m = new Commutateur();
 
-            // Information supplementaire pour un routeur.
+            // TODO : Information supplementaire pour un routeur.
         }
         else {
             std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Type de machine inconnu\n.";
@@ -64,6 +78,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         }
             
         // Initialisation des attributs la machine.
+        // Adresse IP.
         IPv4 ip;
         ip.a = std::bitset<8>(machineJ["ip"][0]);
         ip.b = std::bitset<8>(machineJ["ip"][1]);
@@ -71,6 +86,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         ip.d = std::bitset<8>(machineJ["ip"][3]);
         m->setIp(ip);
 
+        // Adresse MAC.
         MAC mac;
         mac.a = std::bitset<8>(machineJ["mac"][0]);
         mac.b = std::bitset<8>(machineJ["mac"][1]);
@@ -80,17 +96,47 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         mac.f = std::bitset<8>(machineJ["mac"][5]);
         m->setMac(mac);
 
+        // Masque de reseau.
         ip.a = std::bitset<8>(machineJ["masque"][0]);
         ip.b = std::bitset<8>(machineJ["masque"][1]);
         ip.c = std::bitset<8>(machineJ["masque"][2]);
         ip.d = std::bitset<8>(machineJ["masque"][3]);
         m->setMasque(ip);
 
-        for(auto sousReseauJ : machineJ["sous reseaux"]) {
-            ip.a = std::bitset<8>(sousReseauJ[0]);
-            ip.b = std::bitset<8>(sousReseauJ[1]);
-            ip.c = std::bitset<8>(sousReseauJ[2]);
-            ip.d = std::bitset<8>(sousReseauJ[3]);
+        // Masque de sous reseau.
+        // Possede jusqu'a 4 masque de sous reseau.
+        auto obj = machineJ["sous reseaux"][0];
+        if(!obj["ip"].is_null()) {
+            ip.a = std::bitset<8>(obj["ip"][0]);
+            ip.b = std::bitset<8>(obj["ip"][1]);
+            ip.c = std::bitset<8>(obj["ip"][2]);
+            ip.d = std::bitset<8>(obj["ip"][3]);
+
+            // Ajout du masque de sous reseau.
+            m->setSousReseau(ip);
+        }
+        if(!obj["ip2"].is_null()) {
+            ip.a = std::bitset<8>(obj["ip2"][0]);
+            ip.b = std::bitset<8>(obj["ip2"][1]);
+            ip.c = std::bitset<8>(obj["ip2"][2]);
+            ip.d = std::bitset<8>(obj["ip2"][3]);
+
+            m->setSousReseau(ip);
+        }
+        if(!obj["ip3"].is_null()) {
+            ip.a = std::bitset<8>(obj["ip3"][0]);
+            ip.b = std::bitset<8>(obj["ip3"][1]);
+            ip.c = std::bitset<8>(obj["ip3"][2]);
+            ip.d = std::bitset<8>(obj["ip3"][3]);
+
+            m->setSousReseau(ip);
+        }
+        if(!obj["ip4"].is_null()) {
+            ip.a = std::bitset<8>(obj["ip4"][0]);
+            ip.b = std::bitset<8>(obj["ip4"][1]);
+            ip.c = std::bitset<8>(obj["ip4"][2]);
+            ip.d = std::bitset<8>(obj["ip4"][3]);
+
             m->setSousReseau(ip);
         }
 
@@ -114,21 +160,48 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     return std::unique_ptr<ReseauGraphe>(reseau);
 }
 
+/**
+ * @brief Lit le fichier de configuration en parametre pour connaitre le reseau
+ *        souhaite par l'utilisateur.
+ * 
+ * @param cheminFichier : L'emplacement du fichier de configuration.
+ * @param reseau : Le reseau a renvoyer avec les informations du ficheirs.
+ * @param param : La configuration du l'utilisateur.
+ */
 void chargerConfig(const std::string& cheminFichier,
     std::unique_ptr<ReseauGraphe>& reseau, ParamInterface& param)
 {
-    // Lecture du fichier.
+    // Lecture du fichier de configuration.
     std::ifstream lecture(cheminFichier);
     if(lecture.fail()) {
         std::cout << "ERREUR : Dans la fonction 'chargerConfig' : Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 
-    // Convertion du fichier en JSON.
+    // Convertion du fichier de configuration en JSON.
     json j;
     lecture >> j;
 
-    // Chargement des parametres.
+    // Chargement du reseau correspondant.
+    std::string choixReseau = j["Nom du reseau"];
+    if(choixReseau == "ReseauSimple") {
+        reseau = chargerReseau("../../src/include/configReseau/ReseauSimple.json");
+    }
+    else if(choixReseau == "ReseauMaison") {
+        reseau = chargerReseau("../../src/include/configReseau/ReseauMaison.json");
+    }
+    else if(choixReseau == "ReseauPme") {
+        reseau = chargerReseau("../../src/include/configReseau/ReseauPme.json");
+    }
+    else if(choixReseau == "ReseauEntreprise") {
+        reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
+    }
+    else { 
+        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : Reseau choisi inconnu.\n";
+        exit(EXIT_FAILURE);
+    }
+
+    // Chargement des parametres de configuration.
     IPv4 ip;
     ip.a = std::bitset<8>(j["IP destination"][0]);
     ip.b = std::bitset<8>(j["IP destination"][1]);
@@ -145,22 +218,4 @@ void chargerConfig(const std::string& cheminFichier,
     param.m_NbPaquet = j["Nombre de paquets"];
     param.m_Ssthresh = j["ssthresh"];
     param.m_TypeFichier = j["Type de fichier"];
-
-    // Chargement du reseau.
-    std::string choixReseau = j["Nom du reseau"];
-    if(choixReseau == "ReseauSimple") {
-        reseau = chargerReseau("../../include/ConfigReseau/ReseauSimple.json");
-    }
-    else if(choixReseau == "ReseauMaison") {
-        reseau = chargerReseau("../../include/ConfigReseau/ReseauMaison.json");
-    }
-    else if(choixReseau == "ReseauPme") {
-        reseau = chargerReseau("../../include/ConfigReseau/ReseauPme.json");
-    }
-    else if(choixReseau == "ReseauEntreprise") {
-        reseau = chargerReseau("../../include/ConfigReseau/ReseauEntreprise.json");
-    }
-    else { 
-        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : Reseau choisi inconnu.\n";
-    }
 }

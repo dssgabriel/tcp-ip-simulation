@@ -1,5 +1,5 @@
 /**
- * transport.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Transport.
+ * Transport.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Transport.
  * Auteur : Quentin GRUCHET & Fadi MECHRI.
  **/
 

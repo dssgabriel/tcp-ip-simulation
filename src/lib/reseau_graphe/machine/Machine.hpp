@@ -55,6 +55,7 @@ class Machine {
         const MAC& getMac() const;
         
         void setSousReseau(const IPv4& sousReseau);
+        const std::vector<IPv4>& getSousReseau() const;
         
         void setVoisin(Machine& voisin);
         Machine* getVoisin(MAC adresseVoisin);

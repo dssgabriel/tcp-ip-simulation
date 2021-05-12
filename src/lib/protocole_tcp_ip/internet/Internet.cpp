@@ -1,5 +1,5 @@
 /**
- * internet.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Internet.
+ * Internet.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Internet.
  * Auteur : Quentin GRUCHET & Fadi MECHRI.
  **/
 

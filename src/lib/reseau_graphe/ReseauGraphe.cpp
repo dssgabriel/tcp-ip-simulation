@@ -40,16 +40,18 @@ const std::vector<Liaison>& ReseauGraphe::getLiaisons() const {
 
 // Overloading
 std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
-    flux << "Nom de réseau : " << reseau.getNom();
+    flux << "Nom du réseau : " << reseau.getNom() << "\n";
 
+    // Affichage de la liste des machines.
     std::vector<Machine> cpyMachines = reseau.getMachines();
-    std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
-
     for(Machine m : cpyMachines) {
-        flux << m;
+        flux << m << "\n";
     }
+
+    // Affichage de la liste des liaisons.
+    std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
     for(Liaison l : cpyLiaisons) {
-        flux << l;
+        flux << l << "\n";
     }
 
     return flux;
