@@ -1,5 +1,5 @@
 /**
- * physique.hpp : Vous pouvez trouver ici la classe Physique.
+ * Physique.hpp : Vous pouvez trouver ici la classe Physique.
  * Auteur : Quentin GRUCHET & Fadi MECHRI.
  **/
 

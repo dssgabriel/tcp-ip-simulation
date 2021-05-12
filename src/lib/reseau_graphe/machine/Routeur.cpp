@@ -69,7 +69,7 @@ void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
 }
 
 void Routeur::recevoir(PaquetOSPF& ospf) {
-    m_FilePaquetsOSPF.emplace(ospf);
+//     m_FilePaquetsOSPF.emplace(ospf);
 }
 
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {

@@ -23,10 +23,17 @@ class ReseauGraphe {
 
         // Getters & setters
         void setNom(const std::string nom);
-        std::string& getNom();
+        const std::string& getNom() const;
 
         Machine& getMachine(const IPv4& ip);
-        Routeur& getRouteur(const uint8_t& idRouteur);
+        const std::vector<Machine>& getMachines() const;
+        const std::vector<Liaison>& getLiaisons() const;
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const ReseauGraphe& reseau
+        );
 
         // Methodes
         bool estConnexe();
