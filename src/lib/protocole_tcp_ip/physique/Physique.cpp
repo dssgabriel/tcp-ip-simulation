@@ -1,6 +1,10 @@
 /**
- * Physique.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Physique.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+ * @file        Physique.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Physique.
+ * 
+ * @author      Quentin GRUCHET 
+ * @author      Fadi MECHRI
+ * @date        2021
  **/
 
 #include "Physique.hpp"
