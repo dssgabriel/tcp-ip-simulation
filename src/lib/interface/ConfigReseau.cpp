@@ -18,7 +18,7 @@ ConfigReseau::ConfigReseau() : QHBoxLayout()
 }
 
 // Destructeur //
-ConfigReseau::~ConfigReseau() {
+ConfigReseau::~ConfigReseau(){
 
 }
 
