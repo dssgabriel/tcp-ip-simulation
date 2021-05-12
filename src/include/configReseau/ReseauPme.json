@@ -215,9 +215,9 @@
     ],
     "Liste liaisons": [
         {
-            "Départ": 0,
-            "Arrivée": 2,
-            "Débit": 100000
+            "Depart": 0,
+            "Arrivee": 2,
+            "Debit": 100000
         }
     ]
 }

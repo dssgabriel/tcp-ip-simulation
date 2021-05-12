@@ -88,18 +88,18 @@ const IPv4& Machine::getMasque() const {
 
 void Machine::setMac(const MAC& mac) {
     m_Mac = mac;
-}    
+}
 
 const MAC& Machine::getMac() const {
     return m_Mac;
 }
 
 void Machine::setSousReseau(const IPv4& sousReseau) {
-    m_SousReseau.push_back(sousReseau);
+    m_SousReseau.emplace_back(sousReseau);
 }
 
 void Machine::setVoisin(Machine& voisin) {
-    m_Voisins.push_back(&voisin);
+    m_Voisins.emplace_back(&voisin);
 }
 
 Machine* Machine::getVoisin(MAC adresseVoisin) {

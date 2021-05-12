@@ -82,7 +82,6 @@ void Commutateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDes
     trame.pop();
     macDestBA = trame.top();
     trame.pop();
-    MAC ancienneDest = couchePhy.convertir(macDestBA, macDestDC, macDestFE);
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
     for(int i = 0; i < 3; ++i){
@@ -90,9 +89,18 @@ void Commutateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDes
     }
 
     // Changement adresse MAC.
-    couchePhy.setMacSrc(ancienneDest);
-    couchePhy.setMacDest(nouvelleDest);
-    couchePhy.encapsuler(trame);
+    // La destination devient la source.
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
+
+    // Ajout nouvelle destination
+    std::bitset<48> nouvelleDestBit = couchePhy.convertir(nouvelleDest);
+    macDestBA = macDestDC = macDestFE = 0;
+    diviser(nouvelleDestBit, macDestFE, macDestDC, macDestBA);
+    trame.push(macDestBA);
+    trame.push(macDestDC);
+    trame.push(macDestFE);
 }
 
 MAC Commutateur::trouverMacDest(const IPv4& ip) {

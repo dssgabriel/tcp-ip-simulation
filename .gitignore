@@ -2,6 +2,7 @@
 build/
 target/
 .vscode/
+test/testsJson/test
 
 # Files to ignore
 CMakeLists.txt.user

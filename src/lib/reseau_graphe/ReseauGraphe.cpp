@@ -3,6 +3,8 @@
 #include <cstdlib>
 
 ReseauGraphe::ReseauGraphe() {
+    m_Machines.clear();
+    m_Liaisons.clear();
 }
 
 ReseauGraphe::~ReseauGraphe() {
@@ -18,24 +20,14 @@ std::string& ReseauGraphe::getNom() {
 }
 
 Machine& ReseauGraphe::getMachine(const IPv4& ip) {
-    for (size_t i = 0; i < m_Machines.size(); i++) {
-        if (m_Machines[i].getIp() == ip) {
-            return m_Machines[i];
-        }
-    }
+   for(size_t i = 0; i < m_Machines.size(); ++i) {
+       if(m_Machines[i].getIp() == ip) {
+           return m_Machines[i];
+       }
+   }
 
-    exit(1);
-}
-
-Routeur& ReseauGraphe::getRouteur(const uint8_t& idRouteur) {
-    for (size_t i = 0; i < m_Machines.size(); i++) {
-        auto routeur = dynamic_cast<Routeur&>(m_Machines[i]);
-        if (routeur.getIdRouteur() == idRouteur) {
-            return dynamic_cast<Routeur&>(m_Machines[i]);
-        }
-    }
-
-    exit(1);
+    std::cout << "ERREUR : Adresse IP introuvable sur le reseau.\n";
+    exit(EXIT_FAILURE);
 }
 
 // Methodes
