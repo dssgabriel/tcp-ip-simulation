@@ -2,11 +2,16 @@
 build/
 target/
 .vscode/
+<<<<<<< HEAD
 
 # Executable
 test/testsJson/test
 test/testsMachine/test
+=======
+src/.vscode/
+>>>>>>> 8490ade347eb2167924a2dbb1a1291caf72d259e
 
 # Files to ignore
 CMakeLists.txt.user
 *.o
+test

@@ -1,6 +1,12 @@
 /**
- * Internet.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Internet.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+
+ * @file        Internet.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Internet.
+ * 
+ * @author      Quentin GRUCHET
+ * @author      Fadi MECHRI
+ * @date        2021
+
  **/
 
 #include "Internet.hpp"
@@ -140,22 +146,50 @@ void Internet::convertir(IPv4& ip,
 }
 
  /**
-  * @brief 
-  * @param
-  * @return void
+  * @brief Permet de calculer le Checksum.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourne rien.
   **/
 void Internet::calculerChecksum() {
-    // TODO
+
+    std::bitset<16> IpSrc(m_IpSrc);
+    std::bitset<16> IpDest(m_IpDest);
+    std::bitset<16> TTL(m_TTL.to_ulong());
+    std::bitset<16> protocoleId(m_protocoleId.to_ulong());
+
+    int somme;
+    somme = IpSrc.to_ulong();
+    somme += IpDest.to_ulong();
+    somme += TTL.to_ulong();
+    somme += protocoleId.to_ulong();
+    
+    std::bitset<32> sommeBit(somme);
+    std::bitset<16> retenuBit, sommeFinaleBit;
+    diviser(sommeBit, retenuBit, sommeFinaleBit);
+
+    int retenu, sommeFinale;
+    retenu = retenuBit.to_ulong();
+    sommeFinale = sommeFinaleBit.to_ulong();
+    sommeFinale += retenu;    
+
+    m_Checksum = std::bitset<16>(sommeFinale);
 }
 
  /**
-  * @brief 
-  * @param
-  * @return void
+  * @brief Permet de verifier si tous les bits du Checksum sont a 1.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourn rien.
   **/
 void Internet::verifierChecksum() {
-    // TODO
+
+    if(m_Checksum.all()) {
+      std::cout << "validé" << std::endl;
+    }
+    else {
+      std::cout << "refusé" << std::endl;
+    }
 }
+
 
  /**
   * @brief Permet l'encapsulation de la couche Internet.
