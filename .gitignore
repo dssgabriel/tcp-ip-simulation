@@ -2,6 +2,7 @@
 build/
 target/
 .vscode/
+src/.vscode/
 
 # Files to ignore
 CMakeLists.txt.user
