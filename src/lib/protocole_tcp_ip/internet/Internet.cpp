@@ -147,19 +147,23 @@ void Internet::convertir(IPv4& ip,
 
  /**
   * @brief Permet de calculer le Checksum.
-  * @param Ne prend aucun parametre.
-  * @return Ne retourne rien.
+  * 
+  * @return void.
   **/
 void Internet::calculerChecksum() {
 
-    std::bitset<16> IpSrc(m_IpSrc);
-    std::bitset<16> IpDest(m_IpDest);
+    std::bitset<16> IpSrc1(concat(m_IpSrc.a, m_IpSrc.b));
+    std::bitset<16> IpSrc2(concat(m_IpSrc.c, m_IpSrc.d));
+    std::bitset<16> IpDest1(concat(m_IpDest.a, m_IpDest.b));
+    std::bitset<16> IpDest2(concat(m_IpDest.c, m_IpDest.d));
     std::bitset<16> TTL(m_TTL.to_ulong());
-    std::bitset<16> protocoleId(m_protocoleId.to_ulong());
+    std::bitset<16> protocoleId(m_ProtocoleId.to_ulong());
 
     int somme;
-    somme = IpSrc.to_ulong();
-    somme += IpDest.to_ulong();
+    somme = IpSrc1.to_ulong();
+    somme += IpSrc2.to_ulong();
+    somme += IpDest1.to_ulong();
+    somme += IpDest2.to_ulong();
     somme += TTL.to_ulong();
     somme += protocoleId.to_ulong();
     
@@ -167,9 +171,8 @@ void Internet::calculerChecksum() {
     std::bitset<16> retenuBit, sommeFinaleBit;
     diviser(sommeBit, retenuBit, sommeFinaleBit);
 
-    int retenu, sommeFinale;
-    retenu = retenuBit.to_ulong();
-    sommeFinale = sommeFinaleBit.to_ulong();
+    int retenu = retenuBit.to_ulong();
+    int sommeFinale = sommeFinaleBit.to_ulong();
     sommeFinale += retenu;    
 
     m_Checksum = std::bitset<16>(sommeFinale);
@@ -177,12 +180,12 @@ void Internet::calculerChecksum() {
 
  /**
   * @brief Permet de verifier si tous les bits du Checksum sont a 1.
-  * @param Ne prend aucun parametre.
-  * @return Ne retourn rien.
+  *
+  * @return void.
   **/
 void Internet::verifierChecksum() {
 
-    if(m_Checksum.all()) {
+    if (m_Checksum.all()) {
       std::cout << "validé" << std::endl;
     }
     else {
@@ -220,8 +223,7 @@ void Internet::verifierChecksum() {
     m_Checksum = paquet.top();
     paquet.pop();
     paquet.pop();
-    for (size_t i = 0; i < 8; i++)
-    {
+    for (size_t i = 0; i < 8; i++) {
         paquet.pop();
     }
     
