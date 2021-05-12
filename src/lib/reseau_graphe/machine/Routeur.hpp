@@ -39,8 +39,8 @@ class Routeur : public Machine {
         // Getters
         uint8_t getNbRouteur();
         uint8_t getIdRouteur();
-        std::vector<Routeur> getRouteursVoisins();
-        const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
+        //std::vector<Routeur> getRouteursVoisins();
+        //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
         void envoyer(Routeur& dest, PaquetOSPF& ospf);
