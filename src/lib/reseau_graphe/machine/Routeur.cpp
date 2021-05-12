@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 #include "Routeur.hpp"
 
@@ -69,7 +70,7 @@ void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
 }
 
 void Routeur::recevoir(PaquetOSPF& ospf) {
-//     m_FilePaquetsOSPF.emplace(ospf);
+    m_FilePaquetsOSPF.emplace(ospf);
 }
 
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
@@ -86,7 +87,7 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.pop();
 
     // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
-    for(int i = 0; i < 3; ++i){
+    for (size_t i = 0; i < 3; ++i) {
         trame.pop();
     }
 
@@ -140,6 +141,20 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         auto routeur = iter.first;
 
         if (routeur->getIdRouteur() == hello.getIdRouteur()) {
+            std::vector<LSA> annonces;
+
+            for (auto routeur: m_TableRoutage) {
+                LSA lsa(rand() % 1000,
+                        routeur.first->getIdRouteur(),
+                        routeur.first->getSousReseau()
+                );
+                annonces.emplace_back(lsa);
+            }
+
+            PaquetDBD reponse(annonces);
+            reponse.setEntete(DBD, m_IdRouteur);
+            envoyer(*routeur, reponse);
+
             return;
         }
     }
@@ -152,22 +167,49 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
                 PaquetHello reponse(hello.getIdRouteur());
                 reponse.setEntete(Hello, m_IdRouteur);
                 envoyer(*routeur, reponse);
+
+                return;
             }
         }
     }
-
-    exit(1);
 }
 
 void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
     auto vec = dbd.getAnnoncesLSA();
+    std::vector<std::bitset<32>> idLSADemandes;
 
     for (auto lsa: vec) {
         for (auto iter: m_TableRoutage) {
             auto routeur = iter.first;
 
             if (lsa.getIdRouteur() != routeur->getIdRouteur()) {
+                bool found = false;
 
+                for (auto verif: m_TableRoutage) {
+                    if (verif.first->getIdRouteur() ==
+                        routeur->getIdRouteur())
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    idLSADemandes.emplace_back(lsa.getIdLSA());
+                }
+            }
+        }
+    }
+
+    if (!idLSADemandes.empty()) {
+        for (auto iter: m_TableRoutage) {
+            auto routeur = iter.first;
+
+            if (routeur->getIdRouteur() == dbd.getIdRouteur()) {
+                PaquetLSR reponse(dbd.getIdRouteur(), idLSADemandes);
+                reponse.setEntete(LSR, m_IdRouteur);
+                envoyer(*routeur, reponse);
+                return;
             }
         }
     }
@@ -183,4 +225,5 @@ void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
 
 void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
     // TODO : A faire
+#include <cstdlib>
 }
