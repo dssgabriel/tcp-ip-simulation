@@ -45,7 +45,9 @@ void Commutateur::envoyer() {
     paquet.pop();
 
     // Trouver l'adresse MAC de la prochaine machine.
-    MAC prochainStop = trouverMacDest(coucheInt.convertir(ipDestBA, ipDestDC));
+    IPv4 ip;
+    coucheInt.convertir(ip, ipDestBA, ipDestDC);
+    MAC prochainStop = trouverMacDest(ip);
 
     // Encapsulation adresse IP de destination.
     paquet.push(ipDestBA);
