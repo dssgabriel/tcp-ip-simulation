@@ -5,7 +5,7 @@
  * @author      Quentin GRUCHET
  * @author      Fadi MECHRI
  * @date        2021
- **/
+ */
 
 #ifndef physique_HPP
 #define physique_HPP

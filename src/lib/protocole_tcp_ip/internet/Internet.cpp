@@ -1,10 +1,12 @@
 /**
+
  * @file        Internet.cpp
  * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Internet.
  * 
  * @author      Quentin GRUCHET
  * @author      Fadi MECHRI
  * @date        2021
+
  **/
 
 #include "Internet.hpp"
@@ -120,6 +122,7 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
 	std::string s2 = adresse.b.to_string();
 	std::string s3 = adresse.c.to_string();
 	std::string s4 = adresse.d.to_string();
+
 	return std::bitset<32>(s1 + s2 + s3 + s4);
 }
 
@@ -129,41 +132,83 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
   * Après désencapsulation, les adresses IP sont contenues dans deux std::bitset<16> ou chaque 8 bits représente un champ de l'IP.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir l'IP.
   * 
+<<<<<<< HEAD
   * @param ipPartBa Premier bitset contenant les champs a et b de l'IP.
   * @param ipPartDC Second bitset contenant les champs c et d de l'IP.
   * 
   * @return Une structure IPv4 avec les champs remplie.
+=======
+  * @param ip : L'adresse IP a remplir.
+  * @param ipPartBa : Premier bitset contenant les champs a et b de l'IP.
+  * @param ipPartDC : Second bitset contenant les champs c et d de l'IP.
+>>>>>>> 383e3a3f750bb3f6d9035a796683f2a7e031a6bb
   **/
-IPv4& Internet::convertir(const std::bitset<16>& ipPartBA, 
+void Internet::convertir(IPv4& ip,
+    const std::bitset<16>& ipPartBA, 
     const std::bitset<16>& ipPartDC)
 {
-    // Initialisation.
-    IPv4 ip;
-
     // Decoupage, et convertion en IPv4.
     diviser(ipPartBA, ip.b, ip.a);
     diviser(ipPartDC, ip.d, ip.c);
-
-    return ip;
 }
 
  /**
+<<<<<<< HEAD
   * @brief 
   * @param
   * @return void.
+=======
+  * @brief Permet de calculer le Checksum.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourne rien.
+>>>>>>> 383e3a3f750bb3f6d9035a796683f2a7e031a6bb
   **/
 void Internet::calculerChecksum() {
-    // TODO
+
+    std::bitset<16> IpSrc(m_IpSrc);
+    std::bitset<16> IpDest(m_IpDest);
+    std::bitset<16> TTL(m_TTL.to_ulong());
+    std::bitset<16> protocoleId(m_protocoleId.to_ulong());
+
+    int somme;
+    somme = IpSrc.to_ulong();
+    somme += IpDest.to_ulong();
+    somme += TTL.to_ulong();
+    somme += protocoleId.to_ulong();
+    
+    std::bitset<32> sommeBit(somme);
+    std::bitset<16> retenuBit, sommeFinaleBit;
+    diviser(sommeBit, retenuBit, sommeFinaleBit);
+
+    int retenu, sommeFinale;
+    retenu = retenuBit.to_ulong();
+    sommeFinale = sommeFinaleBit.to_ulong();
+    sommeFinale += retenu;    
+
+    m_Checksum = std::bitset<16>(sommeFinale);
 }
 
  /**
+<<<<<<< HEAD
   * @brief 
   * @param
   * @return void.
+=======
+  * @brief Permet de verifier si tous les bits du Checksum sont a 1.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourn rien.
+>>>>>>> 383e3a3f750bb3f6d9035a796683f2a7e031a6bb
   **/
 void Internet::verifierChecksum() {
-    // TODO
+
+    if(m_Checksum.all()) {
+      std::cout << "validé" << std::endl;
+    }
+    else {
+      std::cout << "refusé" << std::endl;
+    }
 }
+
 
  /**
   * @brief Permet l'encapsulation de la couche Internet.

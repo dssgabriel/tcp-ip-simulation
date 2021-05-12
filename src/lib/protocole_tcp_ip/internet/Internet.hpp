@@ -1,10 +1,12 @@
 /**
+
  * @file        Internet.hpp
  * @brief       Déclaration de la classe Internet.
  * 
  * @author      Quentin GRUCHET 
  * @author      Fadi MECHRI
  * @date        2021
+
  **/
 
 
@@ -52,7 +54,7 @@ class Internet {
         
         // Methodes
         std::bitset<32> convertir(const IPv4& adresse);
-        IPv4& convertir(
+        void convertir(IPv4& ip,
             const std::bitset<16>& ipPartBA, 
             const std::bitset<16>& ipPartDC
         );

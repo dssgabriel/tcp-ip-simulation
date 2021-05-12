@@ -28,15 +28,34 @@ uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
-// std::vector<Routeur&>& Routeur::getRouteursVoisins() {
-// TODO : A faire
-// }
+std::vector<Routeur> Routeur::getRouteursVoisins() {
+    std::vector<Routeur> voisins;
+
+    for (auto iter: m_Voisins) {
+        auto routeur = dynamic_cast<Routeur*>(iter);
+
+        if (routeur) {
+            voisins.emplace_back(routeur);
+        }
+    }
+
+    return voisins;
+}
+
+const std::vector<Liaison> Routeur::getPlusCourtChemin(Routeur& dest) {
+    std::vector<Liaison> chemin;
+
+    for (auto iter: m_TableRoutage) {
+        if (iter.first->getIdRouteur() != dest.getIdRouteur()) {
+            chemin.emplace_back(iter.second);
+            break;
+        }
+    }
+
+    return chemin;
+}
 
 // Methodes
-// const std::vector<Liaison>& Routeur::getPlusCourtChemin(const Routeur& dest) {
-// TODO : A faire
-// }
-
 void Routeur::envoyer() {
     // TODO : A faire
 }
@@ -50,7 +69,7 @@ void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
 }
 
 void Routeur::recevoir(PaquetOSPF& ospf) {
-    m_FilePaquetsOSPF.emplace(ospf);
+//     m_FilePaquetsOSPF.emplace(ospf);
 }
 
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
@@ -117,8 +136,8 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
         return;
     }
 
-    for (auto iter = m_TableRoutage.begin(); iter != m_TableRoutage.end(); iter++) {
-        auto routeur = iter->first;
+    for (auto iter: m_TableRoutage) {
+        auto routeur = iter.first;
 
         if (routeur->getIdRouteur() == hello.getIdRouteur()) {
             return;
@@ -126,20 +145,32 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
     }
 
     for (auto iter: m_Voisins) {
-        auto machine = dynamic_cast<Routeur*>(iter);
+        auto routeur = dynamic_cast<Routeur*>(iter);
 
-        if (machine->getIdRouteur() == hello.getIdRouteur()) {
-            PaquetHello reponse(hello.getIdRouteur());
-            reponse.setEntete(Hello, m_IdRouteur);
-            envoyer(*machine, reponse);
+        if (routeur) {
+            if (routeur->getIdRouteur() == hello.getIdRouteur()) {
+                PaquetHello reponse(hello.getIdRouteur());
+                reponse.setEntete(Hello, m_IdRouteur);
+                envoyer(*routeur, reponse);
+            }
         }
     }
 
     exit(1);
 }
 
-void Routeur::traitementPaquetDBD(const PaquetDBD& dbd) {
-    // TODO : A faire
+void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
+    auto vec = dbd.getAnnoncesLSA();
+
+    for (auto lsa: vec) {
+        for (auto iter: m_TableRoutage) {
+            auto routeur = iter.first;
+
+            if (lsa.getIdRouteur() != routeur->getIdRouteur()) {
+
+            }
+        }
+    }
 }
 
 void Routeur::traitementPaquetLSR(const PaquetLSR& lsr) {
