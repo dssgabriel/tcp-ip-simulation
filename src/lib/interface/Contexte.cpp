@@ -2,8 +2,12 @@
 
 // Constructeur
 Contexte::Contexte() {
-    // m_Reseau = new ReseauGraphe();
+    // Chargement du reseau Simple par defaut
+    /*m_Reseau = nullptr;
+    chargerConfig(1);*/
+    m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
+    //std::cout << m_Reseau->getNom() << "\n";
 }
 
 /*ReseauGraphe* Contexte::getReseau() {
@@ -39,8 +43,18 @@ std::string Contexte::informationsReseau() {
 }
 
 void Contexte::chargerConfig(int numConfig) {
-    numConfig = 2;
-    int a = 3;
+    /*if(numConfig == 1) {
+        m_Reseau = chargerReseau("../src/include/configReseau/ReseauSimple");
+    }
+    else if(numConfig == 2) {
+        m_Reseau = chargerReseau("../src/include/configReseau/ReseauMaison");
+    }
+    else if(numConfig == 3) {
+        m_Reseau = chargerReseau("../src/include/configReseau/ReseauPme");
+    }
+    else if(numConfig == 4) {
+        m_Reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise");
+    }*/
 }
 
 void Contexte::executerSimulation() {
