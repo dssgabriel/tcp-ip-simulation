@@ -35,13 +35,13 @@ Q_OBJECT
         void configPme();
         void configEntreprise();
 
-        /*void initialiserGraphe();
-        void rafraichirGraphe();
+        void initialiserGraphe();
+        //void rafraichirGraphe();
         void sauvegarderGraphe();
 
     private slots :
         // Méthode Slots
-        void informationsReseau();*/
+        void informationsReseau();
 
 };
 
