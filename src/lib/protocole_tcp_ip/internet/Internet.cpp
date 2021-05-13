@@ -1,167 +1,201 @@
 /**
- * internet.cpp : Vous trouverez ici toutes les fonctions implemente pour la classe Internet.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+
+ * @file        Internet.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Internet.
+ * 
+ * @author      Quentin GRUCHET
+ * @author      Fadi MECHRI
+ * @date        2021
+
  **/
 
 #include "Internet.hpp"
 
 /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Constructeur de la classe Internet
+  * 
+  * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
+  * 
+  * @return NULL.
   **/
 Internet::Internet() {
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Destructeur de la classe Internet.
+  * 
+  * Le destructeur est vide car tout est géré par le 'garbage collector'.
+  * 
+  * @return NULL.
   **/
 Internet::~Internet() {
 
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Setter pour l'argument de classe m_IpSrc.
+  * 
+  * @param 1 IPv4 src : IP de départ souhaité.
+  * @return void.
   **/
 void Internet::setIpSrc(IPv4 src) {
     m_IpSrc = src;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Getter pour l'argument de classe m_IpSrc.
+  * 
+  * @return Référence vers l'attribut de classe m_IpSrc.
   **/
 IPv4& Internet::getIpSrc() {
     return m_IpSrc;
 }
 
-  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+ /**
+  * @brief Setter pour l'argument de classe m_IpSrc.
+  * 
+  * @param dest : IP de destination souhaité.
+  * @return void.
   **/
 void Internet::setIpDest(IPv4 dest) {
     m_IpDest = dest;
 }
-
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Getter pour l'argument de classe m_IpDest.
+  * 
+  * @return Référence vers l'argument de classe m_IpDest.
   **/
 IPv4& Internet::getIpDest() {
     return m_IpDest;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Setter pour l'argument de classe m_TTL.
+  * 
+  * @param ttl : La valeur souhaité du TTL.
+  * @return void.
   **/
 void Internet::setTTL(const std::bitset<8>& ttl) {
     m_TTL = ttl;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Getter pour l'argument de classe m_TTL.
+  * 
+  * @return La valeur du TTL.
   **/
 std::bitset<8> &Internet::getTTL() {
     return m_TTL;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Setter pour l'argument de classe m_ProtocoleId.
+  * 
+  * Ici, aucun argument est nécessaire. Nous utilisons toujours le protocole TCP donc son ID est toujours 6. 
+  * 
+  * @return void.
   **/
 void Internet::setProtocoleId() {
     m_ProtocoleId = std::bitset<8> (6);
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Getter pour l'argument de classe m_ProtocoleId.
+  * 
+  * @return La valeur de l'identifiant du protocole. 
   **/
 std::bitset<8> &Internet::getProtocoleId() {
     return m_ProtocoleId;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet de convertir une IPv4 en un bitset de 32 bits pour encapsuler cette données.
+  * 
+  * On converti d'abord chaque champs de la structure IPv4 en chaine de caractère. 
+  * Puis nous créeons un bitset de la concaténation de ces chaines de caractère. 
+  * 
+  * @param adresse : L'IPv4 que l'on souhaite modifier.
+  * @return Le bitset obtenue après conversion.
   **/
 std::bitset<32> Internet::convertir(const IPv4& adresse) {
 	std::string s1 = adresse.a.to_string();
 	std::string s2 = adresse.b.to_string();
 	std::string s3 = adresse.c.to_string();
 	std::string s4 = adresse.d.to_string();
+
 	return std::bitset<32>(s1 + s2 + s3 + s4);
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet de convertir deux bitset de 16 bits en une structure IPv4.
+  * 
+  * Après désencapsulation, les adresses IP sont contenues dans deux std::bitset<16> ou chaque 8 bits représente un champ de l'IP.
+  * Cette fonction permet donc de diviser ces bitset en deux, pour remplir l'IP.
+  * 
+  * @param ip : L'adresse IP a remplir.
+  * @param ipPartBa : Premier bitset contenant les champs a et b de l'IP.
+  * @param ipPartDC : Second bitset contenant les champs c et d de l'IP.
   **/
-IPv4& convertir(const std::bitset<16>& ipPartBA, 
+void Internet::convertir(IPv4& ip,
+    const std::bitset<16>& ipPartBA, 
     const std::bitset<16>& ipPartDC)
 {
-    // Initialisation.
-    IPv4 ip;
-
     // Decoupage, et convertion en IPv4.
     diviser(ipPartBA, ip.b, ip.a);
     diviser(ipPartDC, ip.d, ip.c);
-
-    return ip;
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet de calculer le Checksum.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourne rien.
   **/
 void Internet::calculerChecksum() {
 
+    std::bitset<16> IpSrc(m_IpSrc);
+    std::bitset<16> IpDest(m_IpDest);
+    std::bitset<16> TTL(m_TTL.to_ulong());
+    std::bitset<16> protocoleId(m_protocoleId.to_ulong());
+
+    int somme;
+    somme = IpSrc.to_ulong();
+    somme += IpDest.to_ulong();
+    somme += TTL.to_ulong();
+    somme += protocoleId.to_ulong();
+    
+    std::bitset<32> sommeBit(somme);
+    std::bitset<16> retenuBit, sommeFinaleBit;
+    diviser(sommeBit, retenuBit, sommeFinaleBit);
+
+    int retenu, sommeFinale;
+    retenu = retenuBit.to_ulong();
+    sommeFinale = sommeFinaleBit.to_ulong();
+    sommeFinale += retenu;    
+
+    m_Checksum = std::bitset<16>(sommeFinale);
 }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet de verifier si tous les bits du Checksum sont a 1.
+  * @param Ne prend aucun parametre.
+  * @return Ne retourn rien.
   **/
 void Internet::verifierChecksum() {
 
+    if(m_Checksum.all()) {
+      std::cout << "validé" << std::endl;
+    }
+    else {
+      std::cout << "refusé" << std::endl;
+    }
 }
 
+
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet l'encapsulation de la couche Internet.
+  * 
+  * @param segment : Resultat de l'encapsulation de la couche Transport.
+  * @return Resultat de l'encapsulation. Contient donc la couche Transport + la couche Internet.
   **/
  std::stack<std::bitset<16>> Internet::encapsuler(std::stack<std::bitset<16>>& segment) {
     segment.push(concat(m_IpSrc.a, m_IpSrc.b));
@@ -175,10 +209,10 @@ void Internet::verifierChecksum() {
  }
 
  /**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
+  * @brief Permet la desencapsulation de la couche Internet.
+  * 
+  * @param paquet : Resultat de l'encapsulation de la couche Physique.
+  * @return Resultat de la desencapsulation. Contient donc uniquement la couche Transport.
   **/
  std::stack<std::bitset<16>> Internet::desencapsuler(
    std::stack<std::bitset<16>>& paquet)

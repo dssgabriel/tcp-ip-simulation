@@ -1,0 +1,15 @@
+CC = g++
+CFLAGS = -std=c++17 -Wall -Wextra -g3 -O2
+
+OSPF = ../../src/lib/reseau_graphe/ospf/*.cpp
+MACHINE = ../../src/lib/reseau_graphe/machine/*.cpp
+PROTOCOLE = ../../src/lib/protocole_tcp_ip/**/*.cpp
+RESEAU = ../../src/lib/reseau_graphe/ReseauGraphe.cpp
+FILES = $(OSPF) $(MACHINE) $(PROTOCOLE) $(RESEAU)
+
+all:
+	$(CC) $(CFLAGS) $(FILES) testMachine.cpp -o test
+	./test
+
+clean:
+	@rm -Rf test

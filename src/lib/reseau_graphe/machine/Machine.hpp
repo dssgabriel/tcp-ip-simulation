@@ -55,6 +55,7 @@ class Machine {
         const MAC& getMac() const;
         
         void setSousReseau(const IPv4& sousReseau);
+        const std::vector<IPv4>& getSousReseau() const;
         
         void setVoisin(Machine& voisin);
         Machine* getVoisin(MAC adresseVoisin);
@@ -62,7 +63,6 @@ class Machine {
         void setDonnee(std::stack<std::bitset<16>>* donnee);
         std::stack<std::bitset<16>>* suppDonnee();
 
-        // A ENLEVER
         const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
 
         // Overloading

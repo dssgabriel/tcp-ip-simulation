@@ -1,6 +1,10 @@
 /**
- * Transport.hpp : Vous trouverez ici la classe Transport.
- * Auteur : Quentin GRUCHET & Fadi MECHRI.
+ * @file        Transport.hpp
+ * @brief       Déclaration de la classe Transport.
+ * 
+ * @author      Quentin GRUCHET 
+ * @author      Fadi MECHRI
+ * @date        2021
  **/
 
 #ifndef transport_HPP
@@ -20,14 +24,14 @@ class Transport {
     private :
        
         // Attributs
-        uint16_t m_PortSrc ;
-        uint16_t m_PortDest ;
-        std::bitset<16> m_Cwnd ;
-        std::bitset<16> m_Checksum ;
-        std::bitset<16> m_Syn ;
-        std::bitset<16> m_Ack1 ;
-        std::bitset<32> m_Seq ;
-        std::bitset<32> m_Ack2 ;
+        uint16_t m_PortSrc;
+        uint16_t m_PortDest;
+        std::bitset<16> m_Cwnd;
+        std::bitset<16> m_Checksum;
+        std::bitset<16> m_Syn;
+        std::bitset<16> m_Ack1;
+        std::bitset<32> m_Seq;
+        std::bitset<32> m_Ack2;
   
     public :
        
@@ -41,7 +45,7 @@ class Transport {
         void setPortSrc(const uint16_t & src);
         uint16_t & getPortSrc();
 
-        void setPortDest(TypeFichier num) ;
+        void setPortDest(TypeFichier num);
         uint16_t & getPortDest();
         
         void setCwnd(const std::bitset<16>& cwnd);

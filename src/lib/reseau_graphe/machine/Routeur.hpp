@@ -24,15 +24,14 @@ class Routeur : public Machine {
 
         // Methodes
         void traitementPaquetHello(const PaquetHello& hello);
-        void traitementPaquetDBD(const PaquetDBD& dbd);
+        void traitementPaquetDBD(PaquetDBD& dbd);
         void traitementPaquetLSR(const PaquetLSR& lsr);
         void traitementPaquetLSU(const PaquetLSU& lsu);
-        void traitementPaquetLSAck(const PaquetLSAck& lsack);
+        void traitementPaquetLSAck(const PaquetLSAck& ack);
 
     public:
         // Constructeurs
         Routeur();
-        // Routeur(const std::string& nom);
 
         // Destructeur
         ~Routeur();
@@ -40,10 +39,10 @@ class Routeur : public Machine {
         // Getters
         uint8_t getNbRouteur();
         uint8_t getIdRouteur();
-        std::vector<Routeur&>& getRouteursVoisins();
+        //std::vector<Routeur> getRouteursVoisins();
+        //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
-        const std::vector<Liaison>& getPlusCourtChemin(const Routeur& dest);
         void envoyer(Routeur& dest, PaquetOSPF& ospf);
         void recevoir(PaquetOSPF& ospf);
         void traitementPaquetOSPF();

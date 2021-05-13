@@ -88,18 +88,22 @@ const IPv4& Machine::getMasque() const {
 
 void Machine::setMac(const MAC& mac) {
     m_Mac = mac;
-}    
+}
 
 const MAC& Machine::getMac() const {
     return m_Mac;
 }
 
 void Machine::setSousReseau(const IPv4& sousReseau) {
-    m_SousReseau.push_back(sousReseau);
+    m_SousReseau.emplace_back(sousReseau);
+}
+
+const std::vector<IPv4>& Machine::getSousReseau() const {
+    return m_SousReseau;
 }
 
 void Machine::setVoisin(Machine& voisin) {
-    m_Voisins.push_back(&voisin);
+    m_Voisins.emplace_back(&voisin);
 }
 
 Machine* Machine::getVoisin(MAC adresseVoisin) {
@@ -131,17 +135,15 @@ std::stack<std::bitset<16>>* Machine::suppDonnee() {
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {
     flux << "Numero : " << m.getIdMachine() << "/" << m.getNbMachine() << "\n";
     flux << "Nom : " << m.getNom() << "\n";
-    IPv4 tmp = m.getIp();
-    flux << "Ip : " << tmp.a.to_ulong() << "." << tmp.b.to_ulong() << ".";
-    flux << tmp.c.to_ulong() << "." << tmp.d.to_ulong() << "\n";
-    tmp = m.getMasque();
-    flux << "Masque : " << tmp.a.to_ulong() << "." << tmp.b.to_ulong();
-    flux << "." << tmp.c.to_ulong() << "." << tmp.d.to_ulong() << "\n";
-    MAC tmp2;
-    tmp2 = m.getMac();
-    flux << "Mac : " << std::hex << tmp2.a.to_ulong() << ":";
-    flux << tmp2.b.to_ulong() << ":" << tmp2.c.to_ulong() << ":";
-    flux << tmp2.d.to_ulong() << ":" << tmp2.e.to_ulong() << ":" << tmp2.f.to_ulong() << "\n";
+    flux << "Ip : " << m.getIp() << "\n";
+    flux << "Masque : " << m.getMasque() << "\n";
+    flux << "Mac : " << m.getMac() << "\n";
+
+    flux << "Liste des sous réseaux : \n";
+    std::vector<IPv4> cpySousReseau = m.getSousReseau();
+    for(IPv4 sousReseau : cpySousReseau) {
+        flux << "\t > " << sousReseau << "\n";
+    }
 
     return flux;
 }

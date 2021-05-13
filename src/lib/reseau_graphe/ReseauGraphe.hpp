@@ -4,6 +4,7 @@
 #include <string>
 
 #include "machine/Machine.hpp"
+#include "machine/Routeur.hpp"
 #include "../../include/Liaison.hpp"
 
 class ReseauGraphe {
@@ -19,18 +20,26 @@ class ReseauGraphe {
 
         // Destructeur
         ~ReseauGraphe();
-    
+
         // Getters & setters
         void setNom(const std::string nom);
-        std::string& getNom();
-        
+        const std::string& getNom() const;
+
         Machine& getMachine(const IPv4& ip);
-        
+        const std::vector<Machine>& getMachines() const;
+        const std::vector<Liaison>& getLiaisons() const;
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const ReseauGraphe& reseau
+        );
+
         // Methodes
         bool estConnexe();
-        
+
         void ajouter(Machine m);
         void ajouter(Liaison l);
-        
+
         void routageDynamique();
 };

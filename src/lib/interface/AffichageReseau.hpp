@@ -29,13 +29,13 @@ Q_OBJECT
         // Destructeur
         ~AffichageReseau();
 
-        /*// Methodes
+        // Methodes
         void configSimple();
         void configMaison();
         void configPme();
         void configEntreprise();
 
-        void initialiserGraphe();
+        /*void initialiserGraphe();
         void rafraichirGraphe();
         void sauvegarderGraphe();
 
