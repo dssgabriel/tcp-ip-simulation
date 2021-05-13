@@ -35,7 +35,7 @@ Internet::~Internet() {
  /**
   * @brief Setter pour l'argument de classe m_IpSrc.
   * 
-  * @param 1 IPv4 src : IP de départ souhaité.
+  * @param src IP de départ souhaité.
   * @return void.
   **/
 void Internet::setIpSrc(IPv4 src) {
@@ -54,7 +54,7 @@ IPv4& Internet::getIpSrc() {
  /**
   * @brief Setter pour l'argument de classe m_IpSrc.
   * 
-  * @param dest : IP de destination souhaité.
+  * @param dest IP de destination souhaité.
   * @return void.
   **/
 void Internet::setIpDest(IPv4 dest) {
@@ -72,7 +72,7 @@ IPv4& Internet::getIpDest() {
  /**
   * @brief Setter pour l'argument de classe m_TTL.
   * 
-  * @param ttl : La valeur souhaité du TTL.
+  * @param ttl La valeur souhaité du TTL.
   * @return void.
   **/
 void Internet::setTTL(const std::bitset<8>& ttl) {
@@ -114,7 +114,7 @@ std::bitset<8> &Internet::getProtocoleId() {
   * On converti d'abord chaque champs de la structure IPv4 en chaine de caractère. 
   * Puis nous créeons un bitset de la concaténation de ces chaines de caractère. 
   * 
-  * @param adresse : L'IPv4 que l'on souhaite modifier.
+  * @param adresse L'IPv4 que l'on souhaite modifier.
   * @return Le bitset obtenue après conversion.
   **/
 std::bitset<32> Internet::convertir(const IPv4& adresse) {
@@ -132,9 +132,9 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
   * Après désencapsulation, les adresses IP sont contenues dans deux std::bitset<16> ou chaque 8 bits représente un champ de l'IP.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir l'IP.
   * 
-  * @param ip : L'adresse IP a remplir.
-  * @param ipPartBa : Premier bitset contenant les champs a et b de l'IP.
-  * @param ipPartDC : Second bitset contenant les champs c et d de l'IP.
+  * @param ip L'adresse IP a remplir.
+  * @param ipPartBa Premier bitset contenant les champs a et b de l'IP.
+  * @param ipPartDC Second bitset contenant les champs c et d de l'IP.
   **/
 void Internet::convertir(IPv4& ip,
     const std::bitset<16>& ipPartBA, 
@@ -197,7 +197,7 @@ void Internet::verifierChecksum() {
  /**
   * @brief Permet l'encapsulation de la couche Internet.
   * 
-  * @param segment : Resultat de l'encapsulation de la couche Transport.
+  * @param segment Resultat de l'encapsulation de la couche Transport.
   * @return Resultat de l'encapsulation. Contient donc la couche Transport + la couche Internet.
   **/
  std::stack<std::bitset<16>> Internet::encapsuler(std::stack<std::bitset<16>>& segment) {
@@ -214,7 +214,7 @@ void Internet::verifierChecksum() {
  /**
   * @brief Permet la desencapsulation de la couche Internet.
   * 
-  * @param paquet : Resultat de l'encapsulation de la couche Physique.
+  * @param paquet Resultat de l'encapsulation de la couche Physique.
   * @return Resultat de la desencapsulation. Contient donc uniquement la couche Transport.
   **/
  std::stack<std::bitset<16>> Internet::desencapsuler(

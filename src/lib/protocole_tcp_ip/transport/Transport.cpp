@@ -36,7 +36,7 @@ Transport::~Transport() {
 /**
   * @brief Setter de l'attribut de classe m_PortSrc.
   * 
-  * @param src : La valeur du port source souhaité.
+  * @param src La valeur du port source souhaité.
   * @return void.
   **/
 void Transport::setPortSrc(const uint16_t& src) {
@@ -55,7 +55,7 @@ uint16_t &Transport::getPortSrc() {
 /**
   * @brief Setter de l'attribut m_PortDest de la classe Transport
   * 
-  * @param num : La structure contenant le type de fichier que l'on va envoyer.
+  * @param num La structure contenant le type de fichier que l'on va envoyer.
   * @return void.
   **/
 void Transport::setPortDest(TypeFichier num) {
