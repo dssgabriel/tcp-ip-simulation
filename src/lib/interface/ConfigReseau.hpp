@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTextEdit>
 #include <QHBoxLayout>
+#include "Contexte.hpp"
 
 class ConfigReseau : public QHBoxLayout
 {
@@ -20,9 +21,9 @@ Q_OBJECT
         // Destructeur
         ~ConfigReseau();
 
-        /*//Methodes
+        //Methodes
         void initialiserTexte();
-        void rafraichirTexte();*/
+        void rafraichirTexte();
 };
 
 #endif // CONFIGRESEAU_H
