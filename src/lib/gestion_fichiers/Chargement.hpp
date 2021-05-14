@@ -183,6 +183,7 @@ void chargerConfig(const std::string& cheminFichier,
     lecture >> j;
 
     // Chargement du reseau correspondant.
+    // TODO : CHEMIN A CHANGER POUR L APPLICATION
     std::string choixReseau = j["Nom du reseau"];
     if(choixReseau == "ReseauSimple") {
         reseau = chargerReseau("../../src/include/configReseau/ReseauSimple.json");

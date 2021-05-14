@@ -35,11 +35,9 @@ class Ordinateur : public Machine {
             const int& position
         ) const;
         
-        const std::map<uint16_t, double>
-            getTempsTraitementPaquet() const;
-        double getTempsTraitementPaquet(
-            const uint16_t& cle
-        ) const;
+        const std::map<uint16_t, double> getTempsTraitementPaquet() const;
+
+        double getTempsTraitementPaquet(const uint16_t& cle) const;
         
         // Methodes
         void remplirFileDonnees(
@@ -53,4 +51,9 @@ class Ordinateur : public Machine {
         void envoyer();
         void recevoir();
         void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
+
+        void congestionAvoidance(std::bitset<16>& cwnd);
+        void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);
+        void fastRetransmit(const std::bitset<32>& seq, std::bitset<16>& cwnd);
+        void fastRecovery(std::bitset<16>& cwnd);
 };

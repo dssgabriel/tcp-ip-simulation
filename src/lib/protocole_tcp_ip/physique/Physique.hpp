@@ -49,10 +49,6 @@ class Physique {
         );
 
         std::bitset<48> convertir(const MAC& adresse);
-
-        std::stack<std::bitset<16>> decoupageMac(
-            const std::bitset<48>& adresse
-        );
         
         std::stack<std::bitset<16>> encapsuler(
             std::stack<std::bitset<16>>& paquet

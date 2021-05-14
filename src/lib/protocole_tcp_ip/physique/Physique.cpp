@@ -125,38 +125,6 @@ MAC Physique::convertir(const std::bitset<16>& adrPartBA,
 }
 
 /**
-  * @brief Permet de convertir un bitset de 48 bits en une pile de bitset de 16 bits.
-  * 
-  * @param adresse Le bitset que l'on veut diviser.
-  * @return La pile contenant l'argument découpé en plusieurs morceaux.
-  **/
-std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adresse) {
-  std::stack<std::bitset<16>> pile;
-  std::bitset<16> eltPile;
-
-  //
-  size_t i;
-  size_t posAdr = 0;
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-
-  return pile;
-}
-
-/**
   * @brief Permet l'encapsulation de la couche Physique.
   * 
   * @param paquet : Resultat de l'encapsulation de la couche Internet.
@@ -179,11 +147,24 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
   * @param trame. Une pile qui contitent la couche Transport + Internet + Physique. 
   * @return La même pile mais avec la couche Physique en moins.
   **/
-std::stack<std::bitset<16>> Physique::desencapsuler(std::stack<std::bitset<16>>& trame) {
-    for (size_t i = 0; i < 6; i++)
-    {
-        trame.pop();
-    }
+std::stack<std::bitset<16>> Physique::desencapsuler(
+    std::stack<std::bitset<16>>& trame)
+{
+    // Extraction de l'adresse mac de destination.
+    diviser(trame.top(), m_DestMac.e, m_DestMac.f);
+    trame.pop();
+    diviser(trame.top(), m_DestMac.c, m_DestMac.d);
+    trame.pop();
+    diviser(trame.top(), m_DestMac.a, m_DestMac.b);
+    trame.pop(); 
 
+    // Extraction de l'adresse mac source.
+    diviser(trame.top(), m_SrcMac.e, m_SrcMac.f);
+    trame.pop();
+    diviser(trame.top(), m_SrcMac.c, m_SrcMac.d);
+    trame.pop();
+    diviser(trame.top(), m_SrcMac.a, m_SrcMac.b);
+    trame.pop(); 
+    
     return trame;
 }

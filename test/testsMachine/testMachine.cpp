@@ -43,14 +43,21 @@ void test2() {
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
 
+    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
     chargerConfig("ecriture.json", reseau, p);
     // std::cout << *reseau;
 
-    Machine client = reseau->getMachine(p.m_Source);
-    Machine serveur = reseau->getMachine(p.m_Destination);
+    Machine& clientM = reseau->getMachine(p.m_Source);
+    Machine& serveurM = reseau->getMachine(p.m_Destination);
 
-    std::cout << "client \n" << client;
-    std::cout << "serveur \n" << serveur;
+    Ordinateur client = dynamic_cast<Ordinateur&> (clientM);
+    Ordinateur serveur = dynamic_cast<Ordinateur&> (serveurM);
+
+    MAC macDest = {35, 11, 122, 213, 123, 169};
+    client.remplirFileDonnees(p, macDest);
+
+    std::cout << "clientM \n" << clientM;
+    std::cout << "serveurM \n" << serveurM;
 }
 
 int main(void) {
