@@ -9,7 +9,6 @@
 #include "../ospf/PaquetLSR.hpp"
 #include "../ospf/PaquetLSU.hpp"
 #include "../ospf/PaquetLSAck.hpp"
-
 #include "../../../include/Liaison.hpp"
 
 class Routeur : public Machine {

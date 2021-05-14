@@ -48,7 +48,7 @@ class Ordinateur : public Machine {
         void synchroniser();
         void finDeSession();
         
-        void envoyer();
+        void envoyer(const uint32_t cwnd);
         void recevoir();
         void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
 
