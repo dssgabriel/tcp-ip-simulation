@@ -20,9 +20,9 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     //les QComboBox des machines d'arriver et de depart
 
     QLabel* m_LabelDepart = new QLabel("Machine de depart");
-    m_LabelDepart->setStyleSheet("color : white;");
+    m_LabelDepart->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
     m_Depart = new QComboBox();
-
+    m_Depart->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
     for(int i = 0; i<15; i++){
         m_Depart->addItem("Machine "+ QString::number(i));
     }
@@ -30,8 +30,9 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_Vlayout->addWidget(m_Depart);
 
     QLabel* m_LabelArriver = new QLabel("Machine d'arriver");
-    m_LabelArriver->setStyleSheet("color : white;");
+    m_LabelArriver->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
     m_Arrive = new QComboBox();
+    m_Arrive->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
     for(int i = 0; i<15; i++){
         m_Arrive->addItem("Machine "+ QString::number(i));
     }
@@ -43,7 +44,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     //les QSpinBox du QVBoxLayout
 
     QLabel* m_LabelSsthresh = new QLabel("Entrez la taille de la fenetre");
-    m_LabelSsthresh->setStyleSheet("color : white;");
+    m_LabelSsthresh->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
     m_Vlayout->addWidget(m_LabelSsthresh);
     m_Ssthresh = new QSpinBox;
     m_Ssthresh->setRange(128,256);
@@ -53,7 +54,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_Vlayout->addWidget(m_Ssthresh);
 
     QLabel* m_LabelPaquetNombre = new QLabel("Entrez le nombre de paquet a envoyer");
-    m_LabelPaquetNombre->setStyleSheet("color : white;");
+    m_LabelPaquetNombre->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
     m_Vlayout->addWidget(m_LabelPaquetNombre);
     m_PaquetNombre = new QSpinBox;
     m_PaquetNombre->setRange(1,65536);
@@ -64,8 +65,9 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     //QComboBox types paquet
 
     QLabel* m_LabelPaquetTypes = new QLabel("types de paquets a envoyer");
-    m_LabelPaquetTypes->setStyleSheet("color : white;");
+    m_LabelPaquetTypes->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
     m_PaquetType = new QComboBox();
+    m_PaquetType->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
     m_PaquetType->addItem("FTP");
     m_PaquetType->addItem("HTTP");
     m_PaquetType->addItem("SMTP");
@@ -176,7 +178,7 @@ void ChoixReseau::verifConfigMessage(){
 
 void ChoixReseau::selectConfigSimple(){
     QMessageBox m_Simple;
-    m_Simple.setText("choix du reseau simple");
+    m_Simple.setText("choix du reseau Simple");
     m_Simple.setStandardButtons(QMessageBox::Yes);
     m_Simple.addButton(QMessageBox::No);
     m_Simple.setDefaultButton(QMessageBox::No);
@@ -193,7 +195,7 @@ void ChoixReseau::selectConfigSimple(){
 void ChoixReseau::selectConfigMaison(){
 
     QMessageBox m_Maison;
-    m_Maison.setText("choix du reseau simple");
+    m_Maison.setText("choix du reseau Maison");
     m_Maison.setStandardButtons(QMessageBox::Yes);
     m_Maison.addButton(QMessageBox::No);
     m_Maison.setDefaultButton(QMessageBox::No);
@@ -211,7 +213,7 @@ void ChoixReseau::selectConfigMaison(){
 void ChoixReseau::selectConfigPme(){
 
     QMessageBox m_Pme;
-    m_Pme.setText("choix du reseau simple");
+    m_Pme.setText("choix du reseau Pme");
     m_Pme.setStandardButtons(QMessageBox::Yes);
     m_Pme.addButton(QMessageBox::No);
     m_Pme.setDefaultButton(QMessageBox::No);
@@ -229,7 +231,7 @@ void ChoixReseau::selectConfigPme(){
 void ChoixReseau::selectConfigEntreprise(){
 
     QMessageBox m_Entreprise;
-    m_Entreprise.setText("choix du reseau simple");
+    m_Entreprise.setText("choix du reseau Entreprise");
     m_Entreprise.setStandardButtons(QMessageBox::Yes);
     m_Entreprise.addButton(QMessageBox::No);
     m_Entreprise.setDefaultButton(QMessageBox::No);

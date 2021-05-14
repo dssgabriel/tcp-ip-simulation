@@ -35,7 +35,7 @@ Internet::~Internet() {
  /**
   * @brief Setter pour l'argument de classe m_IpSrc.
   * 
-  * @param 1 IPv4 src : IP de départ souhaité.
+  * @param src IP de départ souhaité.
   * @return void.
   **/
 void Internet::setIpSrc(IPv4 src) {
@@ -54,7 +54,7 @@ IPv4& Internet::getIpSrc() {
  /**
   * @brief Setter pour l'argument de classe m_IpSrc.
   * 
-  * @param dest : IP de destination souhaité.
+  * @param dest IP de destination souhaité.
   * @return void.
   **/
 void Internet::setIpDest(IPv4 dest) {
@@ -72,7 +72,7 @@ IPv4& Internet::getIpDest() {
  /**
   * @brief Setter pour l'argument de classe m_TTL.
   * 
-  * @param ttl : La valeur souhaité du TTL.
+  * @param ttl La valeur souhaité du TTL.
   * @return void.
   **/
 void Internet::setTTL(const std::bitset<8>& ttl) {
@@ -114,7 +114,7 @@ std::bitset<8> &Internet::getProtocoleId() {
   * On converti d'abord chaque champs de la structure IPv4 en chaine de caractère. 
   * Puis nous créeons un bitset de la concaténation de ces chaines de caractère. 
   * 
-  * @param adresse : L'IPv4 que l'on souhaite modifier.
+  * @param adresse L'IPv4 que l'on souhaite modifier.
   * @return Le bitset obtenue après conversion.
   **/
 std::bitset<32> Internet::convertir(const IPv4& adresse) {
@@ -132,9 +132,9 @@ std::bitset<32> Internet::convertir(const IPv4& adresse) {
   * Après désencapsulation, les adresses IP sont contenues dans deux std::bitset<16> ou chaque 8 bits représente un champ de l'IP.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir l'IP.
   * 
-  * @param ip : L'adresse IP a remplir.
-  * @param ipPartBa : Premier bitset contenant les champs a et b de l'IP.
-  * @param ipPartDC : Second bitset contenant les champs c et d de l'IP.
+  * @param ip L'adresse IP a remplir.
+  * @param ipPartBa Premier bitset contenant les champs a et b de l'IP.
+  * @param ipPartDC Second bitset contenant les champs c et d de l'IP.
   **/
 void Internet::convertir(IPv4& ip,
     const std::bitset<16>& ipPartBA, 
@@ -147,11 +147,12 @@ void Internet::convertir(IPv4& ip,
 
  /**
   * @brief Permet de calculer le Checksum.
-  * @param Ne prend aucun parametre.
-  * @return Ne retourne rien.
+  * 
+  * @return void.
   **/
 void Internet::calculerChecksum() {
 
+<<<<<<< HEAD
     // std::bitset<16> IpSrc(m_IpSrc);
     // std::bitset<16> IpDest(m_IpDest);
     // std::bitset<16> TTL(m_TTL.to_ulong());
@@ -162,27 +163,42 @@ void Internet::calculerChecksum() {
     // somme += IpDest.to_ulong();
     // somme += TTL.to_ulong();
     // somme += protocoleId.to_ulong();
+=======
+    std::bitset<16> IpSrc1(concat(m_IpSrc.a, m_IpSrc.b));
+    std::bitset<16> IpSrc2(concat(m_IpSrc.c, m_IpSrc.d));
+    std::bitset<16> IpDest1(concat(m_IpDest.a, m_IpDest.b));
+    std::bitset<16> IpDest2(concat(m_IpDest.c, m_IpDest.d));
+    std::bitset<16> TTL(m_TTL.to_ulong());
+    std::bitset<16> protocoleId(m_ProtocoleId.to_ulong());
+
+    int somme;
+    somme = IpSrc1.to_ulong();
+    somme += IpSrc2.to_ulong();
+    somme += IpDest1.to_ulong();
+    somme += IpDest2.to_ulong();
+    somme += TTL.to_ulong();
+    somme += protocoleId.to_ulong();
+>>>>>>> 7ac6b83227e913e72ad09bfda5f314786d0b240c
     
     // std::bitset<32> sommeBit(somme);
     // std::bitset<16> retenuBit, sommeFinaleBit;
     // diviser(sommeBit, retenuBit, sommeFinaleBit);
 
-    // int retenu, sommeFinale;
-    // retenu = retenuBit.to_ulong();
-    // sommeFinale = sommeFinaleBit.to_ulong();
-    // sommeFinale += retenu;    
+    int retenu = retenuBit.to_ulong();
+    int sommeFinale = sommeFinaleBit.to_ulong();
+    sommeFinale += retenu;    
 
     // m_Checksum = std::bitset<16>(sommeFinale);
 }
 
  /**
   * @brief Permet de verifier si tous les bits du Checksum sont a 1.
-  * @param Ne prend aucun parametre.
-  * @return Ne retourn rien.
+  *
+  * @return void.
   **/
 void Internet::verifierChecksum() {
 
-    if(m_Checksum.all()) {
+    if (m_Checksum.all()) {
       std::cout << "validé" << std::endl;
     }
     else {
@@ -194,7 +210,7 @@ void Internet::verifierChecksum() {
  /**
   * @brief Permet l'encapsulation de la couche Internet.
   * 
-  * @param segment : Resultat de l'encapsulation de la couche Transport.
+  * @param segment Resultat de l'encapsulation de la couche Transport.
   * @return Resultat de l'encapsulation. Contient donc la couche Transport + la couche Internet.
   **/
  std::stack<std::bitset<16>> Internet::encapsuler(std::stack<std::bitset<16>>& segment) {
@@ -211,7 +227,7 @@ void Internet::verifierChecksum() {
  /**
   * @brief Permet la desencapsulation de la couche Internet.
   * 
-  * @param paquet : Resultat de l'encapsulation de la couche Physique.
+  * @param paquet Resultat de l'encapsulation de la couche Physique.
   * @return Resultat de la desencapsulation. Contient donc uniquement la couche Transport.
   **/
  std::stack<std::bitset<16>> Internet::desencapsuler(
@@ -224,6 +240,7 @@ void Internet::verifierChecksum() {
     // Extraction du TTL et du Protocole ID.
     diviser(paquet.top(), m_TTL, m_ProtocoleId);
     paquet.pop();
+<<<<<<< HEAD
 
     // Extraction de l'ip de destination.
     diviser(paquet.top(), m_IpDest.c, m_IpDest.d);
@@ -237,5 +254,11 @@ void Internet::verifierChecksum() {
     diviser(paquet.top(), m_IpSrc.a, m_IpSrc.b);
     paquet.pop();
 
+=======
+    for (size_t i = 0; i < 8; i++) {
+        paquet.pop();
+    }
+    
+>>>>>>> 7ac6b83227e913e72ad09bfda5f314786d0b240c
     return paquet;
 }

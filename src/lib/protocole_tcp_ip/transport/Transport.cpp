@@ -36,7 +36,7 @@ Transport::~Transport() {
 /**
   * @brief Setter de l'attribut de classe m_PortSrc.
   * 
-  * @param src : La valeur du port source souhaité.
+  * @param src La valeur du port source souhaité.
   * @return void.
   **/
 void Transport::setPortSrc(const uint16_t& src) {
@@ -55,7 +55,7 @@ uint16_t &Transport::getPortSrc() {
 /**
   * @brief Setter de l'attribut m_PortDest de la classe Transport
   * 
-  * @param num : La structure contenant le type de fichier que l'on va envoyer.
+  * @param num La structure contenant le type de fichier que l'on va envoyer.
   * @return void.
   **/
 void Transport::setPortDest(TypeFichier num) {
@@ -213,8 +213,8 @@ uint16_t Transport::portAlea() {
 
 /**
   * @brief Permert de claculer le Checksum.
-  * @param Ne Prend aucun parametre.
-  * @return Ne retourne rien.
+  * 
+  * @return void.
   **/
 void Transport::calculerChecksum() {
     std::bitset<16> portSrc(m_PortSrc);
@@ -250,8 +250,8 @@ void Transport::calculerChecksum() {
 
 /**
   * @brief Verifie si tous les bits du Checksum sont a 1.
-  * @param Ne prend aucun parametre.
-  * @return Ne retourne rien.
+  * 
+  * @return void.
   **/
 void Transport::verifierChecksum() {
 
