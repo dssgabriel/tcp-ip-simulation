@@ -152,18 +152,6 @@ void Internet::convertir(IPv4& ip,
   **/
 void Internet::calculerChecksum() {
 
-<<<<<<< HEAD
-    // std::bitset<16> IpSrc(m_IpSrc);
-    // std::bitset<16> IpDest(m_IpDest);
-    // std::bitset<16> TTL(m_TTL.to_ulong());
-    // std::bitset<16> protocoleId(m_protocoleId.to_ulong());
-
-    // int somme;
-    // somme = IpSrc.to_ulong();
-    // somme += IpDest.to_ulong();
-    // somme += TTL.to_ulong();
-    // somme += protocoleId.to_ulong();
-=======
     std::bitset<16> IpSrc1(concat(m_IpSrc.a, m_IpSrc.b));
     std::bitset<16> IpSrc2(concat(m_IpSrc.c, m_IpSrc.d));
     std::bitset<16> IpDest1(concat(m_IpDest.a, m_IpDest.b));
@@ -178,17 +166,16 @@ void Internet::calculerChecksum() {
     somme += IpDest2.to_ulong();
     somme += TTL.to_ulong();
     somme += protocoleId.to_ulong();
->>>>>>> 7ac6b83227e913e72ad09bfda5f314786d0b240c
     
-    // std::bitset<32> sommeBit(somme);
-    // std::bitset<16> retenuBit, sommeFinaleBit;
-    // diviser(sommeBit, retenuBit, sommeFinaleBit);
+    std::bitset<32> sommeBit(somme);
+    std::bitset<16> retenuBit, sommeFinaleBit;
+    diviser(sommeBit, retenuBit, sommeFinaleBit);
 
     int retenu = retenuBit.to_ulong();
     int sommeFinale = sommeFinaleBit.to_ulong();
     sommeFinale += retenu;    
 
-    // m_Checksum = std::bitset<16>(sommeFinale);
+    m_Checksum = std::bitset<16>(sommeFinale);
 }
 
  /**
@@ -233,32 +220,38 @@ void Internet::verifierChecksum() {
  std::stack<std::bitset<16>> Internet::desencapsuler(
    std::stack<std::bitset<16>>& paquet)
 {
-    // Extraction du Checksum.
+    //Extraction du Checksum
     m_Checksum = paquet.top();
     paquet.pop();
 
-    // Extraction du TTL et du Protocole ID.
-    diviser(paquet.top(), m_TTL, m_ProtocoleId);
-    paquet.pop();
-<<<<<<< HEAD
-
-    // Extraction de l'ip de destination.
-    diviser(paquet.top(), m_IpDest.c, m_IpDest.d);
-    paquet.pop();
-    diviser(paquet.top(), m_IpDest.a, m_IpDest.b);
+    //Extraction du TTL et du Protocole ID
+    std::bitset<8> ttl, pId;
+    diviser(paquet.top(), ttl, pId);
+    m_TTL = ttl;
+    m_ProtocoleId = pId;
     paquet.pop();
 
-    // Extraction de l'ip source.
-    diviser(paquet.top(), m_IpSrc.c, m_IpSrc.d);
+    //Extraction de l'ip de destination
+    std::bitset<8> ipDestA, ipDestB, ipDestC, ipDestD;
+    diviser(paquet.top(), ipDestC, ipDestD);
+    m_IpDest.c = ipDestC;
+    m_IpDest.d = ipDestD;
     paquet.pop();
-    diviser(paquet.top(), m_IpSrc.a, m_IpSrc.b);
+    diviser(paquet.top(), ipDestA, ipDestB);
+    m_IpDest.a = ipDestA;
+    m_IpDest.b = ipDestB;
     paquet.pop();
 
-=======
-    for (size_t i = 0; i < 8; i++) {
-        paquet.pop();
-    }
-    
->>>>>>> 7ac6b83227e913e72ad09bfda5f314786d0b240c
+    //Extraction de l'ip source
+    std::bitset<8> ipSrcA, ipSrcB, ipSrcC, ipSrcD;
+    diviser(paquet.top(), ipSrcC, ipSrcD);
+    m_IpSrc.c = ipSrcC;
+    m_IpSrc.d = ipSrcD;
+    paquet.pop();
+    diviser(paquet.top(), ipSrcA, ipSrcB);
+    m_IpSrc.a = ipSrcA;
+    m_IpSrc.b = ipSrcB;
+    paquet.pop();
+
     return paquet;
 }
