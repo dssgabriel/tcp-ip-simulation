@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "../../src/include/Commun.hpp"
 #include "../../src/include/ParamInterface.hpp"
 #include "../../src/lib/gestion_fichiers/Chargement.hpp"
 #include "../../src/lib/gestion_fichiers/Sauvegarde.hpp"
@@ -22,15 +23,6 @@ void test1() {
     Routeur r, r2;
     std::cout << r << std::endl;
     std::cout << r2 << std::endl;
-
-    ParamInterface p;
-    p.m_Destination = pc2.getIp();
-    p.m_Source = pc.getIp();
-    p.m_NbPaquet = 10;
-    p.m_Ssthresh = 128;
-    p.m_TypeFichier = FTP;
-
-    pc.remplirFileDonnees(p, pc2.getMac());
 }
 
 void test2() {
@@ -60,9 +52,39 @@ void test2() {
     std::cout << "serveurM \n" << serveurM;
 }
 
+void test3() {
+    Ordinateur pc, pc2;
+
+    pc.setIp({192, 168, 1, 1});
+    pc.setMac({205, 138, 107, 55, 153, 181});
+    pc2.setIp({192, 168, 1, 2});
+    pc2.setMac({35, 11, 122, 213, 123, 169});
+
+    pc.setVoisin(pc2);
+    pc2.setVoisin(pc);
+
+    std::cout << pc << std::endl;
+    std::cout << pc2 << std::endl;
+
+    ParamInterface p;
+    p.m_Destination = pc2.getIp();
+    p.m_Source = pc.getIp();
+    p.m_NbPaquet = 10;
+    p.m_Ssthresh = 128;
+    p.m_TypeFichier = FTP;
+
+    // std::cout << "remplirFileDonnees\n";
+    pc.remplirFileDonnees(p, pc2.getMac());
+    // std::bitset<16> cwnd = 0;
+    // std::cout << "slowStart\n";
+    // pc.slowStart(cwnd, p.m_Ssthresh);
+}
+
 int main(void) {
+    srand(time(NULL));
     // test1();
-    test2();
+    // test2();
+    test3();
 
     return 0;
 }

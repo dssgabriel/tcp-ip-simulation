@@ -56,116 +56,37 @@ double Ordinateur::getTempsTraitementPaquet(const uint16_t& cle) const {
     }
 }
 
-// Methodes
+// ################ //
+// Methodes externe //
+// ################ //
 std::bitset<16> genererMessage() {
-    srand(time(NULL));
     uint16_t tmp = rand() % 2^16;
     return std::bitset<16> (tmp);
 }
 
-void Ordinateur::remplirFileDonnees(const ParamInterface& config, const MAC& destination) {
-    
-    // Initialisation
-    Transport coucheTrans;
-    Internet coucheInt;
-    Physique couchePhy;
-
-    // Preparation des donnees
-    for (size_t i = 0; i < config.m_NbPaquet; ++i) {
-        // Encapsulation couche Transport
-        coucheTrans.setPortSrc(coucheTrans.portAlea());
-        coucheTrans.setPortDest(config.m_TypeFichier);
-        coucheTrans.setCwnd(std::bitset<16>(0));
-        coucheTrans.setSyn(std::bitset<16>(1));
-        coucheTrans.setAck1(std::bitset<16>(0));
-        coucheTrans.setSeq(std::bitset<32>(i));
-        coucheTrans.setAck2(std::bitset<32>(0));
-        coucheTrans.calculerChecksum(); // <=> setChecksum
-        std::stack<std::bitset<16>> segment = coucheTrans.encapsuler(genererMessage());
-
-        // Encapsulation couche Internet
-        coucheInt.setIpSrc(config.m_Source);
-        coucheInt.setIpDest(config.m_Destination);
-        coucheInt.setTTL(std::bitset<8> (100));
-        coucheInt.setProtocoleId();
-        std::stack<std::bitset<16>> paquet = coucheInt.encapsuler(segment);
-
-        // Encapsulation couche Physique
-        couchePhy.setMacSrc(m_Mac);
-        couchePhy.setMacDest(destination);
-        std::stack<std::bitset<16>> trame = couchePhy.encapsuler(paquet);
-        
-        //
-        m_FileDonnees.push(&trame);
-    }
-
-    // Appel tcp ip ?
-}
-
-void Ordinateur::synchroniser() {
-    // TODO : A faire
-}
-
-void Ordinateur::finDeSession() {
-    // TODO : A faire
-}
-
-void Ordinateur::envoyer() {
-    // Vide la file de donnees.
-    std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
-    // TODO Vérifié ack != 0 ?
-    m_FileDonnees.pop();
-
-    // Trouver la machine voisine.
-    // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
-    Machine* voisine = m_Voisins.front();
-
-    // Traitement de la donnee.
-    traitement(*donneeRecu, voisine->getMac());
-
-    // La machine suivante recois le paquet
-    voisine->setDonnee(donneeRecu);
-    voisine->recevoir();
-}
-
-void Ordinateur::recevoir() {
-    // Si y a tout les ack
-        // return
-    // else
-    envoyer();
-}
-
-std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(std::queue<std::stack<std::bitset<16>>*> queue) {
+std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(
+    std::queue<std::stack<std::bitset<16>>*> queue)
+{
+    std::cout << "Debut convertirQueueDeque\n";
     std::deque<std::stack<std::bitset<16>>> dequeu;
+    std::cout << "dequeu creer\n";
+    afficher(queue);
+
     for (size_t i = 0; i < queue.size(); i++) {
+        std::cout << "push_back\n";
+        std::cout << "queue.front() = " << queue.front();
+        afficher(queue);
         dequeu.push_back(*queue.front());
+        std::cout << "pop\n";
         queue.pop();
     }
 
+    std::cout << "Fin convertirQueueDeque\n";
     return dequeu;   
 }
 
-void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
-    // Recuperation du paquet.
-    Physique couchePhy;
-    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
-    
-    // Recuperation adresse MAC destination.
-    MAC ancienneDest = couchePhy.getMacDest();
-
-    // Changement adresse MAC.
-    // La destination devient la source.
-    // Ajout nouvelle destination.
-    couchePhy.setMacSrc(ancienneDest);
-    couchePhy.setMacDest(nouvelleDest);
-
-    // Encapsulation.
-    trame = couchePhy.encapsuler(paquet);
-}
-
-
 bool tripleACK(std::queue<std::stack<std::bitset<16>>*> donnees,
-                std::bitset<32>& ackTriplé)
+                std::bitset<32>& ackTriple)
 {
     // Initialisation des couches.
     Physique couchePhy;
@@ -177,7 +98,7 @@ bool tripleACK(std::queue<std::stack<std::bitset<16>>*> donnees,
     donneesDeque = convertirQueueDeque(donnees);
 
     // On regarde un ack.
-    for (size_t i = 0; i < int(donneesDeque.size()) - 2; ++i) {
+    for (int i = 0; i < int(donneesDeque.size()) - 2; ++i) {
         // Initialisation des couches.
         Physique couchePhy2;
         Internet coucheInt2;
@@ -189,7 +110,7 @@ bool tripleACK(std::queue<std::stack<std::bitset<16>>*> donnees,
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
         // On regarde un deuxieme ack.
-        for (size_t j = i + 1; j < int(donneesDeque.size()) - 1; ++j) {
+        for (int j = i + 1; j < int(donneesDeque.size()) - 1; ++j) {
             // Initialisation des couches.
             Physique couchePhy3;
             Internet coucheInt3;
@@ -202,7 +123,7 @@ bool tripleACK(std::queue<std::stack<std::bitset<16>>*> donnees,
             
             // 2 ack.
             if (coucheTrans.getAck2() == coucheTrans2.getAck2()) {
-                for (size_t k = j + 1; k < int(donneesDeque.size()); ++k) {
+                for (int k = j + 1; k < int(donneesDeque.size()); ++k) {
                     // On desencapsule.
                     std::stack<std::bitset<16>> paquet3 = couchePhy3.desencapsuler(donneesDeque[k]);
                     std::stack<std::bitset<16>> segment3 = coucheInt3.desencapsuler(paquet3);
@@ -211,7 +132,7 @@ bool tripleACK(std::queue<std::stack<std::bitset<16>>*> donnees,
                     // Si le premier ack est equivalent au troisieme,
                     // nous avons un triple ack.
                     if (coucheTrans.getAck2() == coucheTrans3.getAck2()) {
-                        ackTriplé = coucheTrans.getAck2();
+                        ackTriple = coucheTrans.getAck2();
 
                         // On re encapsule.
                         segment3 = coucheTrans3.encapsuler(donnee3);
@@ -272,7 +193,6 @@ int calculerNombreAck(std::deque<std::stack<std::bitset<16>>> donneesDeque) {
 }
 
 bool timeout(std::stack<std::bitset<16>> paquet) {
-
     // On desencapsule.
     Internet coucheInt;
     std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
@@ -291,66 +211,39 @@ bool timeout(std::stack<std::bitset<16>> paquet) {
     return false;
 }
 
-void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd) {
-    int compteur = 0;
-
-    // Convertion de la file de donnees en double file.
-    std::deque<std::stack<std::bitset<16>>> donneesDeque;
-    donneesDeque = convertirQueueDeque(m_FileDonnees);
-    int nombreAck = calculerNombreAck(donneesDeque);
-
+bool estDuplique(std::deque<std::stack<std::bitset<16>>> donneesDeque,
+        const std::bitset<32>& ack)
+{
+    // Initialisation des couches.
     Physique couchePhy;
-    uint64_t cwndConvert = cwnd.to_ulong();
-    std::bitset<32> ackTriple;
+    Internet coucheInt;
+    Transport coucheTrans;
 
-    //
-    if (tripleACK(m_FileDonnees, ackTriple)) {
-        int ackTripleConvert = int(ackTriple.to_ulong());
-        fastRetransmit(std::bitset<32> (ackTripleConvert - 1), cwnd);
-    }
-    
-    //
-    for (int i = 0; i < nombreAck; ++i) {
-        cwndConvert += 1;
-        cwnd = std::bitset<16> (cwndConvert);
-
-        //
+    // On regarde un ack.
+    for (int i = 0; i < int(donneesDeque.size()) - 2; ++i) {
+        // On desencapsule.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i]);
-        if (timeout(paquet)) {
-            uint16_t ssthresh = cwndConvert / 2;
-            cwndConvert = 1;
-            cwnd = std::bitset<16> (cwndConvert);
-            donneesDeque[i] = couchePhy.encapsuler(paquet);
-            slowStart(cwnd, ssthresh);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        if (coucheTrans.getAck2() == ack) {
+
+            // On re encapusle.
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneesDeque[i] = couchePhy.encapsuler(paquet);            
+
+            return true;
         } else {
-            donneesDeque[i] = couchePhy.encapsuler(paquet);
+
+            // On re encapusle.
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneesDeque[i] = couchePhy.encapsuler(paquet);            
         }
     }
-}
 
-void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
-    
-    // Convertion de la file de donnees en double file.
-    std::deque<std::stack<std::bitset<16>>> donneesDeque;
-    donneesDeque = convertirQueueDeque(m_FileDonnees);
-    int nombreAck = calculerNombreAck(donneesDeque);
-
-    //
-    uint64_t cwndConvert = cwnd.to_ulong();
-    if(cwndConvert < ssthresh1) {
-        for(int i = 0; i < nombreAck; ++i) {
-            if(cwndConvert >= ssthresh1) {
-                congestionAvoidance(cwnd);
-            }
-            else {
-                cwndConvert *= 2;
-                cwnd = std::bitset<16> (cwndConvert);
-            }
-        }
-    }
-    else {
-        congestionAvoidance(cwnd);
-    }
+    return false;
 }
 
 std::stack<std::bitset<16>> trouverDonnee(
@@ -383,48 +276,280 @@ std::stack<std::bitset<16>> trouverDonnee(
 
             return donneesDeque[i];
         }
+    }
 
+    std::cout << "ERREUR : Dans la fonction 'trouverDonnee' : Aucune donnée\n";
+    exit(EXIT_FAILURE); 
+}
+
+// ######## //
+// Methodes //
+// ######## //
+void Ordinateur::remplirFileDonnees(
+    const ParamInterface& config, const MAC& destination) 
+{
+    // Preparation des donnees
+    for (size_t i = 0; i < 1; ++i) {
+        // Initialisation
+        Transport coucheTrans;
+        Internet coucheInt;
+        Physique couchePhy;
+
+        // Encapsulation couche Transport
+        coucheTrans.setPortSrc(coucheTrans.portAlea());
+        coucheTrans.setPortDest(config.m_TypeFichier);
+        coucheTrans.setCwnd(std::bitset<16>(0));
+        coucheTrans.setSyn(std::bitset<16>(1));
+        coucheTrans.setAck1(std::bitset<16>(0));
+        coucheTrans.setSeq(std::bitset<32>(i+1));
+        coucheTrans.setAck2(std::bitset<32>(0));
+        coucheTrans.calculerChecksum(); // <=> setChecksum
+        std::stack<std::bitset<16>> segment;
+        segment = coucheTrans.encapsuler(genererMessage());
+        std::cout << coucheTrans;
+
+        // Encapsulation couche Internet
+        coucheInt.setIpSrc(config.m_Source);
+        coucheInt.setIpDest(config.m_Destination);
+        coucheInt.setTTL(std::bitset<8> (100));
+        coucheInt.setProtocoleId();
+        coucheInt.calculerChecksum();
+        std::stack<std::bitset<16>> paquet;
+        paquet = coucheInt.encapsuler(segment);
+        std::cout << coucheInt;
+
+        // Encapsulation couche Physique
+        couchePhy.setMacSrc(m_Mac);
+        couchePhy.setMacDest(destination);
+        std::stack<std::bitset<16>> trame;
+        trame = couchePhy.encapsuler(paquet);
+        std::cout << couchePhy;
+        
+        //
+        setDonnee(&trame);
+    }
+
+    afficher(m_FileDonnees);
+}
+
+void Ordinateur::synchroniser() {
+    // TODO : A faire
+}
+
+void Ordinateur::finDeSession() {
+    // TODO : A faire
+}
+
+void Ordinateur::envoyer(const uint32_t cwnd) {
+    std::cout << "Debut envoie\n";
+    // Trouver la machine voisine.
+    // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
+    Machine* voisine = m_Voisins.front();
+
+    //
+    for (int i = 0; i < int(cwnd); ++i) {
+        // Vide la file de donnees.
+        std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
+        m_FileDonnees.pop();
+        
+        // Initialisation des couches.
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(*donneeRecu);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        // Traitement de la donnee.
+        traitement(*donneeRecu, voisine->getMac());
+
+        // On re encapsule.
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        *donneeRecu = couchePhy.encapsuler(paquet);
+
+        // La machine suivante recois le paquet
+        voisine->setDonnee(donneeRecu);
+    }
+
+    //
+    std::cout << "Recevoir\n";
+    voisine->recevoir();
+}
+
+void Ordinateur::recevoir() {
+    std::cout << "Debut recevoir\n";
+    //
+    std::deque<std::stack<std::bitset<16>>> donneesDeque;
+    donneesDeque = convertirQueueDeque(m_FileDonnees);
+
+    //
+    for (int i = 1; i < int(donneesDeque.size()); ++i) {
+        //
+        Physique couchePhy, couchePhy2;
+        Internet coucheInt, coucheInt2;
+        Transport coucheTrans, coucheTrans2;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet2 = couchePhy2.desencapsuler(donneesDeque[i]);
+        std::stack<std::bitset<16>> segment2 = coucheInt2.desencapsuler(paquet2);
+        std::bitset<16> donnee2 = coucheTrans2.desencapsuler(segment2);
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i-1]);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        //
+        if (coucheTrans.getSeq().to_ulong() + 1 != coucheTrans2.getSeq().to_ulong()) {
+            std::stack<std::bitset<16>> perdu;
+            std::bitset<32> paquetPerdu = coucheTrans2.getSeq();
+            std::bitset<16> paquetPerduGauche, paquetPerduDroit;
+            diviser(paquetPerdu, paquetPerduGauche, paquetPerduDroit);
+            perdu.push(paquetPerduGauche);
+            perdu.push(paquetPerduDroit);
+            setDonnee(&perdu);
+        }
+
+        // On re encapusle.
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneesDeque[i-1] = couchePhy.encapsuler(paquet);
+
+        segment2 = coucheTrans2.encapsuler(donnee2);
+        paquet2 = coucheInt2.encapsuler(segment2);
+        donneesDeque[i] = couchePhy2.encapsuler(paquet2);
+    }
+
+    // donneesDeque.clear();
+}
+
+void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
+    std::cout << "Debut traitement\n";
+    // Recuperation du paquet.
+    Physique couchePhy;
+    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
+    
+    // Recuperation adresse MAC destination.
+    MAC ancienneDest = couchePhy.getMacDest();
+
+    // Changement adresse MAC.
+    // La destination devient la source.
+    // Ajout nouvelle destination.
+    couchePhy.setMacSrc(ancienneDest);
+    couchePhy.setMacDest(nouvelleDest);
+
+    // Encapsulation.
+    trame = couchePhy.encapsuler(paquet);
+}
+
+void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
+    std::cout << "Debut slowStart\n";
+    // Convertion de la file de donnees en double file.
+    std::deque<std::stack<std::bitset<16>>> donneesDeque;
+    donneesDeque = convertirQueueDeque(m_FileDonnees);
+
+    //
+    uint64_t cwndConvert = cwnd.to_ulong();
+    if(cwndConvert < ssthresh1) {
+        std::cout << cwndConvert << " < " << ssthresh1 << std::endl;
+        for(int i = 0; i < int(donneesDeque.size()); ++i) {
+            //
+            Physique couchePhy;
+            Internet coucheInt;
+            Transport coucheTrans;
+
+            // On desencapsule.
+            std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i]);
+            std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+            std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+            
+            if(!estDuplique(donneesDeque ,coucheTrans.getAck2())) {
+                if(cwndConvert >= ssthresh1) {
+                    std::cout << cwndConvert << " >= " << ssthresh1 << std::endl;
+                    std::cout << "On entre dans congestionAvoidance(" << cwnd << ")\n";
+                    
+                    //
+                    coucheTrans.setCwnd(cwnd);
+
+                    // On re encapusle.
+                    segment = coucheTrans.encapsuler(donnee);
+                    paquet = coucheInt.encapsuler(segment);
+                    donneesDeque[i] = couchePhy.encapsuler(paquet);
+
+                    //
+                    congestionAvoidance(cwnd);
+                    return;
+                }
+                else {
+                    cwndConvert *= 2;
+                    std::cout << "cwndConvert *= 2, cwndConvert = " << cwndConvert << std::endl;
+                    cwnd = std::bitset<16> (cwndConvert);
+                }
+            }
+            //
+            coucheTrans.setCwnd(cwnd);
+
+            // On re encapusle.
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneesDeque[i] = couchePhy.encapsuler(paquet);
+        }
+        //
+        std::cout << "On envoie\n";
+        envoyer(cwndConvert);
+    }
+    else {
+        std::cout << "On entre dans congestionAvoidance2(" << cwnd << ")\n";
+        congestionAvoidance(cwnd);
+        return;
+    }
+    std::cout << "Fin slowStart\n";
+}
+
+void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd) {
+    // Convertion de la file de donnees en double file.
+    std::deque<std::stack<std::bitset<16>>> donneesDeque;
+    donneesDeque = convertirQueueDeque(m_FileDonnees);
+    int nombreAck = calculerNombreAck(donneesDeque);
+
+    Physique couchePhy;
+    uint64_t cwndConvert = cwnd.to_ulong();
+    std::bitset<32> ackTriple;
+
+    //
+    if (tripleACK(m_FileDonnees, ackTriple)) {
+        int ackTripleConvert = int(ackTriple.to_ulong());
+        fastRetransmit(std::bitset<32> (ackTripleConvert - 1), cwnd);
+        return;
+    }
+    
+    //
+    for (int i = 0; i < nombreAck; ++i) {
+        cwndConvert += 1;
+        cwnd = std::bitset<16> (cwndConvert);
+
+        //
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i]);
+        if (timeout(paquet)) {
+            uint16_t ssthresh = cwndConvert / 2;
+            cwndConvert = 1;
+            cwnd = std::bitset<16> (cwndConvert);
+            donneesDeque[i] = couchePhy.encapsuler(paquet);
+            slowStart(cwnd, ssthresh);
+            return;
+        } else {
+            donneesDeque[i] = couchePhy.encapsuler(paquet);
+        }
     }
 }
 
 void Ordinateur::fastRetransmit(const std::bitset<32>& seq, std::bitset<16>& cwnd) {
-    setDonnee(&trouverDonnee(m_FileDonnees, seq));
+    std::stack<std::bitset<16>> s = trouverDonnee(m_FileDonnees, seq);
+    setDonnee(&s);
     fastRecovery(cwnd);
-}
-
-bool estDupliqué(std::deque<std::stack<std::bitset<16>>> donneesDeque,
-        const std::bitset<32>& ack)
-{
-    // Initialisation des couches.
-    Physique couchePhy;
-    Internet coucheInt;
-    Transport coucheTrans;
-
-    // On regarde un ack.
-    for (size_t i = 0; i < int(donneesDeque.size()) - 2; ++i) {
-        // On desencapsule.
-        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i]);
-        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
-        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
-
-        if (coucheTrans.getAck2() == ack) {
-
-            // On re encapusle.
-            segment = coucheTrans.encapsuler(donnee);
-            paquet = coucheInt.encapsuler(segment);
-            donneesDeque[i] = couchePhy.encapsuler(paquet);            
-
-            return true;
-        } else {
-
-            // On re encapusle.
-            segment = coucheTrans.encapsuler(donnee);
-            paquet = coucheInt.encapsuler(segment);
-            donneesDeque[i] = couchePhy.encapsuler(paquet);            
-        }
-    }
-
-    return false;
 }
 
 void Ordinateur::fastRecovery(std::bitset<16>& cwnd) {
@@ -454,7 +579,7 @@ void Ordinateur::fastRecovery(std::bitset<16>& cwnd) {
         if (coucheTrans.getAck2() == 0) {
             continue;
         }
-        if (estDupliqué(donneesDeque, coucheTrans.getAck2())) {
+        if (estDuplique(donneesDeque, coucheTrans.getAck2())) {
             cwndConvert += 1;
             cwnd = std::bitset<16>(cwndConvert);
         } else {
@@ -467,6 +592,7 @@ void Ordinateur::fastRecovery(std::bitset<16>& cwnd) {
             donneesDeque[i] = couchePhy.encapsuler(paquet); 
 
             congestionAvoidance(cwnd);
+            return;
         }
     }
 }
