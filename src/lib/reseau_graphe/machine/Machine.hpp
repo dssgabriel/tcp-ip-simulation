@@ -61,7 +61,7 @@ class Machine {
         void setVoisin(Machine& voisin);
         Machine* getVoisin(MAC adresseVoisin);
 
-        void setDonnee(std::stack<std::bitset<16>>* donnee);
+        void setDonnee(std::stack<std::bitset<16>>* trame);
         std::stack<std::bitset<16>>* suppDonnee();
 
         const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
