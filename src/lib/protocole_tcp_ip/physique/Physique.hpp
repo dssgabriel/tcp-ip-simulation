@@ -35,11 +35,11 @@ class Physique {
         ~Physique();
        
         // Getters & setters
-        MAC getMacSrc();
         void setMacSrc(MAC src);
+        const MAC getMacSrc() const;
         
-        MAC getMacDest();
         void setMacDest(MAC dest);
+        const MAC getMacDest() const;
         
         // Methodes
         MAC convertir(
@@ -56,6 +56,12 @@ class Physique {
 
         std::stack<std::bitset<16>> desencapsuler(
             std::stack<std::bitset<16>>& trame
+        );
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const Physique& couchePhy
         );
 };
 

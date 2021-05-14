@@ -47,7 +47,7 @@ void Internet::setIpSrc(IPv4 src) {
   * 
   * @return Référence vers l'attribut de classe m_IpSrc.
   **/
-IPv4& Internet::getIpSrc() {
+const IPv4& Internet::getIpSrc() const {
     return m_IpSrc;
 }
 
@@ -65,7 +65,7 @@ void Internet::setIpDest(IPv4 dest) {
   * 
   * @return Référence vers l'argument de classe m_IpDest.
   **/
-IPv4& Internet::getIpDest() {
+const IPv4& Internet::getIpDest() const {
     return m_IpDest;
 }
 
@@ -84,7 +84,7 @@ void Internet::setTTL(const std::bitset<8>& ttl) {
   * 
   * @return La valeur du TTL.
   **/
-std::bitset<8> &Internet::getTTL() {
+const std::bitset<8>& Internet::getTTL() const {
     return m_TTL;
 }
 
@@ -104,8 +104,12 @@ void Internet::setProtocoleId() {
   * 
   * @return La valeur de l'identifiant du protocole. 
   **/
-std::bitset<8> &Internet::getProtocoleId() {
+const std::bitset<8>& Internet::getProtocoleId() const {
     return m_ProtocoleId;
+}
+
+const std::bitset<16>& Internet::getChecksum() const {
+    return m_Checksum;
 }
 
  /**
@@ -201,12 +205,12 @@ void Internet::verifierChecksum() {
   * @return Resultat de l'encapsulation. Contient donc la couche Transport + la couche Internet.
   **/
  std::stack<std::bitset<16>> Internet::encapsuler(std::stack<std::bitset<16>>& segment) {
-    segment.push(concat(m_IpSrc.a, m_IpSrc.b));
-    segment.push(concat(m_IpSrc.c, m_IpSrc.d));
-    segment.push(concat(m_IpDest.a, m_IpDest.b));
-    segment.push(concat(m_IpDest.c, m_IpDest.d));
-    segment.push(concat(m_TTL, m_ProtocoleId));
-    segment.push(m_Checksum);
+    segment.emplace(concat(m_IpSrc.a, m_IpSrc.b));
+    segment.emplace(concat(m_IpSrc.c, m_IpSrc.d));
+    segment.emplace(concat(m_IpDest.a, m_IpDest.b));
+    segment.emplace(concat(m_IpDest.c, m_IpDest.d));
+    segment.emplace(concat(m_TTL, m_ProtocoleId));
+    segment.emplace(m_Checksum);
 
     return segment;
  }
@@ -254,4 +258,17 @@ void Internet::verifierChecksum() {
     paquet.pop();
 
     return paquet;
+}
+
+std::ostream& operator<<(std::ostream& flux, const Internet& coucheInt) {
+    flux << "m_IpSrc : " << coucheInt.getIpSrc() << std::endl;
+    flux << "m_IpDest : " << coucheInt.getIpDest() << std::endl;
+    flux << "m_TTL : " << coucheInt.getTTL();
+    flux << ", " << coucheInt.getTTL().to_ulong() << std::endl;
+    flux << "m_ProtocoleId : " << coucheInt.getProtocoleId();
+    flux << ", " << coucheInt.getProtocoleId().to_ulong() << std::endl;
+    flux << "m_Checksum : " << coucheInt.getChecksum();
+    flux << ", " << coucheInt.getChecksum().to_ulong() << std::endl;
+
+    return flux;
 }

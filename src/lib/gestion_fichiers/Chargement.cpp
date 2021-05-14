@@ -38,7 +38,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         else if(machineJ["type"] == "Commutateur") {
             m = new Commutateur();
 
-            // TODO : Information supplementaire pour un routeur.
+            // TODO : Information supplementaire pour un commutateur.
         }
         else {
             std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Type de machine inconnu\n.";

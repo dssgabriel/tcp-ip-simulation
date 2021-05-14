@@ -13,14 +13,12 @@
 
 /**
   * @brief Constructeur de la classe Transport.
- * 
+  * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
   * 
   * @return NULL. 
   **/
-Transport::Transport() {
-	
-}
+Transport::Transport() {}
 
 /**
   * @brief Destucteur de la classe Transport.
@@ -29,9 +27,7 @@ Transport::Transport() {
   * 
   * @return NULL.
   **/
-Transport::~Transport() {
-
-}
+Transport::~Transport() {}
 
 /**
   * @brief Setter de l'attribut de classe m_PortSrc.
@@ -48,7 +44,7 @@ void Transport::setPortSrc(const uint16_t& src) {
   * 
   * @return La valeur de l'attribut m_PortSrc. 
   **/
-uint16_t &Transport::getPortSrc() {
+const uint16_t &Transport::getPortSrc() const {
     return m_PortSrc;
 }
 
@@ -82,7 +78,7 @@ void Transport::setPortDest(TypeFichier num) {
   *  
   * @return La valeur de m_PortDest.
   **/
-uint16_t &Transport::getPortDest() {
+const uint16_t &Transport::getPortDest() const {
     return m_PortDest;
 }
 
@@ -101,7 +97,7 @@ void Transport::setCwnd(const std::bitset<16>& cwnd) {
   * 
   * @return La valeur du cwnd.
   **/
-std::bitset<16> &Transport::getCwnd() {
+const std::bitset<16> &Transport::getCwnd() const {
     return m_Cwnd;
 }
 
@@ -120,7 +116,7 @@ void Transport::setChecksum(const std::bitset<16>& checksum) {
   *
   * @return La valeur du checksum.
   **/
-std::bitset<16>& Transport::getChecksum() {
+const std::bitset<16>& Transport::getChecksum() const {
     return m_Checksum;
 }
 
@@ -139,7 +135,7 @@ void Transport::setSyn(const std::bitset<16>& syn) {
   * 
   * @return La valeur de m_Syn. 
   **/
-std::bitset<16> &Transport::getSyn() {
+const std::bitset<16> &Transport::getSyn() const {
     return m_Syn;
 }
 
@@ -158,7 +154,7 @@ void Transport::setAck1(const std::bitset<16>& ack1) {
   * 
   * @return La valeur de m_Ack1.
   **/
-std::bitset<16> &Transport::getAck1() {
+const std::bitset<16> &Transport::getAck1() const {
     return m_Ack1;
 }
 
@@ -177,7 +173,7 @@ void Transport::setSeq(const std::bitset<32>& numSeq) {
   * 
   * @return La valeur de l'attribut m_Seq. 
   **/
-std::bitset<32>& Transport::getSeq() {
+const std::bitset<32>& Transport::getSeq() const {
     return m_Seq;
 }
 
@@ -196,7 +192,7 @@ void Transport::setAck2(const std::bitset<32>& ack2) {
   * 
   * @return La valeur de m_Ack2. 
   **/
-std::bitset<32> &Transport::getAck2() {
+const std::bitset<32> &Transport::getAck2() const {
     return m_Ack2;
 }
 
@@ -206,9 +202,7 @@ std::bitset<32> &Transport::getAck2() {
   * @return Retourne le nombre aléatoire produit. 
   **/
 uint16_t Transport::portAlea() {
-	srand(time(NULL));
-	uint16_t tmp = rand()%65535+1032;
-	return tmp;
+	return rand()%65535+1032;
 }
 
 /**
@@ -270,24 +264,24 @@ void Transport::verifierChecksum() {
   **/
 std::stack<std::bitset<16>> Transport::encapsuler(std::bitset<16> donnee) {
     std::stack<std::bitset<16>> segment;
-    segment.push(donnee);
-    segment.push(std::bitset<16>(m_PortSrc));
-    segment.push(std::bitset<16>(m_PortDest));
-    segment.push(m_Cwnd);
-    segment.push(m_Checksum);
-    segment.push(m_Syn);
-    segment.push(m_Ack1);
+    segment.emplace(donnee);
+    segment.emplace(std::bitset<16>(m_PortSrc));
+    segment.emplace(std::bitset<16>(m_PortDest));
+    segment.emplace(m_Cwnd);
+    segment.emplace(m_Checksum);
+    segment.emplace(m_Syn);
+    segment.emplace(m_Ack1);
 
-    // On divise m_Seq en deux bitset de 16bits pour les push dans la pile.
+    // On divise m_Seq en deux bitset de 16bits pour les emplace dans la pile.
     std::bitset<16> seqGauche, seqDroite;
     diviser(m_Seq, seqGauche, seqDroite);
-    segment.push(seqGauche);
-    segment.push(seqDroite);
+    segment.emplace(seqGauche);
+    segment.emplace(seqDroite);
 
     std::bitset<16> ack2Gauche, ack2Droite;
     diviser(m_Ack2, ack2Gauche, ack2Droite);
-    segment.push(ack2Gauche);
-    segment.push(ack2Droite);
+    segment.emplace(ack2Gauche);
+    segment.emplace(ack2Droite);
 
     return segment;
 }
@@ -330,4 +324,23 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     segment.pop();
 
     return std::bitset<16>(segment.top());
+}
+
+std::ostream& operator<<(std::ostream& flux, const Transport& coucheTrans) {
+    flux << "m_PortSrc : " << coucheTrans.getPortSrc() << std::endl;
+    flux << "m_PortDest : " << coucheTrans.getPortDest() << std::endl;
+    flux << "m_Cwnd : " << coucheTrans.getCwnd();
+    flux << ", " << coucheTrans.getCwnd().to_ulong() << std::endl;
+    flux << "m_Checksum : " << coucheTrans.getChecksum();
+    flux << ", " << coucheTrans.getChecksum().to_ulong() << std::endl;
+    flux << "m_Syn : " << coucheTrans.getSyn();
+    flux << ", " << coucheTrans.getSyn().to_ulong() << std::endl;
+    flux << "m_Ack1 : " << coucheTrans.getAck1();
+    flux << ", " << coucheTrans.getAck1().to_ulong() << std::endl;
+    flux << "m_Seq : " << coucheTrans.getSeq();
+    flux << ", " << coucheTrans.getSeq().to_ulong() << std::endl;
+    flux << "m_Ack2 : " << coucheTrans.getAck2();
+    flux << ", " << coucheTrans.getAck2().to_ulong() << std::endl;
+
+    return flux;
 }

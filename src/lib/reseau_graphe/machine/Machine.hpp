@@ -9,6 +9,7 @@
 #include "../../../include/MAC.hpp"
 #include "../../../include/IPv4.hpp"
 #include "../../horloge/Horloge.hpp"
+#include "../../../include/Commun.hpp"
 #include "../../protocole_tcp_ip/internet/Internet.hpp"
 #include "../../protocole_tcp_ip/physique/Physique.hpp"
 
@@ -60,20 +61,21 @@ class Machine {
         void setVoisin(Machine& voisin);
         Machine* getVoisin(MAC adresseVoisin);
 
-        void setDonnee(std::stack<std::bitset<16>>* donnee);
+        void setDonnee(std::stack<std::bitset<16>>* trame);
         std::stack<std::bitset<16>>* suppDonnee();
 
         const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
+
+        // Methodes
+        virtual void recevoir() {};
+
+        // NE PAS NOMMER LES VARIABLES.
+        virtual void envoyer(const uint32_t) {};
+        virtual void traitement(std::stack<std::bitset<16>>&, MAC) {};
 
         // Overloading
         friend std::ostream& operator<<(
             std::ostream& flux, 
             const Machine& machine
         );
-
-        // Methodes
-        virtual void envoyer() {};
-        virtual void recevoir() {};
-        // NE PAS NOMMER LES VARIABLES.
-        virtual void traitement(std::stack<std::bitset<16>>&, MAC) {};
 };
