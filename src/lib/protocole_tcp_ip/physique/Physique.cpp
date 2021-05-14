@@ -46,7 +46,7 @@ void Physique::setMacSrc(MAC src) {
   *
   * @return La valeur de l'adresse MAC source.
   **/
-MAC Physique::getMacSrc() {
+const MAC Physique::getMacSrc() const {
     return m_SrcMac;
 }
 
@@ -65,7 +65,7 @@ void Physique::setMacDest(MAC dest) {
   * 
   * @return La valeur de l'adresse MAC de destination.
   **/
-MAC Physique::getMacDest() {
+const MAC Physique::getMacDest() const {
     return m_DestMac;
 }
 
@@ -131,12 +131,12 @@ MAC Physique::convertir(const std::bitset<16>& adrPartBA,
   * @return Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
   **/
  std::stack<std::bitset<16>> Physique::encapsuler(std::stack<std::bitset<16>>& paquet) {
-    paquet.push(concat(m_SrcMac.a, m_SrcMac.b));
-    paquet.push(concat(m_SrcMac.c, m_SrcMac.d));
-    paquet.push(concat(m_SrcMac.e, m_SrcMac.f));
-    paquet.push(concat(m_DestMac.a, m_DestMac.b));
-    paquet.push(concat(m_DestMac.c, m_DestMac.d));
-    paquet.push(concat(m_DestMac.e, m_DestMac.f));
+    paquet.emplace(concat(m_SrcMac.a, m_SrcMac.b));
+    paquet.emplace(concat(m_SrcMac.c, m_SrcMac.d));
+    paquet.emplace(concat(m_SrcMac.e, m_SrcMac.f));
+    paquet.emplace(concat(m_DestMac.a, m_DestMac.b));
+    paquet.emplace(concat(m_DestMac.c, m_DestMac.d));
+    paquet.emplace(concat(m_DestMac.e, m_DestMac.f));
 
     return paquet;
  }
@@ -167,4 +167,11 @@ std::stack<std::bitset<16>> Physique::desencapsuler(
     trame.pop(); 
     
     return trame;
+}
+
+std::ostream& operator<<(std::ostream& flux, const Physique& couchePhy) {
+    flux << "m_SrcMac : " << couchePhy.getMacSrc() << std::endl;
+    flux << "m_DestMac : " << couchePhy.getMacDest() << std::endl;
+
+    return flux;
 }

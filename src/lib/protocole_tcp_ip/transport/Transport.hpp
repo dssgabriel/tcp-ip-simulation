@@ -43,37 +43,43 @@ class Transport {
     
         // Setters & getters
         void setPortSrc(const uint16_t & src);
-        uint16_t & getPortSrc();
+        const uint16_t & getPortSrc() const;
 
         void setPortDest(TypeFichier num);
-        uint16_t & getPortDest();
+        const uint16_t & getPortDest() const;
         
         void setCwnd(const std::bitset<16>& cwnd);
-        std::bitset<16>& getCwnd();
+        const std::bitset<16>& getCwnd() const;
         
         void setChecksum(const std::bitset<16>& checksum);
-        std::bitset<16>& getChecksum();
+        const std::bitset<16>& getChecksum() const;
         
         void setSyn(const std::bitset<16>& syn);
-        std::bitset<16>& getSyn();
+        const std::bitset<16>& getSyn() const;
         
         void setAck1(const std::bitset<16>& ack1);
-        std::bitset<16>& getAck1();
+        const std::bitset<16>& getAck1() const;
         
         void setSeq(const std::bitset<32>& numSeq);
-        std::bitset<32>& getSeq();
+        const std::bitset<32>& getSeq() const;
         
-        void setAck2(const std::bitset<32>& ack2) ;
-        std::bitset<32>& getAck2();
+        void setAck2(const std::bitset<32>& ack2);
+        const std::bitset<32>& getAck2() const;
 
         // Methodes
-        uint16_t portAlea() ;
+        uint16_t portAlea();
 
         void calculerChecksum();
         void verifierChecksum();
         
         std::stack<std::bitset<16>> encapsuler(std::bitset<16> donnee);
         std::bitset<16> desencapsuler(std::stack<std::bitset<16>>& segment);
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const Transport& coucheTrans
+        );
 };
 
 #endif
