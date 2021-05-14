@@ -212,17 +212,6 @@ uint16_t Transport::portAlea() {
 }
 
 /**
-  * @brief Permet de convertir des uint16_t en bitset de 16 bits.
-  * 
-  * @param val L'entier sur 16 bits que l'on souhaite convertir.
-  * @return Le bitset de 16 bits produit.
-  **/
-std::bitset<16> Transport::convertir(const uint16_t& val) {  
-	std::bitset<16> tmp(val);
-	return tmp;
-}
-
-/**
   * @brief Permert de claculer le Checksum.
   * 
   * @return void.
@@ -279,10 +268,11 @@ void Transport::verifierChecksum() {
   * 
   * @return Une pile contenant toute les attributs de la classe Transport. 
   **/
-std::stack<std::bitset<16>> Transport::encapsuler() {
+std::stack<std::bitset<16>> Transport::encapsuler(std::bitset<16> donnee) {
     std::stack<std::bitset<16>> segment;
-    segment.push(convertir(m_PortSrc));
-    segment.push(convertir(m_PortDest));
+    segment.push(donnee);
+    segment.push(std::bitset<16>(m_PortSrc));
+    segment.push(std::bitset<16>(m_PortDest));
     segment.push(m_Cwnd);
     segment.push(m_Checksum);
     segment.push(m_Syn);
@@ -309,7 +299,6 @@ std::stack<std::bitset<16>> Transport::encapsuler() {
   * @return Un bitset de 16 qui est la données a transmettre. 
   **/
 std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
-    
     //
     std::bitset<16> ack2Droite = segment.top();
     segment.pop();

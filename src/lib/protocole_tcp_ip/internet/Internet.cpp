@@ -220,12 +220,38 @@ void Internet::verifierChecksum() {
  std::stack<std::bitset<16>> Internet::desencapsuler(
    std::stack<std::bitset<16>>& paquet)
 {
+    //Extraction du Checksum
     m_Checksum = paquet.top();
     paquet.pop();
+
+    //Extraction du TTL et du Protocole ID
+    std::bitset<8> ttl, pId;
+    diviser(paquet.top(), ttl, pId);
+    m_TTL = ttl;
+    m_ProtocoleId = pId;
     paquet.pop();
-    for (size_t i = 0; i < 8; i++) {
-        paquet.pop();
-    }
-    
+
+    //Extraction de l'ip de destination
+    std::bitset<8> ipDestA, ipDestB, ipDestC, ipDestD;
+    diviser(paquet.top(), ipDestC, ipDestD);
+    m_IpDest.c = ipDestC;
+    m_IpDest.d = ipDestD;
+    paquet.pop();
+    diviser(paquet.top(), ipDestA, ipDestB);
+    m_IpDest.a = ipDestA;
+    m_IpDest.b = ipDestB;
+    paquet.pop();
+
+    //Extraction de l'ip source
+    std::bitset<8> ipSrcA, ipSrcB, ipSrcC, ipSrcD;
+    diviser(paquet.top(), ipSrcC, ipSrcD);
+    m_IpSrc.c = ipSrcC;
+    m_IpSrc.d = ipSrcD;
+    paquet.pop();
+    diviser(paquet.top(), ipSrcA, ipSrcB);
+    m_IpSrc.a = ipSrcA;
+    m_IpSrc.b = ipSrcB;
+    paquet.pop();
+
     return paquet;
 }

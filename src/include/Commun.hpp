@@ -9,12 +9,12 @@
   * Parametres : 
   * Sortie :
   **/
-template <size_t N3>
-void diviser(const std::bitset <N3>& original,
-            std::bitset <N3/2>& gauche, std::bitset <N3/2>& droite)
+template <size_t N>
+void diviser(const std::bitset <N>& original,
+            std::bitset <N/2>& gauche, std::bitset <N/2>& droite)
 {
-	droite = std::bitset<N3/2> ((original).to_ulong());
-	gauche = std::bitset<N3/2> ((original >> N3/2).to_ulong());
+	droite = std::bitset<N/2> ((original).to_ulong());
+	gauche = std::bitset<N/2> ((original >> N/2).to_ulong());
 }
 
 /**
@@ -23,13 +23,13 @@ void diviser(const std::bitset <N3>& original,
   * Parametres : 
   * Sortie :
   **/
-template <size_t N4>
-void diviser(std::bitset <N4> original, std::bitset <N4/3>& gauche,
-            std::bitset <N4/3>& milieu, std::bitset <N4/3>& droite)
+template <size_t N>
+void diviser(std::bitset <N> original, std::bitset <N/3>& gauche,
+            std::bitset <N/3>& milieu, std::bitset <N/3>& droite)
 {
-	droite = std::bitset<N4/3> ((original).to_ulong());
-	milieu = std::bitset<N4/3> ((original >>= N4/3).to_ulong());
-	gauche = std::bitset<N4/3> ((original >> N4/3).to_ulong());
+	droite = std::bitset<N/3> ((original).to_ulong());
+	milieu = std::bitset<N/3> ((original >>= N/3).to_ulong());
+	gauche = std::bitset<N/3> ((original >> N/3).to_ulong());
 }
 
 /**
@@ -53,9 +53,9 @@ std::bitset<N1 + N2> concat(const std::bitset <N1> b1,
   * Parametres : 
   * Sortie :
   **/
-template <size_t N1>
-void inverser(std::stack<std::bitset<N1>> &pile) {
-    std::stack<std::bitset<N1>> pileInv;
+template <size_t N>
+void inverser(std::stack<std::bitset<N>> &pile) {
+    std::stack<std::bitset<N>> pileInv;
 
     for(size_t i = 0; i < pile.size(); ++i) {
         pileInv.push(pile.top());

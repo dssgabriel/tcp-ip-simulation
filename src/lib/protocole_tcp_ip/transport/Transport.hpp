@@ -68,12 +68,11 @@ class Transport {
 
         // Methodes
         uint16_t portAlea() ;
-        std::bitset<16> convertir(const uint16_t &);
 
         void calculerChecksum();
         void verifierChecksum();
         
-        std::stack<std::bitset<16>> encapsuler();
+        std::stack<std::bitset<16>> encapsuler(std::bitset<16> donnee);
         std::bitset<16> desencapsuler(std::stack<std::bitset<16>>& segment);
 };
 
