@@ -33,6 +33,11 @@ MenuEntete::MenuEntete() : QHBoxLayout()
     m_Fichier->addAction(m_ExporterGraphe);
     m_Fichier->addAction(m_Quitter);
 
+    connect(m_Charger,SIGNAL(triggered()),this,SLOT(charger()));
+    connect(m_Sauvegarder,SIGNAL(triggered()),this,SLOT(sauvegarder()));
+    connect(m_ExporterGraphe,SIGNAL(triggered()),this,SLOT(exporterGraphe()));
+    connect(m_Quitter,SIGNAL(triggered()),this,SLOT(quitter()));
+
     QVBoxLayout* m_Vlayout = new QVBoxLayout();
 
     // Espace permettant d'éviter que les widgets se superposent avec la Barre de Menu
@@ -68,15 +73,32 @@ MenuEntete::MenuEntete() : QHBoxLayout()
     m_Stop->setIconSize(QSize(20,20));
     m_Hlayout->addWidget(m_Stop);
 
+    connect(m_Stop,SIGNAL(clicked()),this, SLOT(stop()));
+
+    m_Minuteur = new QTimer();
+    connect(m_Minuteur, SIGNAL(timeout()), this, SLOT(rafraichir()));
+
     m_Montre = new QLabel("00:00:00");
+    m_Montre->setMargin(5);
     m_Montre->setStyleSheet("background-color: rgba(50, 50, 50, 255); border-radius: 5px; color: White; font: bold;");
     m_Hlayout->addWidget(m_Montre);
 
     m_Hlayout->addSpacerItem(item);
 
-    m_Tuto = new QPushButton("Tuto");
-    m_Tuto->setStyleSheet(s);
+    m_Tuto = new QPushButton();
+    m_Tuto->setStyleSheet("QPushButton {background-color: rgba(50, 50, 50, 255);"
+                          "border-radius: 25px;"
+                          "border-width: 10px;"
+                          "padding: 15px;}"
+                          "QPushButton:hover {background-color: rgba(70, 70, 70, 255);}"
+                          "QPushButton:pressed {background-color: rgba(30, 30, 30, 255);}");
+    m_Tuto->setMaximumHeight(50);
+    m_Tuto->setMaximumWidth(50);
+    m_Tuto->setIcon(QIcon("../src/lib/interface/ressources/Tuto.png"));
+    m_Tuto->setIconSize(QSize(20,20));
     m_Hlayout->addWidget(m_Tuto);
+
+    connect(m_Tuto,SIGNAL(clicked()),this, SLOT(afficheTuto()));
 
     //Attribution du QVBoxLayout comme celui de menuentete
     addLayout(m_Vlayout);
@@ -88,13 +110,114 @@ MenuEntete::~MenuEntete() {
 
 }
 
+void MenuEntete::activeExporter(bool m_export) {
+    if (m_export)
+        m_ExporterGraphe->setDisabled(false);
+    else
+        m_ExporterGraphe->setDisabled(true);
+}
+
+void MenuEntete::charger() {
+
+    QMessageBox messageCharge;
+    messageCharge.setText("Souhaitez-vous sauvegarder la configuration actuelle ?");
+    messageCharge.addButton(QMessageBox::Yes);
+    messageCharge.addButton(QMessageBox::No);
+    messageCharge.addButton(QMessageBox::Cancel);
+    messageCharge.setDefaultButton(QMessageBox::Cancel);
+    int launch = messageCharge.exec();
+    if (launch == QMessageBox::Yes) {
+        sauvegarder();
+    }
+    if (launch == QMessageBox::Yes || launch == QMessageBox::No) {
+        QFileDialog dialog;
+        dialog.setFileMode(QFileDialog::ExistingFile);
+        QString file_name = dialog.getOpenFileName(qobject_cast<QWidget*>(this), tr("Choisissez le fichier a charger"), "../src/include/configReseau", "JSON File(*.json)");
+        QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+    }
+}
+
+void MenuEntete::sauvegarder() {
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setNameFilter(tr("*.json"));
+    QString file_name = dialog.getSaveFileName(qobject_cast<QWidget*>(this), tr("Choisissez l'emplacement de sauvegarde"), "../src/include/configReseau", "JSON File(*.json)");
+    QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+}
+
+void MenuEntete::exporterGraphe() {
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setNameFilter(tr("*.png"));
+    QString file_name = dialog.getSaveFileName(qobject_cast<QWidget*>(this), tr("Choisissez l'emplacement de sauvegarde"), "../src/include/configReseau", "PNG File(*.png)");
+    QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+}
+
+void MenuEntete::quitter() {
+    QMessageBox messageQuitter;
+    messageQuitter.setText("Souhaitez-vous vraiment quitter ?");
+    messageQuitter.addButton(QMessageBox::Yes);
+    messageQuitter.addButton(QMessageBox::No);
+    messageQuitter.setDefaultButton(QMessageBox::No);
+    int launch = messageQuitter.exec();
+    if(launch == QMessageBox::Yes) {
+        qApp->quit();
+    }
+}
+
+void MenuEntete::rafraichir() {
+    Contexte::GetInstance().getTemps() += 500;
+    int temp = Contexte::GetInstance().getTemps();
+    //3600000 milliseconds in an hour
+    long hr = temp / 3600000;
+    temp = temp - 3600000 * hr;
+    //60000 milliseconds in a minute
+    long min = temp / 60000;
+    temp = temp - 60000 * min;
+
+    //1000 milliseconds in a second
+    long sec = temp / 1000;
+    Contexte::GetInstance().rafraichir();
+    m_Montre->setText(QStringLiteral("%1").arg(hr, 2, 10, QLatin1Char('0')) + ":" +
+                      QStringLiteral("%1").arg(min, 2, 10, QLatin1Char('0')) + ":" +
+                      QStringLiteral("%1").arg(sec, 2, 10, QLatin1Char('0')));
+}
+
+void MenuEntete::stop() {
+    m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
+    m_ModeActuel = Attente;
+    m_Minuteur->stop();
+    activeExporter(true);
+    Contexte::GetInstance().stopSimulation();
+}
+
 void MenuEntete::changerMode(){
     if(m_ModeActuel == Attente || m_ModeActuel == Pause) {
+        if (m_ModeActuel == Attente) {
+            m_Montre->setText("00:00:00");
+            Contexte::GetInstance().getTemps() = 0;
+        }
         m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Pause.png"));
         m_ModeActuel = Lecture;
+        m_Minuteur->start(500);
+        activeExporter(false);
     }
     else if(m_ModeActuel == Lecture) {
         m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
         m_ModeActuel = Pause;
+        int remaining = m_Minuteur->remainingTime();
+        m_Minuteur->stop();
+        m_Minuteur->setInterval(remaining);
+        activeExporter(true);
     }
+}
+
+void MenuEntete::afficheTuto() {
+    QWidget *wdg = new QWidget;
+    QGridLayout* lyt = new QGridLayout();
+    wdg->setLayout(lyt);
+    QLabel* lbl = new QLabel();
+    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png"));
+    lyt->addWidget(lbl);
+    wdg->show();
 }

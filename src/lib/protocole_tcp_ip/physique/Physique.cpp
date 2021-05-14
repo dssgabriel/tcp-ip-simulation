@@ -34,7 +34,7 @@ Physique::~Physique() {
 /**
   * @brief Setter de l'attribut de classe m_SrcMac.
   * 
-  * @param src : Adresse MAC source souhaitée.
+  * @param src Adresse MAC source souhaitée.
   * @return void.
   **/
 void Physique::setMacSrc(MAC src) {
@@ -53,7 +53,7 @@ MAC Physique::getMacSrc() {
 /**
   * @brief Setter de l'attribut de classe m_DestMac.
   * 
-  * @param dest : Adresse destination souhaitée.
+  * @param dest Adresse destination souhaitée.
   * @return void.
   **/
 void Physique::setMacDest(MAC dest) {
@@ -94,9 +94,9 @@ std::bitset<48> Physique::convertir(const MAC& adresse) {
   * Après désencapsulation, les adresses MAC sont contenues dans trois std::bitset<16> ou chaque 8 bits représente un champ de l'adresse MAC.
   * Cette fonction permet donc de diviser ces bitset en deux, pour remplir la MAC.
   * 
-  * @param adrPartBA : Premier bitset contenant les champs a et b.
-  * @param adrPartDC : Second bitset contenant les champs c et d.
-  * @param adrPartFE : Troisième bitset contenant les champs e et f.
+  * @param adrPartBA Premier bitset contenant les champs a et b.
+  * @param adrPartDC Second bitset contenant les champs c et d.
+  * @param adrPartFE Troisième bitset contenant les champs e et f.
   * @return Une structure MAC avec les champs remplie.
   **/
 MAC Physique::convertir(const std::bitset<16>& adrPartBA, 
@@ -105,8 +105,8 @@ MAC Physique::convertir(const std::bitset<16>& adrPartBA,
   // Initialisation de l'adress MAC.
   MAC mac;
 
-  //division en deux de chaque bitset de 16 bits
-  //et association dans les champs de mac;
+  // Division en deux de chaque bitset de 16 bits
+  // et association dans les champs de mac;
   std::bitset<8> gauche, droite;
 
   diviser(adrPartBA, droite, gauche);
@@ -159,8 +159,8 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
 /**
   * @brief Permet l'encapsulation de la couche Physique.
   * 
-  * @param paquet : Resultat de l'encapsulation de la couche Internet.
-  * @return. Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
+  * @param paquet Resultat de l'encapsulation de la couche Internet.
+  * @return Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
   **/
  std::stack<std::bitset<16>> Physique::encapsuler(std::stack<std::bitset<16>>& paquet) {
     paquet.push(concat(m_SrcMac.a, m_SrcMac.b));
@@ -176,7 +176,7 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
 /**
   * @brief Permet la desencapsulation de la couche Physique.
   * 
-  * @param trame. Une pile qui contitent la couche Transport + Internet + Physique. 
+  * @param trame Une pile qui contitent la couche Transport + Internet + Physique. 
   * @return La même pile mais avec la couche Physique en moins.
   **/
 std::stack<std::bitset<16>> Physique::desencapsuler(std::stack<std::bitset<16>>& trame) {
