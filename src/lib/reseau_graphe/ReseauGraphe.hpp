@@ -5,6 +5,7 @@
 
 #include "machine/Machine.hpp"
 #include "machine/Routeur.hpp"
+#include "machine/Commutateur.hpp"
 #include "../../include/Liaison.hpp"
 
 class ReseauGraphe {

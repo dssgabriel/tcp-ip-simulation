@@ -34,23 +34,8 @@ std::bitset<N1 + N2> concat(const std::bitset <N1> b1,
     return std::bitset <N1 + N2>(s1 + s2);
 }
 
-template <size_t N>
-void afficher(std::stack<std::bitset<N>> pile) {
-    std::cout << "debut stack\n";
-    while (!pile.empty()) {
-        std::cout << "(" << pile.top().to_string() << ") = (";
-        std::cout << pile.top().to_ulong() << ")" << std::endl;
-        pile.pop();
-    }
-    std::cout << "fin stack\n";
-}
+void afficher(std::stack<std::bitset<16>> pile);
 
-template <size_t N>
-void afficher(std::queue<std::stack<std::bitset<N>>*> file) {
-    std::cout << "debut queue\n";
-    while (!file.empty()) {
-        afficher(*file.front());
-        file.pop();
-    }
-    std::cout << "fin queue\n";
-}
+void afficher(std::queue<std::stack<std::bitset<16>>> file);
+
+void afficher(std::deque<std::stack<std::bitset<16>>> doubleFile);

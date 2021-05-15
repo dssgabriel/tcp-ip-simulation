@@ -329,18 +329,12 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
 std::ostream& operator<<(std::ostream& flux, const Transport& coucheTrans) {
     flux << "m_PortSrc : " << coucheTrans.getPortSrc() << std::endl;
     flux << "m_PortDest : " << coucheTrans.getPortDest() << std::endl;
-    flux << "m_Cwnd : " << coucheTrans.getCwnd();
-    flux << ", " << coucheTrans.getCwnd().to_ulong() << std::endl;
-    flux << "m_Checksum : " << coucheTrans.getChecksum();
-    flux << ", " << coucheTrans.getChecksum().to_ulong() << std::endl;
-    flux << "m_Syn : " << coucheTrans.getSyn();
-    flux << ", " << coucheTrans.getSyn().to_ulong() << std::endl;
-    flux << "m_Ack1 : " << coucheTrans.getAck1();
-    flux << ", " << coucheTrans.getAck1().to_ulong() << std::endl;
-    flux << "m_Seq : " << coucheTrans.getSeq();
-    flux << ", " << coucheTrans.getSeq().to_ulong() << std::endl;
-    flux << "m_Ack2 : " << coucheTrans.getAck2();
-    flux << ", " << coucheTrans.getAck2().to_ulong() << std::endl;
+    flux << "m_Cwnd : " << coucheTrans.getCwnd().to_ulong() << std::endl;
+    flux << "m_Checksum : " << coucheTrans.getChecksum().to_ulong() << std::endl;
+    flux << "m_Syn : " << coucheTrans.getSyn().to_ulong() << std::endl;
+    flux << "m_Ack1 : " << coucheTrans.getAck1().to_ulong() << std::endl;
+    flux << "m_Seq : " << coucheTrans.getSeq().to_ulong() << std::endl;
+    flux << "m_Ack2 : " << coucheTrans.getAck2().to_ulong() << std::endl;
 
     return flux;
 }

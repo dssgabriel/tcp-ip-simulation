@@ -8,8 +8,7 @@
  */
 
 
-#ifndef physique_HPP
-#define physique_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -64,5 +63,3 @@ class Physique {
             const Physique& couchePhy
         );
 };
-
-#endif

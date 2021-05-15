@@ -116,16 +116,16 @@ Machine* Machine::getVoisin(MAC adresseVoisin) {
     return nullptr;
 }
 
-void Machine::setDonnee(std::stack<std::bitset<16>>* trame) {
+void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
     m_FileDonnees.emplace(trame);
 }
 
-const std::queue<std::stack<std::bitset<16>>*>& Machine::getDonnees() {
+const std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
-std::stack<std::bitset<16>>* Machine::suppDonnee() {
-    std::stack<std::bitset<16>>* donnee = m_FileDonnees.front();
+std::stack<std::bitset<16>> Machine::suppDonnee() {
+    std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
     m_FileDonnees.pop();
     return donnee;
 }

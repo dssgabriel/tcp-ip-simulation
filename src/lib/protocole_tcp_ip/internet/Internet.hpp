@@ -9,9 +9,7 @@
 
  **/
 
-
-#ifndef internet_HPP
-#define internet_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -73,5 +71,3 @@ class Internet {
             const Internet& coucheInt
         );
 };
-
-#endif

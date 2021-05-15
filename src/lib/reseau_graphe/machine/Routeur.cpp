@@ -113,6 +113,7 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.push(macDestFE);
 }
 
+/*
 void Routeur::traitementPaquetOSPF() {
     PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
 
@@ -172,6 +173,23 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
             return;
         }
     }
+
+    // TODO : Revoir l'initialisation du reseau
+    
+    for (auto iter: m_Voisins) {
+        auto routeur = dynamic_cast<Routeur*>(iter);
+
+        if (routeur) {
+            if (routeur->getIdRouteur() == hello.getIdRouteur()) {
+                PaquetHello reponse(hello.getIdRouteur());
+                reponse.setEntete(Hello, m_IdRouteur);
+                envoyer(*routeur, reponse);
+
+                return;
+            }
+        }
+    }
+    
 }
 
 void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
@@ -265,3 +283,4 @@ void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
 void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
     // TODO : A faire
 }
+*/

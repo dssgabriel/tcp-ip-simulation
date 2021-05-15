@@ -30,8 +30,8 @@ class Machine {
 
         // Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
-        std::queue<std::stack<std::bitset<16>>*> m_FileDonnees;
-
+        std::queue<std::stack<std::bitset<16>>> m_FileDonnees;
+    
     public:
         // Constructeur
         Machine();
@@ -61,10 +61,10 @@ class Machine {
         void setVoisin(Machine& voisin);
         Machine* getVoisin(MAC adresseVoisin);
 
-        void setDonnee(std::stack<std::bitset<16>>* trame);
-        std::stack<std::bitset<16>>* suppDonnee();
+        void setDonnee(const std::stack<std::bitset<16>>& trame);
+        std::stack<std::bitset<16>> suppDonnee();
 
-        const std::queue<std::stack<std::bitset<16>>*>& getDonnees();
+        const std::queue<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
         virtual void recevoir() {};
@@ -75,7 +75,7 @@ class Machine {
 
         // Overloading
         friend std::ostream& operator<<(
-            std::ostream& flux,
+            std::ostream& flux, 
             const Machine& machine
         );
 };
