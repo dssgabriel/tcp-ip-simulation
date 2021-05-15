@@ -1,5 +1,6 @@
-#include <iostream>
 #include <cstdlib>
+#include <string>
+#include <utility>
 
 #include "Routeur.hpp"
 
@@ -112,134 +113,155 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.push(macDestFE);
 }
 
-// void Routeur::traitementPaquetOSPF() {
-//     PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
+void Routeur::traitementPaquetOSPF() {
+    PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
 
-//     switch (paquet.getType()) {
-//         case 1:
-//             traitementPaquetHello(dynamic_cast<PaquetHello&>(paquet));
-//             break;
-//         case 2:
-//             traitementPaquetDBD(dynamic_cast<PaquetDBD&>(paquet));
-//             break;
-//         case 3:
-//             traitementPaquetLSR(dynamic_cast<PaquetLSR&>(paquet));
-//             break;
-//         case 4:
-//             traitementPaquetLSU(dynamic_cast<PaquetLSU&>(paquet));
-//             break;
-//         case 5:
-//             traitementPaquetLSAck(dynamic_cast<PaquetLSAck&>(paquet));
-//             break;
-//         default:
-//             std::cout << "Type de PaquetOSPF inconnu\n";
-//             return;
-//     }
-// }
+    switch (paquet.getType()) {
+        case 1:
+            traitementPaquetHello(dynamic_cast<PaquetHello&>(paquet));
+            break;
+        case 2:
+            traitementPaquetDBD(dynamic_cast<PaquetDBD&>(paquet));
+            break;
+        case 3:
+            traitementPaquetLSR(dynamic_cast<PaquetLSR&>(paquet));
+            break;
+        case 4:
+            traitementPaquetLSU(dynamic_cast<PaquetLSU&>(paquet));
+            break;
+        case 5:
+            traitementPaquetLSAck(dynamic_cast<PaquetLSAck&>(paquet));
+            break;
+        default:
+            std::cout << "Type de PaquetOSPF inconnu\n";
+            return;
+    }
+}
 
-// // Methodes privees
-// void Routeur::traitementPaquetHello(const PaquetHello& hello) {
-//     // Si l'identifiant du voisin ne correspond pas avec l'identifiant
-//     // du routeur, le paquet ne nous est pas destine
-//     if (hello.getIdVoisin() != m_IdRouteur) {
-//         return;
-//     }
+// Methodes privees
+void Routeur::traitementPaquetHello(const PaquetHello& hello) {
+    // Si l'identifiant du voisin ne correspond pas avec l'identifiant
+    // du routeur, le paquet ne nous est pas destine
+    if (hello.getIdVoisin() != m_IdRouteur) {
+        return;
+    }
 
-//     // On parcourt la table de routage pour verifier si le routeur nous
-//     // envoyant le paquet Hello est connu
-//     for (auto iter: m_TableRoutage) {
-//         auto routeur = iter.first;
+    // On parcourt la table de routage pour verifier si le routeur nous
+    // envoyant le paquet Hello est connu
+    for (auto iter: m_TableRoutage) {
+        // Si le routeur est connu, alors on lui envoie un paquet DBD
+        if (iter.first->getIdRouteur() == hello.getIdRouteur()) {
+            std::vector<LSA> annonces;
 
-//         // Si le routeur est connu, alors on lui envoie un paquet DBD
-//         if (routeur->getIdRouteur() == hello.getIdRouteur()) {
-//             std::vector<LSA> annonces;
+            // On initialise la liste des annonces LSA
+            for (auto routeur: m_TableRoutage) {
+                LSA lsa(routeur.first->getIdRouteur(),
+                        routeur.first->getIdRouteur(),
+                        routeur.first->getSousReseau()
+                );
+                annonces.emplace_back(lsa);
+            }
 
-//             // On initialise la liste des annonces LSA
-//             for (auto routeur: m_TableRoutage) {
-//                 LSA lsa(routeur.first->getIdRouteur(),
-//                         routeur.first->getIdRouteur(),
-//                         routeur.first->getSousReseau()
-//                 );
-//                 annonces.emplace_back(lsa);
-//             }
+            // On envoie un paquet DBD au routeur nous envoyant le paquet Hello
+            auto destinataire = iter.first;
 
-//             // On envoie un paquet DBD au routeur nous envoyant le paquet Hello
-//             PaquetDBD reponse(annonces);
-//             reponse.setEntete(DBD, m_IdRouteur);
-//             envoyer(*routeur, reponse);
+            PaquetDBD reponse(annonces);
+            reponse.setEntete(DBD, m_IdRouteur);
+            envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
 
-//             return;
-//         }
-//     }
+            return;
+        }
+    }
+}
 
-//     // TODO : Revoir l'initialisation du reseau
-//     /*
-//     for (auto iter: m_Voisins) {
-//         auto routeur = dynamic_cast<Routeur*>(iter);
+void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
+    auto annonces = dbd.getAnnoncesLSA();
+    std::vector<std::bitset<32>> idADemander;
 
-//         if (routeur) {
-//             if (routeur->getIdRouteur() == hello.getIdRouteur()) {
-//                 PaquetHello reponse(hello.getIdRouteur());
-//                 reponse.setEntete(Hello, m_IdRouteur);
-//                 envoyer(*routeur, reponse);
+    for (auto annonce: annonces) {
+        for (auto iter: m_TableRoutage) {
+            auto routeur = iter.first;
 
-//                 return;
-//             }
-//         }
-//     }
-//     */
-// }
+            if (annonce.getIdRouteur() != routeur->getIdRouteur()) {
+                bool trouve = false;
 
-// void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
-//     auto vec = dbd.getAnnoncesLSA();
-//     std::vector<std::bitset<32>> idLSADemandes;
+                for (auto verif: m_TableRoutage) {
+                    if (verif.first->getIdRouteur() ==
+                        routeur->getIdRouteur())
+                    {
+                        trouve = true;
+                        break;
+                    }
+                }
 
-//     for (auto lsa: vec) {
-//         for (auto iter: m_TableRoutage) {
-//             auto routeur = iter.first;
+                if (!trouve) {
+                    idADemander.emplace_back(annonce.getIdLSA());
+                    m_TableLSADemandes.emplace(*routeur, annonce.getIdLSA());
+                }
+            }
+        }
+    }
 
-//             if (lsa.getIdRouteur() != routeur->getIdRouteur()) {
-//                 bool found = false;
+    if (!idADemander.empty()) {
+        for (auto iter: m_TableRoutage) {
+            if (iter.first->getIdRouteur() == dbd.getIdRouteur()) {
+                auto destinataire = iter.first;
 
-//                 for (auto verif: m_TableRoutage) {
-//                     if (verif.first->getIdRouteur() ==
-//                         routeur->getIdRouteur())
-//                     {
-//                         found = true;
-//                         break;
-//                     }
-//                 }
+                PaquetLSR reponse(dbd.getIdRouteur(), idADemander);
+                reponse.setEntete(LSR, m_IdRouteur);
+                envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
 
-//                 if (!found) {
-//                     idLSADemandes.emplace_back(lsa.getIdLSA());
-//                     m_TableLSADemandes.emplace(std::make_pair(routeur, lsa.getIdLSA()));
-//                 }
-//             }
-//         }
-//     }
+                return;
+            }
+        }
+    }
+}
 
-//     if (!idLSADemandes.empty()) {
-//         for (auto iter: m_TableRoutage) {
-//             auto routeur = iter.first;
+void Routeur::traitementPaquetLSR(PaquetLSR& lsr) {
+    if (lsr.getIdAnnonceur() != m_IdRouteur) {
+        // Le paquet LSR ne nous est pas destine,
+        // on sort directement de la methode
+        return;
+    }
 
-//             if (routeur->getIdRouteur() == dbd.getIdRouteur()) {
-//                 PaquetLSR reponse(dbd.getIdRouteur(), idLSADemandes);
-//                 reponse.setEntete(LSR, m_IdRouteur);
-//                 envoyer(*routeur, reponse);
-//                 return;
-//             }
-//         }
-//     }
-// }
+    auto vec = lsr.getIdLSADemandes();
+    std::vector<LSA> annoncesDemandes;
 
-// void Routeur::traitementPaquetLSR(const PaquetLSR& lsr) {
-//     // TODO : A faire
-// }
+    for (auto id: vec) {
+        for (auto iter: m_TableRoutage) {
+            auto routeur = iter.first;
 
-// void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
-//     // TODO : A faire
-// }
+            if (routeur->getIdRouteur() == (uint8_t)(id.to_ulong())) {
+                LSA lsa(routeur->getIdRouteur(),
+                        routeur->getIdRouteur(),
+                        routeur->getSousReseau()
+                );
+                annoncesDemandes.emplace_back(lsa);
+            }
+        }
+    }
 
-// void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
-//     // TODO : A faire
-// }
+    for (auto iter: m_TableRoutage) {
+        if (lsr.getIdRouteur() == iter.first->getIdRouteur()) {
+            auto destinataire = iter.first;
+
+            for (auto annonce: annoncesDemandes) {
+                m_TableLSAEnvoyes.emplace(*destinataire, annonce.getIdLSA());
+            }
+
+            PaquetLSU reponse(annoncesDemandes);
+            reponse.setEntete(LSU, m_IdRouteur);
+            envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+
+            return;
+        }
+    }
+}
+
+void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
+    // TODO : A faire
+}
+
+void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
+    // TODO : A faire
+}

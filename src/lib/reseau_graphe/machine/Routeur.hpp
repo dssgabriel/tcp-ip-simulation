@@ -1,6 +1,10 @@
 #pragma once
 
+#include <bitset>
+#include <cstdint>
 #include <map>
+#include <queue>
+#include <vector>
 
 #include "Machine.hpp"
 #include "../ospf/PaquetOSPF.hpp"
@@ -24,7 +28,7 @@ class Routeur : public Machine {
         // Methodes
         void traitementPaquetHello(const PaquetHello& hello);
         void traitementPaquetDBD(PaquetDBD& dbd);
-        void traitementPaquetLSR(const PaquetLSR& lsr);
+        void traitementPaquetLSR(PaquetLSR& lsr);
         void traitementPaquetLSU(const PaquetLSU& lsu);
         void traitementPaquetLSAck(const PaquetLSAck& ack);
 
