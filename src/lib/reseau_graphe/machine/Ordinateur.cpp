@@ -351,6 +351,7 @@ void Ordinateur::finDeSession() {
 
 void Ordinateur::envoyer(const uint32_t cwnd) {
     std::cout << "Debut envoie\n";
+    afficher(m_FileDonnees);
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
     Machine* voisine = m_Voisins.front();
