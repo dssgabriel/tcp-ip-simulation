@@ -73,6 +73,7 @@ std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(
         queue.pop();
     }
 
+    std::cout << "Fin convertirQueueDeque\n";
     return dequeu;   
 }
 
