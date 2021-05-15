@@ -19,6 +19,11 @@
   * @return NULL.
   **/
 Internet::Internet() {
+    m_IpSrc = ipMax;
+    m_IpDest = ipMax;
+    m_TTL.set();
+    m_ProtocoleId.set();
+    m_Checksum.set();
 }
 
  /**
@@ -28,9 +33,7 @@ Internet::Internet() {
   * 
   * @return NULL.
   **/
-Internet::~Internet() {
-
-}
+Internet::~Internet() {}
 
  /**
   * @brief Setter pour l'argument de classe m_IpSrc.
