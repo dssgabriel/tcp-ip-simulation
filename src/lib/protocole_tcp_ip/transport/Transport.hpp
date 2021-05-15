@@ -15,6 +15,7 @@
 #include <string>
 #include <stack>
 #include <time.h>
+#include <limits>
 
 #include "../../../include/Commun.hpp"
 #include "../../../include/ParamInterface.hpp"
