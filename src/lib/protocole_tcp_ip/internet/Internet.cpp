@@ -263,12 +263,9 @@ void Internet::verifierChecksum() {
 std::ostream& operator<<(std::ostream& flux, const Internet& coucheInt) {
     flux << "m_IpSrc : " << coucheInt.getIpSrc() << std::endl;
     flux << "m_IpDest : " << coucheInt.getIpDest() << std::endl;
-    flux << "m_TTL : " << coucheInt.getTTL();
-    flux << ", " << coucheInt.getTTL().to_ulong() << std::endl;
-    flux << "m_ProtocoleId : " << coucheInt.getProtocoleId();
-    flux << ", " << coucheInt.getProtocoleId().to_ulong() << std::endl;
-    flux << "m_Checksum : " << coucheInt.getChecksum();
-    flux << ", " << coucheInt.getChecksum().to_ulong() << std::endl;
+    flux << "m_TTL : " << coucheInt.getTTL().to_ulong() << std::endl;
+    flux << "m_ProtocoleId : " << coucheInt.getProtocoleId().to_ulong() << std::endl;
+    flux << "m_Checksum : " << coucheInt.getChecksum().to_ulong() << std::endl;
 
     return flux;
 }
