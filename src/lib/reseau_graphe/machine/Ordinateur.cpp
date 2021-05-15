@@ -402,6 +402,44 @@ void Ordinateur::recevoir() {
     std::deque<std::stack<std::bitset<16>>> donneesDeque;
     donneesDeque = convertirQueueDeque(m_FileDonnees);
 
+    if (int(donneesDeque.size()) == 1) {
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[0]);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        // On re encapusle.
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneesDeque[0] = couchePhy.encapsuler(paquet);
+
+        //
+        std::stack<std::bitset<16>> recep;
+        std::bitset<32> paquetRecep;
+        std::bitset<16> paquetRecepGauche, paquetRecepDroit;
+
+        //
+        std::cout << "Un paquet ok" << std::endl;
+        paquetRecep = coucheTrans.getSeq();
+        diviser(paquetRecep, paquetRecepGauche, paquetRecepDroit);
+
+        //
+        recep.push(paquetRecepGauche);
+        recep.push(paquetRecepDroit);
+        setDonnee(recep);
+        std::cout << "Fin recevoir\n";
+
+        // Trouver la machine voisine.
+        // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
+        Machine* voisine = m_Voisins.front();
+        voisine->envoyer(1);
+    }
+
     //
     Physique couchePhy;
     Internet coucheInt;
