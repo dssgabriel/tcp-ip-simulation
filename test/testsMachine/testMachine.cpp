@@ -54,53 +54,16 @@ void test2() {
 }
 
 void test3() {
-<<<<<<< HEAD
     //
-    Ordinateur pc, pc2;
-=======
-<<<<<<< HEAD
-    //
-    Ordinateur pc, pc2;
-=======
     Ordinateur pc, pc2;
 
->>>>>>> 9360b6e580d686e911ecb0b06a885c23798a30c7
->>>>>>> c9cc145b1baa458df604abdce7f55be89e7d6b60
+    //
     pc.setIp({192, 168, 1, 1});
     pc.setMac({205, 138, 107, 55, 153, 181});
     pc2.setIp({192, 168, 1, 2});
     pc2.setMac({35, 11, 122, 213, 123, 169});
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
     pc.setVoisin(pc2);
     pc2.setVoisin(pc);
-
-    // std::cout << pc << std::endl;
-    // std::cout << pc2 << std::endl;
-
-    //
-    ParamInterface p;
-    p.m_Destination = pc2.getIp();
-    p.m_Source = pc.getIp();
-    p.m_NbPaquet = 2;
-    p.m_Ssthresh = 8;
-    p.m_TypeFichier = FTP;
-
-    //
-    pc.remplirFileDonnees(p, pc2.getMac());
-    // afficher(pc.getDonnees());
-    
-    //
-    std::bitset<16> cwnd = 1;
-    // pc.slowStart(cwnd, p.m_Ssthresh);
-    pc.envoyer(2);
-=======
-
->>>>>>> c9cc145b1baa458df604abdce7f55be89e7d6b60
-    pc.setVoisin(pc2);
-    pc2.setVoisin(pc);
-
     // std::cout << pc << std::endl;
     // std::cout << pc2 << std::endl;
 
@@ -121,13 +84,9 @@ void test3() {
     //
     // std::bitset<16> cwnd = 1;
     // pc.slowStart(cwnd, p.m_Ssthresh);
-<<<<<<< HEAD
     // pc.envoyer(2);
     // pc.envoyer(3);
     pc.envoyer(4);
-=======
->>>>>>> 9360b6e580d686e911ecb0b06a885c23798a30c7
->>>>>>> c9cc145b1baa458df604abdce7f55be89e7d6b60
 }
 
 int main(void) {
