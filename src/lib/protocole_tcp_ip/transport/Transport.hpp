@@ -7,8 +7,7 @@
  * @date        2021
  **/
 
-#ifndef transport_HPP
-#define transport_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -81,5 +80,3 @@ class Transport {
             const Transport& coucheTrans
         );
 };
-
-#endif
