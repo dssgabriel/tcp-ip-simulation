@@ -335,6 +335,12 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     return std::bitset<16>(segment.top());
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param coucheTrans La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Transport& coucheTrans) {
     flux << "m_PortSrc : " << coucheTrans.getPortSrc() << std::endl;
     flux << "m_PortDest : " << coucheTrans.getPortDest() << std::endl;

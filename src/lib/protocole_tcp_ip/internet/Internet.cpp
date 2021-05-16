@@ -263,6 +263,12 @@ void Internet::verifierChecksum() {
     return paquet;
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param coucheInt La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Internet& coucheInt) {
     flux << "m_IpSrc : " << coucheInt.getIpSrc() << std::endl;
     flux << "m_IpDest : " << coucheInt.getIpDest() << std::endl;
