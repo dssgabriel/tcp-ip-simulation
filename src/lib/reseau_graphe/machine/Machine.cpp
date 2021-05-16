@@ -98,7 +98,7 @@ void Machine::setSousReseau(const IPv4& sousReseau) {
     m_SousReseau.emplace_back(sousReseau);
 }
 
-const std::vector<IPv4>& Machine::getSousReseau() const {
+const std::vector<IPv4>& Machine::getSousReseaux() const {
     return m_SousReseau;
 }
 
@@ -106,7 +106,7 @@ void Machine::setVoisin(Machine& voisin) {
     m_Voisins.emplace_back(&voisin);
 }
 
-Machine* Machine::getVoisin(MAC adresseVoisin) {
+Machine* Machine::getVoisin(MAC adresseVoisin) const {
     for(size_t i = 0; i < m_Voisins.size(); ++i) {
         if(m_Voisins[i]->getMac() == adresseVoisin) {
             return m_Voisins[i];
@@ -116,11 +116,15 @@ Machine* Machine::getVoisin(MAC adresseVoisin) {
     return nullptr;
 }
 
+std::vector<Machine*> Machine::getVoisins() const {
+    return m_Voisins;
+}
+
 void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
     m_FileDonnees.emplace(trame);
 }
 
-const std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
+std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
@@ -140,9 +144,15 @@ std::ostream& operator<<(std::ostream& flux, const Machine& m) {
     flux << "Mac : " << m.getMac() << std::endl;
 
     flux << "Liste des sous réseaux : \n";
-    std::vector<IPv4> cpySousReseau = m.getSousReseau();
+    std::vector<IPv4> cpySousReseau = m.getSousReseaux();
     for(IPv4 sousReseau : cpySousReseau) {
         flux << "\t > " << sousReseau << std::endl;
+    }
+
+    flux << "Liste des voisins : \n";
+    std::vector<Machine*> cpyVoisins = m.getVoisins();
+    for(Machine* voisine : cpyVoisins) {
+        flux << "\t > " << voisine->getIp() << std::endl;
     }
 
     return flux;

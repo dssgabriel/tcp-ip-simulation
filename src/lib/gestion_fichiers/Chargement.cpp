@@ -122,6 +122,12 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 
         // Ajout de la liaison dans le reseau.
         reseau->ajouter(l);
+
+        // Configuration des voisins.
+        Machine* a = reseau->getMachine(l.m_NumMachine1);
+        Machine* b = reseau->getMachine(l.m_NumMachine2);
+        a->setVoisin(*b);
+        b->setVoisin(*a);
     }
 
     // Convertion.
@@ -142,7 +148,8 @@ void chargerConfig(const std::string& cheminFichier,
     // Lecture du fichier de configuration.
     std::ifstream lecture(cheminFichier);
     if(lecture.fail()) {
-        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
+        std::cout << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 
@@ -165,7 +172,8 @@ void chargerConfig(const std::string& cheminFichier,
         reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
     }
     else { 
-        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : Reseau choisi inconnu.\n";
+        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
+        std::cout << "Reseau choisi inconnu.\n";
         exit(EXIT_FAILURE);
     }
 

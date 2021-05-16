@@ -37,7 +37,7 @@ class Machine {
         Machine();
 
         // Destructeur
-        virtual ~Machine() {};
+       virtual ~Machine() {};
 
         // Getters & setters
         const uint16_t& getNbMachine() const;
@@ -56,15 +56,16 @@ class Machine {
         const MAC& getMac() const;
 
         void setSousReseau(const IPv4& sousReseau);
-        const std::vector<IPv4>& getSousReseau() const;
+        const std::vector<IPv4>& getSousReseaux() const;
 
         void setVoisin(Machine& voisin);
-        Machine* getVoisin(MAC adresseVoisin);
+        Machine* getVoisin(MAC adresseVoisin) const;
+        std::vector<Machine*> getVoisins() const;
 
         void setDonnee(const std::stack<std::bitset<16>>& trame);
         std::stack<std::bitset<16>> suppDonnee();
 
-        const std::queue<std::stack<std::bitset<16>>>& getDonnees();
+        std::queue<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
         virtual void recevoir() {};

@@ -19,6 +19,16 @@ const std::string& ReseauGraphe::getNom() const{
     return m_Nom;
 }
 
+Machine* ReseauGraphe::getMachine(const unsigned int& indice) {
+    if (indice >= m_Machines.size()) {
+        std::cout << "ERREUR : Dans la fonction 'getMachine' :";
+        std::cout << " Indice en dehors du tableau.\n";
+        exit(EXIT_FAILURE);
+    }
+
+    return &m_Machines[indice];
+}
+
 Machine& ReseauGraphe::getMachine(const IPv4& ip) {
    for(size_t i = 0; i < m_Machines.size(); ++i) {
        if(m_Machines[i].getIp() == ip) {
@@ -26,7 +36,7 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
        }
    }
 
-    std::cout << "ERREUR : Adresse IP <" << ip;
+    std::cout << "ERREUR : Dans la fonction 'getMachine' : Adresse IP <" << ip;
     std::cout << "> introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }

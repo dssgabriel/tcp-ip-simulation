@@ -27,7 +27,9 @@ class ReseauGraphe {
         const std::string& getNom() const;
 
         Machine& getMachine(const IPv4& ip);
+        Machine* getMachine(const unsigned int& indice);
         const std::vector<Machine>& getMachines() const;
+
         const std::vector<Liaison>& getLiaisons() const;
 
         // Overloading

@@ -16,9 +16,7 @@ Ordinateur::Ordinateur() : Machine() {
 // // Ordinateur(const std::string& nom) {}
 
 // Destructeur
-Ordinateur::~Ordinateur() {
-
-}
+Ordinateur::~Ordinateur() {}
 
 // Getters
 const uint8_t& Ordinateur::getNbrOrdinateur() const {
