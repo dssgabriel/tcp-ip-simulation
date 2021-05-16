@@ -13,8 +13,6 @@
   * @brief Constructeur de la classe Physique.
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL.
   **/
 Physique::Physique() {
     m_SrcMac = macMax;
@@ -25,8 +23,6 @@ Physique::Physique() {
   * @brief Destructeur de la classe Physique.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
   **/
 Physique::~Physique() {}
 

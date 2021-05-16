@@ -15,8 +15,6 @@
   * @brief Constructeur de la classe Transport.
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL. 
   **/
 Transport::Transport() {
     m_PortSrc = std::numeric_limits<uint16_t>::max();
@@ -33,9 +31,7 @@ Transport::Transport() {
   * @brief Destucteur de la classe Transport.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
-  **/
+**/
 Transport::~Transport() {}
 
 /**
