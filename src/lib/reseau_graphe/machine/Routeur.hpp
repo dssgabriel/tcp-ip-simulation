@@ -29,8 +29,8 @@ class Routeur : public Machine {
         void traitementPaquetHello(const PaquetHello& hello);
         void traitementPaquetDBD(PaquetDBD& dbd);
         void traitementPaquetLSR(PaquetLSR& lsr);
-        void traitementPaquetLSU(const PaquetLSU& lsu);
-        void traitementPaquetLSAck(const PaquetLSAck& ack);
+        void traitementPaquetLSU(PaquetLSU& lsu);
+        void traitementPaquetLSAck(PaquetLSAck& ack);
 
     public:
         // Constructeurs
@@ -46,11 +46,11 @@ class Routeur : public Machine {
         //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
-        void envoyer(Routeur& dest, PaquetOSPF& ospf);
-        void recevoir(PaquetOSPF& ospf);
+        void envoyerOSPF(Routeur& dest, PaquetOSPF& ospf);
+        void recevoirOSPF(PaquetOSPF& ospf);
         void traitementPaquetOSPF();
 
-        void envoyer();
+        void envoyer(const uint32_t);
         void recevoir();
         void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
 };
