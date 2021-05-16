@@ -15,8 +15,6 @@
   * @brief Constructeur de la classe Internet
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL.
   **/
 Internet::Internet() {
     m_IpSrc = ipMax;
@@ -30,8 +28,6 @@ Internet::Internet() {
   * @brief Destructeur de la classe Internet.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
   **/
 Internet::~Internet() {}
 
