@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "Routeur.hpp"
+#include "../ReseauGraphe.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
 
@@ -113,10 +114,9 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.push(macDestFE);
 }
 
-/*
 void Routeur::traitementPaquetOSPF() {
     // Recuperation du paquet en debut de file.
-    PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
+    PaquetOSPF& paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
 
     // Appel a la methode adequate en fonction du type de paquet.
     switch (paquet.getType()) {
@@ -269,6 +269,7 @@ void Routeur::traitementPaquetLSR(PaquetLSR& lsr) {
     }
 }
 
+// TODO : Renvoyer des LSUs lorsqu'on en recoit et que l'on fait des mises a jours.
 void Routeur::traitementPaquetLSU(PaquetLSU& lsu) {
     auto annonces = lsu.getLSADemandes();
     std::vector<std::bitset<32>> idLSARecus;
@@ -280,8 +281,13 @@ void Routeur::traitementPaquetLSU(PaquetLSU& lsu) {
                     if (id == annonce.getIdLSA()) {
                         idLSARecus.push_back(id);
                         m_TableLSADemandes.erase(verif.first);
-                        // routageDynamique();
-                        // m_TableRoutage.emplace();
+
+                        auto routeur = ReseauGraphe::getRouteur(verif.first->getIdRouteur());
+                        std::vector<Liaison> plusCourtChemin = ReseauGraphe::routageDynamique(
+                            routeur.getIdRouteur(),
+                            m_IdRouteur
+                        );
+                        m_TableRoutage.emplace(routeur, plusCourtChemin);
                     }
                 }
             }
@@ -363,4 +369,3 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck& ack) {
         }
     }
 }
-*/

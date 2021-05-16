@@ -16,7 +16,7 @@
 #include "../../../include/Liaison.hpp"
 
 class Routeur : public Machine {
-	private:
+    private:
         // Attributs
         static uint8_t m_NbRouteur;
         uint8_t m_IdRouteur;
