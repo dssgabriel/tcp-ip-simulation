@@ -313,7 +313,8 @@ std::stack<std::bitset<16>> Transport::encapsuler(std::bitset<16> donnee) {
   * @return Un bitset de 16 qui est la données a transmettre. 
   **/
 std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
-    //
+
+    // On recupere et affecte a l'attribut de classe l'ack2.
     std::bitset<16> ack2Droite = segment.top();
     segment.pop();
     std::bitset<16> ack2Gauche = segment.top();
@@ -327,7 +328,7 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     segment.pop();
     m_Seq = concat(seqGauche, seqDroite);
     
-    //
+    // On recupere chaque element et on les affecte a l'attribut de classe.
     m_Ack1 = segment.top();
     segment.pop();
     m_Syn = segment.top();
@@ -337,7 +338,7 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     m_Cwnd = segment.top();
     segment.pop();
 
-    //
+    // On recupere et affecte a l'attribut de classe le port source et le port de destination.
     m_PortDest = segment.top().to_ulong();
     segment.pop();
     m_PortSrc = segment.top().to_ulong();
