@@ -168,6 +168,12 @@ std::stack<std::bitset<16>> Physique::desencapsuler(
     return trame;
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param couchePhy La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Physique& couchePhy) {
     flux << "m_SrcMac : " << couchePhy.getMacSrc() << std::endl;
     flux << "m_DestMac : " << couchePhy.getMacDest() << std::endl;
