@@ -99,6 +99,7 @@ void ReseauGraphe::ajouter(Liaison l) {
     m_Liaisons.emplace_back(l);
 }
 
+// TODO : Verifications
 const uint8_t getRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
                                     std::vector<uint8_t>& visites,
                                     std::vector<uint8_t>& nonVisites)

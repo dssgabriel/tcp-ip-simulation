@@ -14,11 +14,11 @@ class ReseauGraphe {
         // Attributs
         std::string m_Nom;
         static std::vector<Machine> m_Machines;
-        std::vector<Liaison> m_Liaisons;
+        static std::vector<Liaison> m_Liaisons;
 
-        std::vector<Liaison> getCheminsVoisins(const uint8_t& routeurCourant);
-        uint8_t getRouteur(const uint16_t idMachine);
-        void getPlusCourtChemin(
+        static uint8_t getRouteur(const uint16_t idMachine);
+        static std::vector<Liaison> getCheminsVoisins(const uint8_t& routeurCourant);
+        static void getPlusCourtChemin(
             const uint8_t& depart,
             const uint8_t& arrivee,
             std::vector<int16_t> peres,
