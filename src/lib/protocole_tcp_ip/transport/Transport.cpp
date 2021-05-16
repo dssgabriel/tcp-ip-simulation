@@ -18,7 +18,16 @@
   * 
   * @return NULL. 
   **/
-Transport::Transport() {}
+Transport::Transport() {
+    m_PortSrc = std::numeric_limits<uint16_t>::max();
+    m_PortDest = std::numeric_limits<uint16_t>::max();
+    m_Cwnd.set();
+    m_Checksum.set();
+    m_Syn.set();
+    m_Ack1.set();
+    m_Seq.set();
+    m_Ack2.set();
+}
 
 /**
   * @brief Destucteur de la classe Transport.
@@ -298,14 +307,14 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     segment.pop();
     std::bitset<16> ack2Gauche = segment.top();
     segment.pop();
-    m_Ack2 = concat(ack2Droite, ack2Gauche);
+    m_Ack2 = concat(ack2Gauche, ack2Droite);
 
     //
     std::bitset<16> seqDroite = segment.top();
     segment.pop();
     std::bitset<16> seqGauche = segment.top();
     segment.pop();
-    m_Seq = concat(seqDroite, seqGauche);
+    m_Seq = concat(seqGauche, seqDroite);
     
     //
     m_Ack1 = segment.top();

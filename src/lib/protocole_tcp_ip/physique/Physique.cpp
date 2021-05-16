@@ -17,7 +17,8 @@
   * @return NULL.
   **/
 Physique::Physique() {
-    
+    m_SrcMac = macMax;
+    m_DestMac = macMax;
 }
 
 /**
@@ -27,9 +28,7 @@ Physique::Physique() {
   * 
   * @return NULL.
   **/
-Physique::~Physique() {
-
-}
+Physique::~Physique() {}
 
 /**
   * @brief Setter de l'attribut de classe m_SrcMac.
