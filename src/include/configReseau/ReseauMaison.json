@@ -1,6 +1,6 @@
 {
     "Nom du reseau": "reseau maison",
-    "Liste machine":[
+    "Liste machines":[
         {
             "type" : "Ordinateur",
             "ip": [192, 168, 1, 1],
@@ -134,7 +134,7 @@
         {
             "Depart": 3,
             "Arrivee": 4, 
-            "Debit":1000
+            "Debit": 1000
         },
         {
             "Depart": 4,
@@ -144,7 +144,7 @@
         {
             "Depart": 5,
             "Arrivee": 6, 
-            "Debit":10000
+            "Debit": 10000
         },
         {
             "Depart": 5,

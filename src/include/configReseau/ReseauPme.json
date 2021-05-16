@@ -1,6 +1,6 @@
 {
     "Nom du reseau": "reseau pme",
-    "Liste machine":[
+    "Liste machines":[
         {
             "type" : "Ordinateur",
             "ip": [192, 168, 1, 1],
