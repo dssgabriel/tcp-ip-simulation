@@ -60,6 +60,9 @@ std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
 
 // Methodes
 bool ReseauGraphe::estConnexe() {
+
+    //ECHEC, NEED HELP
+
     return false;
 }
 
@@ -72,4 +75,6 @@ void ReseauGraphe::ajouter(Liaison l) {
 }
 
 void ReseauGraphe::routageDynamique() {
+
+    //ECHEC, NEED HELP
 }
