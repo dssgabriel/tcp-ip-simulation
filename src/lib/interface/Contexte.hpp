@@ -1,9 +1,12 @@
 #ifndef CONTEXTE_H
 #define CONTEXTE_H
 
+//#include "../reseau_graphe/ReseauGraphe.hpp"
 #include "../../include/ParamInterface.hpp"
 #include "../../include/MAC.hpp"
 #include "../../include/ElementControleCongestion.hpp"
+//#include "../gestion_fichiers/Chargement.hpp"
+//#include "../gestion_fichiers/Sauvegarde.hpp"
 
 #include<memory>
 #include<string>

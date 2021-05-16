@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <iostream>
+#include "Commun.hpp"
 
 struct MAC {
     std::bitset<8> a;
@@ -29,6 +30,12 @@ struct MAC {
         flux << std::hex << mac.a.to_ulong() << ":" << mac.b.to_ulong() << ":";
         flux << mac.c.to_ulong() << ":" << mac.d.to_ulong() << ":";
         flux << mac.e.to_ulong() << ":" << mac.f.to_ulong() << std::dec;
+        
+        flux << ", ";
+
+        flux << mac.a.to_ulong() << ":" << mac.b.to_ulong() << ":";
+        flux << mac.c.to_ulong() << ":" << mac.d.to_ulong() << ":";
+        flux << mac.e.to_ulong() << ":" << mac.f.to_ulong();
 
         return flux;
     }

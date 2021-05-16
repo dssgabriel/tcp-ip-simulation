@@ -18,6 +18,16 @@ ConfigReseau::ConfigReseau() : QHBoxLayout()
 }
 
 // Destructeur //
-ConfigReseau::~ConfigReseau() {
+ConfigReseau::~ConfigReseau(){
 
+}
+
+void ConfigReseau::initialiserTexte(){
+    m_FenetreDonnee->clear();
+}
+
+void ConfigReseau::rafraichirTexte(){
+    QString m_StringToQstring;
+    m_StringToQstring.fromStdString(Contexte::GetInstance().informationsReseau());
+    m_FenetreDonnee->append(m_StringToQstring);  
 }

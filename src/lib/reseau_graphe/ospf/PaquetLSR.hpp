@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <vector>
+
 #include "PaquetOSPF.hpp"
 
 class PaquetLSR: public PaquetOSPF {

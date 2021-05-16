@@ -1,64 +1,41 @@
 #pragma once
 
+#include <queue>
+#include <stack>
 #include <bitset>
 #include <string>
+#include <iostream>
 
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
-template <size_t N3>
-void diviser(const std::bitset <N3>& original,
-            std::bitset <N3/2>& gauche, std::bitset <N3/2>& droite)
+// NE PAS METTRE DANS UN CPP
+
+template <size_t N>
+void diviser(const std::bitset <N>& original,
+    std::bitset <N/2>& gauche, std::bitset <N/2>& droite)
 {
-	droite = std::bitset<N3/2> ((original).to_ulong());
-	gauche = std::bitset<N3/2> ((original >> N3/2).to_ulong());
+	droite = std::bitset<N/2> ((original).to_ulong());
+	gauche = std::bitset<N/2> ((original >> N/2).to_ulong());
 }
 
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
-template <size_t N4>
-void diviser(std::bitset <N4> original, std::bitset <N4/3>& gauche,
-            std::bitset <N4/3>& milieu, std::bitset <N4/3>& droite)
+template <size_t N>
+void diviser(std::bitset <N> original, std::bitset <N/3>& gauche,
+    std::bitset <N/3>& milieu, std::bitset <N/3>& droite)
 {
-	droite = std::bitset<N4/3> ((original).to_ulong());
-	milieu = std::bitset<N4/3> ((original >>= N4/3).to_ulong());
-	gauche = std::bitset<N4/3> ((original >> N4/3).to_ulong());
+    droite = std::bitset<N/3> ((original).to_ulong());
+    milieu = std::bitset<N/3> ((original >>= N/3).to_ulong());
+    gauche = std::bitset<N/3> ((original >> N/3).to_ulong());
 }
 
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
-template <size_t N1, size_t N2 >
-std::bitset<N1 + N2> concat(const std::bitset <N1> b1,
-            const std::bitset <N2> b2)
+template <size_t N1, size_t N2>
+std::bitset<N1 + N2> concat(const std::bitset <N1> gauche,
+    const std::bitset <N2> droite)
 {
-    std::string s1 = b1.to_string();
-    std::string s2 = b2.to_string();
-    return std::bitset <N1 + N2>(s1 + s2);
+    std::string gaucheStr = gauche.to_string();
+    std::string droiteStr = droite.to_string();
+    return std::bitset <N1 + N2>(gaucheStr + droiteStr);
 }
 
-/**
-  * Description :
-  * Fonction :
-  * Parametres : 
-  * Sortie :
-  **/
-template <size_t N1>
-void inverser(std::stack<std::bitset<N1>> &pile) {
-    std::stack<std::bitset<N1>> pileInv;
+void afficher(std::stack<std::bitset<16>> pile);
 
-    for(size_t i = 0; i < pile.size(); ++i) {
-        pileInv.push(pile.top());
-        pile.pop();
-    }
-}
+void afficher(std::queue<std::stack<std::bitset<16>>> file);
+
+void afficher(std::deque<std::stack<std::bitset<16>>> doubleFile);

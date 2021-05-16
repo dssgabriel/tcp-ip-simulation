@@ -118,3 +118,30 @@ void AffichageReseau::configEntreprise()
     QIcon ButtonIcon(pixmap);
     m_Image->setIcon(ButtonIcon);
 }
+
+void AffichageReseau::sauvegarderGraphe()
+{
+  QPixmap png_graphe = m_Vue->grab();
+  QImage image = png_graphe.toImage();
+  image.save("Graphique_congestion.png","PNG");
+}
+
+void AffichageReseau::informationsReseau()
+{
+    QWidget* window = new QWidget;
+    QLabel* test = new QLabel;
+    test->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png"));
+    window->resize(600, 600);
+    test->show();
+    window->show();
+}
+
+void AffichageReseau::initialiserGraphe()
+{
+    m_Graphique->removeAllSeries();
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+}

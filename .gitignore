@@ -2,6 +2,12 @@
 build/
 target/
 .vscode/
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+# Executable
+test/testsJson/test
+test/testsMachine/test
 **/.vscode/**
 
 # Files to ignore

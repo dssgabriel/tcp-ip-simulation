@@ -1,14 +1,14 @@
 {
     "IP destination": [
+        192,
         168,
-        4,
-        125,
-        6
+        1,
+        2
     ],
     "IP source": [
         192,
-        240,
-        20,
+        168,
+        1,
         1
     ],
     "Nom du reseau": "ReseauSimple",
