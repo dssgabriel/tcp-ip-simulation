@@ -116,16 +116,16 @@ Machine* Machine::getVoisin(MAC adresseVoisin) {
     return nullptr;
 }
 
-void Machine::setDonnee(std::stack<std::bitset<16>>* donnee) {
-    m_FileDonnees.push(donnee);
+void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
+    m_FileDonnees.emplace(trame);
 }
 
-const std::queue<std::stack<std::bitset<16>>*>& Machine::getDonnees() {
+const std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
-std::stack<std::bitset<16>>* Machine::suppDonnee() {
-    std::stack<std::bitset<16>>* donnee = m_FileDonnees.front();
+std::stack<std::bitset<16>> Machine::suppDonnee() {
+    std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
     m_FileDonnees.pop();
     return donnee;
 }
@@ -133,16 +133,16 @@ std::stack<std::bitset<16>>* Machine::suppDonnee() {
 
 // Overloading
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {
-    flux << "Numero : " << m.getIdMachine() << "/" << m.getNbMachine() << "\n";
-    flux << "Nom : " << m.getNom() << "\n";
-    flux << "Ip : " << m.getIp() << "\n";
-    flux << "Masque : " << m.getMasque() << "\n";
-    flux << "Mac : " << m.getMac() << "\n";
+    flux << "Numero : " << m.getIdMachine() << "/" << m.getNbMachine() << std::endl;
+    flux << "Nom : " << m.getNom() << std::endl;
+    flux << "Ip : " << m.getIp() << std::endl;
+    flux << "Masque : " << m.getMasque() << std::endl;
+    flux << "Mac : " << m.getMac() << std::endl;
 
     flux << "Liste des sous réseaux : \n";
     std::vector<IPv4> cpySousReseau = m.getSousReseau();
     for(IPv4 sousReseau : cpySousReseau) {
-        flux << "\t > " << sousReseau << "\n";
+        flux << "\t > " << sousReseau << std::endl;
     }
 
     return flux;

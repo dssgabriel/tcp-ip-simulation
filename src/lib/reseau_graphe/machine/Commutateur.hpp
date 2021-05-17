@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-
 #include "Machine.hpp"
 
 class Commutateur : public Machine {

@@ -25,12 +25,11 @@ uint8_t Commutateur::getIdCommutateur() {
 // Methode
 void Commutateur::envoyer() {
     // Vide la file de donnees.
-    std::stack<std::bitset<16>>* donneeRecu = m_FileDonnees.front();
-    m_FileDonnees.pop();
+    std::stack<std::bitset<16>> donneeRecu = suppDonnee();
 
     Physique couchePhy;
     Internet coucheInt;
-    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(*donneeRecu);
+    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
     
     // On enleve le checksum, le ttl et le protocoleId. 
     std::bitset<16> checksum = paquet.top();
@@ -61,7 +60,7 @@ void Commutateur::envoyer() {
     Machine* voisine = getVoisin(prochainStop);
 
     // Traitement de la donnee.
-    traitement(*donneeRecu, prochainStop);
+    traitement(donneeRecu, prochainStop);
 
     // La machine suivante recois le paquet
     voisine->setDonnee(donneeRecu);

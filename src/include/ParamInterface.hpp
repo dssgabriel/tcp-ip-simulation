@@ -10,7 +10,7 @@ enum TypeFichier: uint16_t {
 struct ParamInterface {
     IPv4 m_Source;
     IPv4 m_Destination;
-    uint8_t m_Ssthresh;
+    uint16_t m_Ssthresh;
     uint32_t m_NbPaquet;
     TypeFichier m_TypeFichier;
 };

@@ -1,13 +1,18 @@
 #ifndef MENUENTETE_H
 #define MENUENTETE_H
 
+#include "Contexte.hpp"
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
 #include <QMenuBar>
+#include <QTimer>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
+#include <QFileDialog>
 
 class MenuEntete : public QHBoxLayout
 {
@@ -40,19 +45,19 @@ Q_OBJECT
         ~MenuEntete();
 
         // Méthode
-        //void activeExporter(bool m_export);
+       void activeExporter(bool m_export);
 
     private slots :
         // Méthodes Slots
-        /*void charger();
+        void charger();
         void sauvegarder();
         void exporterGraphe();
         void quitter();
 
         void rafraichir();
-        void stop();*/
+        void stop();
         void changerMode();
-        //void afficheTuto();
+        void afficheTuto();
 
 };
 

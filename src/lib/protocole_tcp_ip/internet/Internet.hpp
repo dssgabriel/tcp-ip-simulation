@@ -9,9 +9,7 @@
 
  **/
 
-
-#ifndef internet_HPP
-#define internet_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -25,8 +23,8 @@
 class Internet {
     private :
        // Attributs
-        IPv4 m_IpSrc ;
-        IPv4 m_IpDest ;
+        IPv4 m_IpSrc;
+        IPv4 m_IpDest;
         std::bitset<8> m_TTL;
         std::bitset<8> m_ProtocoleId;
         std::bitset<16> m_Checksum;
@@ -41,16 +39,18 @@ class Internet {
 
         // Setters & getters
         void setIpSrc(IPv4 src);
-        IPv4& getIpSrc();
+        const IPv4& getIpSrc() const;
 
         void setIpDest(IPv4 dest);
-        IPv4& getIpDest();
+        const IPv4& getIpDest() const;
 
         void setTTL(const std::bitset<8>& ttl);
-        std::bitset<8>& getTTL();
+        const std::bitset<8>& getTTL() const;
 
         void setProtocoleId();
-        std::bitset<8>& getProtocoleId();
+        const std::bitset<8>& getProtocoleId() const;
+
+        const std::bitset<16>& getChecksum() const;
         
         // Methodes
         std::bitset<32> convertir(const IPv4& adresse);
@@ -64,6 +64,10 @@ class Internet {
 
         std::stack<std::bitset<16>> encapsuler(std::stack<std::bitset<16>>& segment);
         std::stack<std::bitset<16>> desencapsuler(std::stack<std::bitset<16>>& paquet);
-};
 
-#endif
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const Internet& coucheInt
+        );
+};
