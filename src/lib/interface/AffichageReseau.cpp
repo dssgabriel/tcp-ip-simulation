@@ -14,7 +14,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
 
     m_Image = new QPushButton("");
     m_Image ->setStyleSheet(s);
-    QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png");
+    QPixmap pixmap("../src/lib/interface/ressources/Reseau1_Rectangle.png");
     QIcon ButtonIcon(pixmap);
     m_Image->setIcon(ButtonIcon);
     m_Image->setMaximumSize(QSize(347, 700));
@@ -32,7 +32,51 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->setTheme(QChart::ChartThemeDark);
     m_Graphique->titleFont().setBold(true);
 
-    QLineSeries* initial = new QLineSeries();
+    QLineSeries* slow_start = new QLineSeries();
+    slow_start->setName("Slow Start");
+    m_Lignes.push_back(slow_start);
+    m_Graphique->addSeries(slow_start);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[0]->setColor(QColor(255,105,180,255));
+
+    QLineSeries* cong_avoid = new QLineSeries();
+    cong_avoid->setName("Congestion Avoidance");
+    m_Lignes.push_back(cong_avoid);
+    m_Graphique->addSeries(cong_avoid);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[1]->setColor(QColor(Qt::cyan));
+
+    QLineSeries* fast_retransmit = new QLineSeries();
+    fast_retransmit->setName("Fast Retransmit");
+    m_Lignes.push_back(fast_retransmit);
+    m_Graphique->addSeries(fast_retransmit);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[2]->setColor(QColor(138,43,226,255));
+
+    QLineSeries* fast_recovery = new QLineSeries();
+    fast_recovery->setName("Fast Recovery");
+    m_Lignes.push_back(fast_recovery);
+    m_Graphique->addSeries(fast_recovery);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[3]->setColor(QColor(Qt::green));
+
+    /*QLineSeries* initial = new QLineSeries();
     initial->setName("Slow Start");
     m_Lignes.push_back(initial);
     m_Graphique->addSeries(initial);
@@ -80,8 +124,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 40);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 10);*/
 
-    m_Lignes[0]->append(27,6);
-
+    //m_Lignes[0]->append(27,6);
     addWidget(m_Vue);
 }
 
@@ -128,12 +171,59 @@ void AffichageReseau::sauvegarderGraphe()
 
 void AffichageReseau::informationsReseau()
 {
-    QWidget* window = new QWidget;
-    QLabel* test = new QLabel;
-    test->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png"));
-    window->resize(600, 600);
-    test->show();
-    window->show();
+    QWidget *wdg = new QWidget;
+    QGridLayout* lyt = new QGridLayout();
+    wdg->setLayout(lyt);
+    QLabel* lbl = new QLabel();
+    lbl->resize(QSize(1000, 1000));
+    
+    // mise à l'échelle de l'image dans le label //
+    int w = lbl->width();
+    int h = lbl->height();
+    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau1_debit.png").scaled(w,h,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+    lyt->addWidget(lbl,0,0);
+
+    // QTextEdit + AddWidget //
+    QTextEdit * m_InfoReseau = new QTextEdit();
+    m_InfoReseau->setTextColor(Qt::red);
+    m_InfoReseau->append("Réseau Simple\n");
+    m_InfoReseau->setTextColor(Qt::black);
+    m_InfoReseau->append
+    (
+        "ORDINATEUR 1:\n"
+        "ip: 192.168.1.1\n" 
+        "mac: 205-138-107-55-15-181\n"
+         "masque: 255.255.255.0\n\n"
+        
+        "ORDINATEUR 2:\n"
+            "ip: 192.168.1.2\n"
+            "mac: 32-11-122-213-123-169\n"
+            "masque: 255.255.255.0\n\n"
+
+        "ORDINATEUR 3:\n"
+            "ip: 192.168.1.127\n"
+            "mac: 20-150-14-46-148-111\n"
+            "masque: 255.255.255.0\n\n"
+
+        "ORDINATEUR 4:\n"
+            "ip: 192.168.1.128\n"
+            "mac:6-8-182-75-181-255\n"
+            "masque: 255.255.255.0\n\n"
+
+        "ROUTEUR 1:\n"
+            "ip: 192.168.1.65\n"
+            "mac: 188-230-238-227-106-100\n"
+            "masque: 255.255.255.0\n\n"
+
+        "ROUTEUR 2:\n"
+            "ip: 192.168.1.66\n"
+            "mac: 81-216-176-118-154-102\n"
+            "masque: 255.255.255.0);\n"
+    );
+    //m_InfoReseau->setMaximumHeight(300);
+    m_InfoReseau->setReadOnly(true);
+    lyt->addWidget(m_InfoReseau,0,1);
+    wdg->show();
 }
 
 void AffichageReseau::initialiserGraphe()
