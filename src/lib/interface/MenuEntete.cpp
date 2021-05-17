@@ -4,18 +4,18 @@ MenuEntete::MenuEntete() : QHBoxLayout()
 {
 
     // Definition de la StyleSheet pour les widgets(fond degrade orange vers rose, texte blanc de taille 20 pixel, bordure arrondie etc...)
-    QString s("QPushButton {background-color: rgba(50, 50, 50, 255);"
+    QString s("QPushButton {background-color: rgba(64, 68, 75, 255);"
                "font: bold;"
                "border-radius: 5px;"
                "color: White;"
                "border-width: 10px;"
                "padding: 15px;}"
-               "QPushButton:hover {background-color: rgba(70, 70, 70, 255);}"
-               "QPushButton:pressed {background-color: rgba(30, 30, 30, 255);}");
+               "QPushButton:hover {background-color: rgba(74, 78, 85, 255);}"
+               "QPushButton:pressed {background-color: rgba(54, 58, 65, 255);}");
 
     m_Barre = new QMenuBar();
     m_Fichier = new QMenu("Fichier");
-    m_Barre->setStyleSheet("background-color: rgba(80, 80, 80, 255); color: White;");
+    m_Barre->setStyleSheet("background-color: rgba(35, 39, 42, 255); color: White;");
     m_Barre->setMinimumWidth(1920);
     m_Barre->setMaximumHeight(30);
     m_Barre->addMenu(m_Fichier);
@@ -80,18 +80,18 @@ MenuEntete::MenuEntete() : QHBoxLayout()
 
     m_Montre = new QLabel("00:00:00");
     m_Montre->setMargin(5);
-    m_Montre->setStyleSheet("background-color: rgba(50, 50, 50, 255); border-radius: 5px; color: White; font: bold;");
+    m_Montre->setStyleSheet("background-color: rgba(64, 68, 75, 255); border-radius: 5px; color: White; font: bold;");
     m_Hlayout->addWidget(m_Montre);
 
     m_Hlayout->addSpacerItem(item);
 
     m_Tuto = new QPushButton();
-    m_Tuto->setStyleSheet("QPushButton {background-color: rgba(50, 50, 50, 255);"
+    m_Tuto->setStyleSheet("QPushButton {background-color: rgba(64, 68, 75, 255);"
                           "border-radius: 25px;"
                           "border-width: 10px;"
                           "padding: 15px;}"
-                          "QPushButton:hover {background-color: rgba(70, 70, 70, 255);}"
-                          "QPushButton:pressed {background-color: rgba(30, 30, 30, 255);}");
+                          "QPushButton:hover {background-color: rgba(74, 78, 85, 255);}"
+                          "QPushButton:pressed {background-color: rgba(54, 58, 65, 255);}");
     m_Tuto->setMaximumHeight(50);
     m_Tuto->setMaximumWidth(50);
     m_Tuto->setIcon(QIcon("../src/lib/interface/ressources/Tuto.png"));

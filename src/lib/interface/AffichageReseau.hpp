@@ -1,3 +1,11 @@
+/**
+ * @file        AffichageReseau.hpp
+ * @brief       Déclaration de la classe AffichageReseau.
+ * 
+ * @author      Johann RAMANANDRAISIORY 
+ * @date        2021
+ **/
+
 #ifndef AFFICHAGERESEAU_H
 #define AFFICHAGERESEAU_H
 
