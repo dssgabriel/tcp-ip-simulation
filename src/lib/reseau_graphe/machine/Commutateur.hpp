@@ -8,12 +8,11 @@ class Commutateur : public Machine {
         // Attributs
         static uint8_t m_NbrCommutateur;
         uint8_t m_IdCommutateur;
-        std::map<IPv4, MAC> m_CacheMem;
+        std::map<const IPv4*, const MAC*> m_CacheMem;
     	
     public:
         // Constructeurs
         Commutateur();
-        // // Commutateur(const std::string& nom);
         
         // Destructeur
         ~Commutateur();
@@ -21,10 +20,17 @@ class Commutateur : public Machine {
         // Getters
         uint8_t getNbrCommutateur();
         uint8_t getIdCommutateur();
+        void setMemoire(const IPv4* ip, const MAC* mac);
+        const std::map<const IPv4*, const MAC*>& getMemoire() const;
         
         // Methode
-        void envoyer();
-        void recevoir();
-        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
-        MAC trouverMacDest(const IPv4& ip);
+        void envoyer(const uint32_t cwnd, const bool isAck);
+        void recevoir(const uint32_t cwnd, const bool isAck);
+        MAC trouverMacDest(const IPv4 ip);
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            Commutateur& c
+        );
 };

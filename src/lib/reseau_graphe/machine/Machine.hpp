@@ -12,6 +12,7 @@
 #include "../../../include/Commun.hpp"
 #include "../../protocole_tcp_ip/internet/Internet.hpp"
 #include "../../protocole_tcp_ip/physique/Physique.hpp"
+#include "../../protocole_tcp_ip/transport/Transport.hpp"
 
 class Machine {
     private:
@@ -37,7 +38,7 @@ class Machine {
         Machine();
 
         // Destructeur
-        virtual ~Machine() {};
+       virtual ~Machine() {};
 
         // Getters & setters
         const uint16_t& getNbMachine() const;
@@ -56,22 +57,24 @@ class Machine {
         const MAC& getMac() const;
 
         void setSousReseau(const IPv4& sousReseau);
-        const std::vector<IPv4>& getSousReseau() const;
+        const std::vector<IPv4>& getSousReseaux() const;
 
         void setVoisin(Machine& voisin);
-        Machine* getVoisin(MAC adresseVoisin);
+        Machine* getVoisin(MAC adresseVoisin) const;
+        std::vector<Machine*> getVoisins() const;
 
         void setDonnee(const std::stack<std::bitset<16>>& trame);
         std::stack<std::bitset<16>> suppDonnee();
 
-        const std::queue<std::stack<std::bitset<16>>>& getDonnees();
+        std::queue<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
-        virtual void recevoir() {};
-
         // NE PAS NOMMER LES VARIABLES.
-        virtual void envoyer(const uint32_t) {};
-        virtual void traitement(std::stack<std::bitset<16>>&, MAC) {};
+        virtual void envoyer(const uint32_t, bool) {};
+        void traitement(std::stack<std::bitset<16>>&, MAC);
+        virtual void recevoir(const uint32_t, bool) {};
+
+
 
         // Overloading
         friend std::ostream& operator<<(
@@ -79,3 +82,5 @@ class Machine {
             const Machine& machine
         );
 };
+
+bool estVide(std::queue<std::stack<std::bitset<16>>> donnees);

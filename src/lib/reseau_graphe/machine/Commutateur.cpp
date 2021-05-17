@@ -22,95 +22,137 @@ uint8_t Commutateur::getIdCommutateur() {
     return m_IdCommutateur; 
 }
 
+void Commutateur::setMemoire(const IPv4* ip, const MAC* mac) {
+    m_CacheMem.insert(std::pair<const IPv4*, const MAC*>(ip, mac));
+}
+
+const std::map<const IPv4*, const MAC*>& Commutateur::getMemoire() const {
+    return m_CacheMem;
+}
+
 // Methode
-void Commutateur::envoyer() {
-    // Vide la file de donnees.
-    std::stack<std::bitset<16>> donneeRecu = suppDonnee();
+void Commutateur::envoyer(const uint32_t cwnd, const bool isAck) {
+    std::cout << m_Nom << " : Debut envoie\n";
 
-    Physique couchePhy;
-    Internet coucheInt;
-    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
-    
-    // On enleve le checksum, le ttl et le protocoleId. 
-    std::bitset<16> checksum = paquet.top();
-    paquet.pop();
-    std::bitset<16> ttl_Protocole = paquet.top();
-    paquet.pop();
+    //
+    if (isAck) {
+        std::cout << "Retour\n";
 
-    // On recupere l'adresse de destination.
-    std::bitset<16> ipDestDC = paquet.top();
-    paquet.pop();
-    std::bitset<16> ipDestBA = paquet.top();
-    paquet.pop();
+        //
+        std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
 
-    // Trouver l'adresse MAC de la prochaine machine.
-    IPv4 ip;
-    coucheInt.convertir(ip, ipDestBA, ipDestDC);
-    MAC prochainStop = trouverMacDest(ip);
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
 
-    // Encapsulation adresse IP de destination.
-    paquet.push(ipDestBA);
-    paquet.push(ipDestDC);
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-    // Encapsulation du checksun et de ttl_Protole.
-    paquet.push(ttl_Protocole);
-    paquet.push(checksum);
+        //
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneeRecu = couchePhy.encapsuler(paquet);
 
-    // Trouver la machine voisine.
-    Machine* voisine = getVoisin(prochainStop);
-
-    // Traitement de la donnee.
-    traitement(donneeRecu, prochainStop);
-
-    // La machine suivante recois le paquet
-    voisine->setDonnee(donneeRecu);
-    voisine->recevoir();
-}
-
-void Commutateur::recevoir() {
-    // TODO : A faire
-}
-
-void Commutateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
-    // Recuperation du paquet.
-    Physique couchePhy;
-    
-    // Recuperation adresse MAC destination.
-    std::bitset<16> macDestBA, macDestDC, macDestFE;
-    macDestFE = trame.top();
-    trame.pop();
-    macDestDC = trame.top();
-    trame.pop();
-    macDestBA = trame.top();
-    trame.pop();
-
-    // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
-    for(int i = 0; i < 3; ++i){
-        trame.pop();
-    }
-
-    // Changement adresse MAC.
-    // La destination devient la source.
-    trame.push(macDestBA);
-    trame.push(macDestDC);
-    trame.push(macDestFE);
-
-    // Ajout nouvelle destination
-    std::bitset<48> nouvelleDestBit = couchePhy.convertir(nouvelleDest);
-    macDestBA = macDestDC = macDestFE = 0;
-    diviser(nouvelleDestBit, macDestFE, macDestDC, macDestBA);
-    trame.push(macDestBA);
-    trame.push(macDestDC);
-    trame.push(macDestFE);
-}
-
-MAC Commutateur::trouverMacDest(const IPv4& ip) {
-    auto trouve = m_CacheMem.find(ip);
-    if(trouve != m_CacheMem.end()) {
-        return trouve->second;
+        //
+        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpSrc()));
+        voisine->setDonnee(donneeRecu);
+        voisine->recevoir(cwnd, true);
+        
+        std::cout << m_Nom << " : Fin envoie\n";
+        return;
     }
     else {
-        std::cout << "ERREUR : Aucune adresse MAC ne correspond à l'adresse IP indiqué\n";
-        return macZero;
+        std::cout << "Aller\n";
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // Vide la file de donnees.
+        std::stack<std::bitset<16>> donneeRecu = suppDonnee();
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        // Trouver la machine voisine.
+        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpDest()));
+
+        //
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneeRecu = couchePhy.encapsuler(paquet);
+
+        // Traitement de la donnee.
+        traitement(donneeRecu, voisine->getMac());
+
+        // La machine suivante recois le paquet
+        voisine->setDonnee(donneeRecu);
+
+        //
+        for (int i = 1; i < int(cwnd); ++i) {
+            // Vide la file de donnees.
+            std::stack<std::bitset<16>> donneeRecu = suppDonnee();
+
+            // On desencapsule.
+            std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+            std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+            std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+            //
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneeRecu = couchePhy.encapsuler(paquet);
+            
+            // Traitement de la donnee.
+            traitement(donneeRecu, voisine->getMac());
+
+            // La machine suivante recois le paquet
+            voisine->setDonnee(donneeRecu);
+        }
+
+        //
+        voisine->recevoir(cwnd, false);
+        std::cout << m_Nom << " : Fin envoie\n";
     }
+}
+
+void Commutateur::recevoir(const uint32_t cwnd, const bool isAck) {
+    std::cout << m_Nom << " : Debut recevoir\n";
+    envoyer(cwnd, isAck);
+    std::cout << m_Nom << " : Fin recevoir\n";
+}
+
+MAC Commutateur::trouverMacDest(const IPv4 ip) {
+    
+    //
+    for (auto it = m_CacheMem.begin(); it != m_CacheMem.end(); ++it) {
+        if(*it->first == ip) {
+            return *it->second;
+        }
+    }
+
+    //
+    std::cout << "ERREUR : Dans la fonction 'trouverMacDest' : ";
+    std::cout << "Aucune adresse MAC ne correspond à l'adresse IP indiqué\n";
+    return macZero;
+}
+
+// Overloading
+std::ostream& operator<<(std::ostream& flux, Commutateur& c) {
+    Machine *m = dynamic_cast<Commutateur*>(&c);
+    flux << *m;
+
+    std::map<const IPv4*, const MAC*> cpyCacheMem = c.getMemoire();
+    flux << "Cache memoire (taille : " << cpyCacheMem.size() << ") : \n";
+    for (auto itMap = cpyCacheMem.begin(); itMap != cpyCacheMem.end(); ++itMap) {
+        // flux << *itMap->first << " -> " << *itMap->second << std::endl;
+        flux << itMap->first << " -> " << itMap->second << std::endl;
+    }
+
+    return flux;
 }

@@ -12,7 +12,7 @@ void test1() {
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
     
-    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
 }
 
 void test2() {
@@ -21,6 +21,7 @@ void test2() {
 }
 
 void test3() {
+    test1();
     std::unique_ptr<ReseauGraphe> reseau;
 
     ParamInterface p;
@@ -34,10 +35,15 @@ void test3() {
     std::cout << *reseau;
 }
 
+void test4() {
+
+}
+
 int main(void) {
-    test1();
+    // test1();
     // test2();
     test3();
+    // test4();
 
     return 0;
 }
