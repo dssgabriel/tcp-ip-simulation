@@ -113,6 +113,7 @@ Machine* Machine::getVoisin(MAC adresseVoisin) const {
         }
     }
 
+    std::cout << "ERREUR : Dans la fonction 'getVoisin' : Aucune voisin trouve.\n";
     return nullptr;
 }
 
@@ -129,11 +130,62 @@ std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
 }
 
 std::stack<std::bitset<16>> Machine::suppDonnee() {
-    std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
-    m_FileDonnees.pop();
-    return donnee;
+    if (!m_FileDonnees.empty()) {
+        std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
+        m_FileDonnees.pop();
+        return donnee;
+    } else {
+        std::cout << "ERREUR : Dans la fonction 'suppDonnee' : File vide.\n";
+        exit(EXIT_FAILURE);
+    }
 }
 // Fin getters et setters
+
+// Methodes
+void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
+    std::cout << m_Nom << " : Debut traitement\n";
+    
+    // Recuperation du paquet.
+    Physique couchePhy;
+    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
+    
+    // Recuperation adresse MAC destination.
+    MAC ancienneDest = couchePhy.getMacDest();
+
+    // Changement adresse MAC.
+    // La destination devient la source.
+    // Ajout nouvelle destination.
+    couchePhy.setMacSrc(ancienneDest);
+    couchePhy.setMacDest(nouvelleDest);
+
+    // Encapsulation.
+    trame = couchePhy.encapsuler(paquet);
+    std::cout << m_Nom << " : fin traitement\n";
+}
+
+bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
+    while (!donnees.empty()) {
+        //
+        std::stack<std::bitset<16>> donnee = donnees.front();
+        donnees.pop();
+
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donnee);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        coucheTrans.desencapsuler(segment);
+        
+        if (coucheTrans.getAck2().to_ulong() == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 // Overloading
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {

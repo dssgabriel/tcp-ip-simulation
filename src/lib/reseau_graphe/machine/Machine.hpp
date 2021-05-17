@@ -12,6 +12,7 @@
 #include "../../../include/Commun.hpp"
 #include "../../protocole_tcp_ip/internet/Internet.hpp"
 #include "../../protocole_tcp_ip/physique/Physique.hpp"
+#include "../../protocole_tcp_ip/transport/Transport.hpp"
 
 class Machine {
     private:
@@ -68,11 +69,12 @@ class Machine {
         std::queue<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
-        virtual void recevoir() {};
-
         // NE PAS NOMMER LES VARIABLES.
-        virtual void envoyer(const uint32_t) {};
-        virtual void traitement(std::stack<std::bitset<16>>&, MAC) {};
+        virtual void envoyer(const uint32_t, bool) {};
+        void traitement(std::stack<std::bitset<16>>&, MAC);
+        virtual void recevoir(const uint32_t, bool) {};
+
+
 
         // Overloading
         friend std::ostream& operator<<(
@@ -80,3 +82,5 @@ class Machine {
             const Machine& machine
         );
 };
+
+bool estVide(std::queue<std::stack<std::bitset<16>>> donnees);
