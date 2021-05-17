@@ -1,6 +1,10 @@
 #pragma once
 
+#include <bitset>
+#include <cstdint>
 #include <map>
+#include <queue>
+#include <vector>
 
 #include "Machine.hpp"
 #include "../ospf/PaquetOSPF.hpp"
@@ -9,11 +13,10 @@
 #include "../ospf/PaquetLSR.hpp"
 #include "../ospf/PaquetLSU.hpp"
 #include "../ospf/PaquetLSAck.hpp"
-
 #include "../../../include/Liaison.hpp"
 
 class Routeur : public Machine {
-	private:
+    private:
         // Attributs
         static uint8_t m_NbRouteur;
         uint8_t m_IdRouteur;
@@ -25,9 +28,9 @@ class Routeur : public Machine {
         // Methodes
         void traitementPaquetHello(const PaquetHello& hello);
         void traitementPaquetDBD(PaquetDBD& dbd);
-        void traitementPaquetLSR(const PaquetLSR& lsr);
-        void traitementPaquetLSU(const PaquetLSU& lsu);
-        void traitementPaquetLSAck(const PaquetLSAck& ack);
+        void traitementPaquetLSR(PaquetLSR& lsr);
+        void traitementPaquetLSU(PaquetLSU& lsu);
+        void traitementPaquetLSAck(PaquetLSAck& ack);
 
     public:
         // Constructeurs
@@ -43,11 +46,11 @@ class Routeur : public Machine {
         //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
-        void envoyer(Routeur& dest, PaquetOSPF& ospf);
-        void recevoir(PaquetOSPF& ospf);
+        void envoyerOSPF(Routeur& dest, PaquetOSPF& ospf);
+        void recevoirOSPF(PaquetOSPF& ospf);
         void traitementPaquetOSPF();
 
-        void envoyer();
+        void envoyer(const uint32_t);
         void recevoir();
         void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
 };

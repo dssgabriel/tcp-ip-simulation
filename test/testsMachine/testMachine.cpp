@@ -1,5 +1,7 @@
 #include <iostream>
+#include <time.h>
 
+#include "../../src/include/Commun.hpp"
 #include "../../src/include/ParamInterface.hpp"
 #include "../../src/lib/gestion_fichiers/Chargement.hpp"
 #include "../../src/lib/gestion_fichiers/Sauvegarde.hpp"
@@ -22,15 +24,6 @@ void test1() {
     Routeur r, r2;
     std::cout << r << std::endl;
     std::cout << r2 << std::endl;
-
-    ParamInterface p;
-    p.m_Destination = pc2.getIp();
-    p.m_Source = pc.getIp();
-    p.m_NbPaquet = 10;
-    p.m_Ssthresh = 128;
-    p.m_TypeFichier = FTP;
-
-    pc.remplirFileDonnees(p, pc2.getMac());
 }
 
 void test2() {
@@ -43,19 +36,64 @@ void test2() {
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
 
+    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
     chargerConfig("ecriture.json", reseau, p);
     // std::cout << *reseau;
 
-    Machine client = reseau->getMachine(p.m_Source);
-    Machine serveur = reseau->getMachine(p.m_Destination);
+    Machine& clientM = reseau->getMachine(p.m_Source);
+    Machine& serveurM = reseau->getMachine(p.m_Destination);
 
-    std::cout << "client \n" << client;
-    std::cout << "serveur \n" << serveur;
+    Ordinateur client = dynamic_cast<Ordinateur&> (clientM);
+    Ordinateur serveur = dynamic_cast<Ordinateur&> (serveurM);
+
+    MAC macDest = {35, 11, 122, 213, 123, 169};
+    client.remplirFileDonnees(p, macDest);
+
+    std::cout << "clientM \n" << clientM;
+    std::cout << "serveurM \n" << serveurM;
+}
+
+void test3() {
+    //
+    Ordinateur pc, pc2;
+
+    //
+    pc.setIp({192, 168, 1, 1});
+    pc.setMac({205, 138, 107, 55, 153, 181});
+    pc2.setIp({192, 168, 1, 2});
+    pc2.setMac({35, 11, 122, 213, 123, 169});
+    pc.setVoisin(pc2);
+    pc2.setVoisin(pc);
+    // std::cout << pc << std::endl;
+    // std::cout << pc2 << std::endl;
+
+    //
+    ParamInterface p;
+    p.m_Destination = pc2.getIp();
+    p.m_Source = pc.getIp();
+    // p.m_NbPaquet = 2;
+    // p.m_NbPaquet = 3;
+    p.m_NbPaquet = 4;
+    p.m_Ssthresh = 8;
+    p.m_TypeFichier = FTP;
+
+    //
+    pc.remplirFileDonnees(p, pc2.getMac());
+    // afficher(pc.getDonnees());
+    
+    //
+    // std::bitset<16> cwnd = 1;
+    // pc.slowStart(cwnd, p.m_Ssthresh);
+    // pc.envoyer(2);
+    // pc.envoyer(3);
+    pc.envoyer(4);
 }
 
 int main(void) {
+    srand(time(NULL));
     // test1();
-    test2();
+    // test2();
+    test3();
 
     return 0;
 }

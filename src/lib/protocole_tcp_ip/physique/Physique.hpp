@@ -8,8 +8,7 @@
  */
 
 
-#ifndef physique_HPP
-#define physique_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -35,11 +34,11 @@ class Physique {
         ~Physique();
        
         // Getters & setters
-        MAC getMacSrc();
         void setMacSrc(MAC src);
+        const MAC getMacSrc() const;
         
-        MAC getMacDest();
         void setMacDest(MAC dest);
+        const MAC getMacDest() const;
         
         // Methodes
         MAC convertir(
@@ -49,10 +48,6 @@ class Physique {
         );
 
         std::bitset<48> convertir(const MAC& adresse);
-
-        std::stack<std::bitset<16>> decoupageMac(
-            const std::bitset<48>& adresse
-        );
         
         std::stack<std::bitset<16>> encapsuler(
             std::stack<std::bitset<16>>& paquet
@@ -61,6 +56,10 @@ class Physique {
         std::stack<std::bitset<16>> desencapsuler(
             std::stack<std::bitset<16>>& trame
         );
-};
 
-#endif
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            const Physique& couchePhy
+        );
+};

@@ -13,23 +13,18 @@
   * @brief Constructeur de la classe Physique.
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL.
   **/
 Physique::Physique() {
-    
+    m_SrcMac = macMax;
+    m_DestMac = macMax;
 }
 
 /**
   * @brief Destructeur de la classe Physique.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
   **/
-Physique::~Physique() {
-
-}
+Physique::~Physique() {}
 
 /**
   * @brief Setter de l'attribut de classe m_SrcMac.
@@ -46,7 +41,7 @@ void Physique::setMacSrc(MAC src) {
   *
   * @return La valeur de l'adresse MAC source.
   **/
-MAC Physique::getMacSrc() {
+const MAC Physique::getMacSrc() const {
     return m_SrcMac;
 }
 
@@ -65,7 +60,7 @@ void Physique::setMacDest(MAC dest) {
   * 
   * @return La valeur de l'adresse MAC de destination.
   **/
-MAC Physique::getMacDest() {
+const MAC Physique::getMacDest() const {
     return m_DestMac;
 }
 
@@ -125,50 +120,18 @@ MAC Physique::convertir(const std::bitset<16>& adrPartBA,
 }
 
 /**
-  * @brief Permet de convertir un bitset de 48 bits en une pile de bitset de 16 bits.
-  * 
-  * @param adresse Le bitset que l'on veut diviser.
-  * @return La pile contenant l'argument découpé en plusieurs morceaux.
-  **/
-std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adresse) {
-  std::stack<std::bitset<16>> pile;
-  std::bitset<16> eltPile;
-
-  //
-  size_t i;
-  size_t posAdr = 0;
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-  for(i = 0; i < 16; ++i) {
-    eltPile[i] = adresse[posAdr];
-    posAdr++;
-  }
-  pile.push(eltPile);
-
-  return pile;
-}
-
-/**
   * @brief Permet l'encapsulation de la couche Physique.
   * 
   * @param paquet Resultat de l'encapsulation de la couche Internet.
   * @return Le resultat de la désencapsulation. Donc une pile contenant la couche Physique + Internet + Transport.
   **/
  std::stack<std::bitset<16>> Physique::encapsuler(std::stack<std::bitset<16>>& paquet) {
-    paquet.push(concat(m_SrcMac.a, m_SrcMac.b));
-    paquet.push(concat(m_SrcMac.c, m_SrcMac.d));
-    paquet.push(concat(m_SrcMac.e, m_SrcMac.f));
-    paquet.push(concat(m_DestMac.a, m_DestMac.b));
-    paquet.push(concat(m_DestMac.c, m_DestMac.d));
-    paquet.push(concat(m_DestMac.e, m_DestMac.f));
+    paquet.emplace(concat(m_SrcMac.a, m_SrcMac.b));
+    paquet.emplace(concat(m_SrcMac.c, m_SrcMac.d));
+    paquet.emplace(concat(m_SrcMac.e, m_SrcMac.f));
+    paquet.emplace(concat(m_DestMac.a, m_DestMac.b));
+    paquet.emplace(concat(m_DestMac.c, m_DestMac.d));
+    paquet.emplace(concat(m_DestMac.e, m_DestMac.f));
 
     return paquet;
  }
@@ -179,11 +142,37 @@ std::stack<std::bitset<16>> Physique::decoupageMac(const std::bitset<48>& adress
   * @param trame Une pile qui contitent la couche Transport + Internet + Physique. 
   * @return La même pile mais avec la couche Physique en moins.
   **/
-std::stack<std::bitset<16>> Physique::desencapsuler(std::stack<std::bitset<16>>& trame) {
-    for (size_t i = 0; i < 6; i++)
-    {
-        trame.pop();
-    }
+std::stack<std::bitset<16>> Physique::desencapsuler(
+    std::stack<std::bitset<16>>& trame)
+{
+    // Extraction de l'adresse mac de destination.
+    diviser(trame.top(), m_DestMac.e, m_DestMac.f);
+    trame.pop();
+    diviser(trame.top(), m_DestMac.c, m_DestMac.d);
+    trame.pop();
+    diviser(trame.top(), m_DestMac.a, m_DestMac.b);
+    trame.pop(); 
 
+    // Extraction de l'adresse mac source.
+    diviser(trame.top(), m_SrcMac.e, m_SrcMac.f);
+    trame.pop();
+    diviser(trame.top(), m_SrcMac.c, m_SrcMac.d);
+    trame.pop();
+    diviser(trame.top(), m_SrcMac.a, m_SrcMac.b);
+    trame.pop(); 
+    
     return trame;
+}
+
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param couchePhy La couche a afficher.
+ **/
+std::ostream& operator<<(std::ostream& flux, const Physique& couchePhy) {
+    flux << "m_SrcMac : " << couchePhy.getMacSrc() << std::endl;
+    flux << "m_DestMac : " << couchePhy.getMacDest() << std::endl;
+
+    return flux;
 }
