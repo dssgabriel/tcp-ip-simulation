@@ -15,8 +15,6 @@
   * @brief Constructeur de la classe Internet
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL.
   **/
 Internet::Internet() {
     m_IpSrc = ipMax;
@@ -30,8 +28,6 @@ Internet::Internet() {
   * @brief Destructeur de la classe Internet.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
   **/
 Internet::~Internet() {}
 
@@ -159,13 +155,20 @@ void Internet::convertir(IPv4& ip,
   **/
 void Internet::calculerChecksum() {
 
+    // Etant donne la declaration d'un IPV4 m_IpSrc qui correpsond
+    // à 4 bitset de 8, alors on declare deux bitset de 16: IpSrc1 et IpSrc2,
+    // qui vont tous les deux prendre la concatenations de m_IpSrc.a, m_IpSrc.b
+    // pour IpSrc1 et m_IpSrc.c, m_IpSrc.d pour IpSrc2.
+    // Meme principe pour IPV4 IpDest.
     std::bitset<16> IpSrc1(concat(m_IpSrc.a, m_IpSrc.b));
     std::bitset<16> IpSrc2(concat(m_IpSrc.c, m_IpSrc.d));
     std::bitset<16> IpDest1(concat(m_IpDest.a, m_IpDest.b));
     std::bitset<16> IpDest2(concat(m_IpDest.c, m_IpDest.d));
     std::bitset<16> TTL(m_TTL.to_ulong());
     std::bitset<16> protocoleId(m_ProtocoleId.to_ulong());
-
+	
+    // Declaration de la variable somme 
+    // qui va contenir l'addition des differents bitset.
     int somme;
     somme = IpSrc1.to_ulong();
     somme += IpSrc2.to_ulong();
@@ -174,10 +177,16 @@ void Internet::calculerChecksum() {
     somme += TTL.to_ulong();
     somme += protocoleId.to_ulong();
     
+    // Declaration de sommeBit en bitset de 32
+    // qui va stocker la valeur de somme dans celle-ci
+    // qui sera ensuite diviser en deux bitsets
+    // pour la retenuBit et sommeFinalBit.
     std::bitset<32> sommeBit(somme);
     std::bitset<16> retenuBit, sommeFinaleBit;
     diviser(sommeBit, retenuBit, sommeFinaleBit);
 
+    // On va attribue a la variable retenu la valeur de retenuBit
+    // puis l'additionner a la sommeFinale, pour la stocker dans m_Checksum.
     int retenu = retenuBit.to_ulong();
     int sommeFinale = sommeFinaleBit.to_ulong();
     sommeFinale += retenu;    
@@ -191,7 +200,8 @@ void Internet::calculerChecksum() {
   * @return void.
   **/
 void Internet::verifierChecksum() {
-
+    
+    // La fonction all() va verifier si tous les bits sont egales a 1.
     if (m_Checksum.all()) {
       std::cout << "validé" << std::endl;
     }
@@ -263,6 +273,12 @@ void Internet::verifierChecksum() {
     return paquet;
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param coucheInt La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Internet& coucheInt) {
     flux << "m_IpSrc : " << coucheInt.getIpSrc() << std::endl;
     flux << "m_IpDest : " << coucheInt.getIpDest() << std::endl;

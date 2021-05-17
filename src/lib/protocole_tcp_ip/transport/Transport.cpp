@@ -15,8 +15,6 @@
   * @brief Constructeur de la classe Transport.
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL. 
   **/
 Transport::Transport() {
     m_PortSrc = std::numeric_limits<uint16_t>::max();
@@ -33,9 +31,7 @@ Transport::Transport() {
   * @brief Destucteur de la classe Transport.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
-  **/
+**/
 Transport::~Transport() {}
 
 /**
@@ -222,13 +218,17 @@ uint16_t Transport::portAlea() {
 void Transport::calculerChecksum() {
     std::bitset<16> portSrc(m_PortSrc);
     std::bitset<16> portDest(m_PortDest);
-
+	
+    // On divise m_Seq en deux bitset de 16.
     std::bitset<16> seqGauche, seqDroite;
     diviser(m_Seq, seqGauche, seqDroite);
-
+    
+    // On divise m_Ack2 en deux bitset de 16.
     std::bitset<16> ack2Gauche, ack2Droite;
     diviser(m_Ack2, ack2Gauche, ack2Droite);
-
+    
+    // Declaration de la variable somme 
+    // qui va contenir l'addition des differents bitset.
     int somme;
     somme = portSrc.to_ulong();
     somme += portDest.to_ulong();
@@ -239,10 +239,16 @@ void Transport::calculerChecksum() {
     somme += ack2Gauche.to_ulong();
     somme += ack2Droite.to_ulong();
 
+    // Declaration de sommeBit en bitset de 32
+    // qui va stocker la valeur de somme dans celle-ci
+    // qui sera ensuite diviser en deux bitsets
+    // pour la retenuBit et sommeFinalBit.
     std::bitset<32> sommeBit(somme);
     std::bitset<16> retenuBit, sommeFinaleBit;
     diviser(sommeBit, retenuBit, sommeFinaleBit);
-
+	
+    // On va attribue a la variable retenu la valeur de retenuBit
+    // puis l'additionner a la sommeFinale, pour la stocker dans m_Checksum.
     int retenu, sommeFinale;
     retenu = retenuBit.to_ulong();
     sommeFinale = sommeFinaleBit.to_ulong();
@@ -258,6 +264,7 @@ void Transport::calculerChecksum() {
   **/
 void Transport::verifierChecksum() {
 
+    // La fonction all() va verifier si tous les bits sont egales a 1.
     if(m_Checksum.all()) {
       std::cout << "validé" << std::endl;
     }
@@ -302,21 +309,22 @@ std::stack<std::bitset<16>> Transport::encapsuler(std::bitset<16> donnee) {
   * @return Un bitset de 16 qui est la données a transmettre. 
   **/
 std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
-    //
+
+    // On recupere et affecte a l'attribut de classe l'ack2.
     std::bitset<16> ack2Droite = segment.top();
     segment.pop();
     std::bitset<16> ack2Gauche = segment.top();
     segment.pop();
     m_Ack2 = concat(ack2Gauche, ack2Droite);
 
-    //
+    // On va concatener seqGauche et seqDroite dans m_Seq.
     std::bitset<16> seqDroite = segment.top();
     segment.pop();
     std::bitset<16> seqGauche = segment.top();
     segment.pop();
     m_Seq = concat(seqGauche, seqDroite);
     
-    //
+    // On recupere chaque element et on les affecte a l'attribut de classe.
     m_Ack1 = segment.top();
     segment.pop();
     m_Syn = segment.top();
@@ -326,7 +334,7 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     m_Cwnd = segment.top();
     segment.pop();
 
-    //
+    // On recupere et affecte a l'attribut de classe le port source et le port de destination.
     m_PortDest = segment.top().to_ulong();
     segment.pop();
     m_PortSrc = segment.top().to_ulong();
@@ -335,6 +343,12 @@ std::bitset<16> Transport::desencapsuler(std::stack<std::bitset<16>>& segment) {
     return std::bitset<16>(segment.top());
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param coucheTrans La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Transport& coucheTrans) {
     flux << "m_PortSrc : " << coucheTrans.getPortSrc() << std::endl;
     flux << "m_PortDest : " << coucheTrans.getPortDest() << std::endl;
