@@ -54,7 +54,7 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
        }
    }
 
-    std::cout << "ERREUR : Adresse IP <" << ip;
+    std::cout << "ERREUR : Dans la fonction 'getMachine' : Adresse IP <" << ip;
     std::cout << "> introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }

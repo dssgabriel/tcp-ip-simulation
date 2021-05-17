@@ -1,5 +1,5 @@
-#include <iostream>
 #include <time.h>
+#include <iostream>
 
 #include "../../src/include/Commun.hpp"
 #include "../../src/include/ParamInterface.hpp"
@@ -38,7 +38,6 @@ void test2() {
 
     sauvegarderConfig("ecriture.json", "ReseauSimple", p);
     chargerConfig("ecriture.json", reseau, p);
-    // std::cout << *reseau;
 
     Machine& clientM = reseau->getMachine(p.m_Source);
     Machine& serveurM = reseau->getMachine(p.m_Destination);
@@ -56,44 +55,83 @@ void test2() {
 void test3() {
     //
     Ordinateur pc, pc2;
-
-    //
     pc.setIp({192, 168, 1, 1});
     pc.setMac({205, 138, 107, 55, 153, 181});
     pc2.setIp({192, 168, 1, 2});
     pc2.setMac({35, 11, 122, 213, 123, 169});
     pc.setVoisin(pc2);
     pc2.setVoisin(pc);
-    // std::cout << pc << std::endl;
-    // std::cout << pc2 << std::endl;
 
     //
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    // p.m_NbPaquet = 2;
-    // p.m_NbPaquet = 3;
     p.m_NbPaquet = 4;
     p.m_Ssthresh = 8;
     p.m_TypeFichier = FTP;
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
-    // afficher(pc.getDonnees());
     
     //
     // std::bitset<16> cwnd = 1;
     // pc.slowStart(cwnd, p.m_Ssthresh);
     // pc.envoyer(2);
     // pc.envoyer(3);
-    pc.envoyer(4);
+    pc.envoyer(4, false);
+}
+
+void test4() {
+    //
+    Ordinateur pc, pc2;
+    pc.setIp({192, 168, 1, 1});
+    pc.setMac({205, 138, 107, 55, 153, 181});
+    pc2.setIp({192, 168, 1, 2});
+    pc2.setMac({35, 11, 122, 213, 123, 169});
+
+    //
+    Commutateur c, c2;
+    c.setIp({192, 168, 1, 3});
+    c.setMac({213, 73, 221, 65, 26, 32});
+    c2.setIp({192, 168, 1, 4});
+    c2.setMac({40, 51, 229, 150, 102, 83});
+
+    //
+    pc.setVoisin(c);
+    c.setVoisin(pc);
+    c.setVoisin(c2);
+    c2.setVoisin(c);
+    c2.setVoisin(pc2);
+    pc2.setVoisin(c2);
+
+    //
+    c.setMemoire(&pc.getIp(), &pc.getMac());
+    c.setMemoire(&pc2.getIp(), &c2.getMac());
+    c2.setMemoire(&pc.getIp(), &c.getMac());
+    c2.setMemoire(&pc2.getIp(), &pc2.getMac());
+
+    //
+    ParamInterface p;
+    p.m_Destination = pc2.getIp();
+    p.m_Source = pc.getIp();
+    int nbrPaquet = 2;
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 8;
+    p.m_TypeFichier = FTP;
+
+    //
+    pc.remplirFileDonnees(p, pc2.getMac());
+
+    //
+    pc.envoyer(nbrPaquet, false);
 }
 
 int main(void) {
     srand(time(NULL));
     // test1();
     // test2();
-    test3();
+    // test3();
+    // test4();
 
     return 0;
 }
