@@ -1,4 +1,21 @@
+/**
+ * @file        AffichageReseau.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe AffichageReseau.
+ * 
+ * @author      Johann RAMANANDRAITSIORY
+ * @date        2021
+ **/
+
 #include "AffichageReseau.hpp"
+
+ /**
+  * @brief Constructeur de la classe AffichageReseau.
+  * 
+  * Le constructeur contient :
+  * Le bouton affichant le réseau de configuration (ici on affiche le réseau Simple).
+  * Le graphique composé des légendes(titre + axes) et des couleurs qui le représente.
+  * De plus le bouton appelle la fonction informationsReseau() si l'on clique dessus.
+  **/
 
 AffichageReseau::AffichageReseau() : QHBoxLayout()
 {
@@ -128,11 +145,22 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     addWidget(m_Vue);
 }
 
-// Destructeur //
+ /**
+  * @brief Destructeur de la classe AffichageReseau.
+  * 
+  * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
+  * 
+  **/
 AffichageReseau::~AffichageReseau() {
 
 }
 
+ /**
+  * @brief Permet d'afficher le Réseau de configuration Simple.
+  * 
+  * On cherche l'image dans le dossier ressource. 
+  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  **/
 void AffichageReseau::configSimple()
 {
     QPixmap pixmap("../src/lib/interface/ressources/Reseau1_Rectangle.png");
@@ -141,6 +169,12 @@ void AffichageReseau::configSimple()
 
 }
 
+ /**
+  * @brief Permet d'afficher le Réseau de configuration Maison.
+  * 
+  * On cherche l'image dans le dossier ressource. 
+  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  **/
 void AffichageReseau::configMaison()
 {
     QPixmap pixmap("../src/lib/interface/ressources/Reseau2_Rectangle.png");
@@ -148,6 +182,12 @@ void AffichageReseau::configMaison()
     m_Image->setIcon(ButtonIcon);
 }
 
+ /**
+  * @brief Permet d'afficher le Réseau de configuration Pme.
+  * 
+  * On cherche l'image dans le dossier ressource. 
+  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  **/
 void AffichageReseau::configPme()
 {
     QPixmap pixmap("../src/lib/interface/ressources/Reseau3_Rectangle.png");
@@ -155,6 +195,12 @@ void AffichageReseau::configPme()
     m_Image->setIcon(ButtonIcon);
 }
 
+ /**
+  * @brief Permet d'afficher le Réseau de configuration Entreprise.
+  * 
+  * On cherche l'image dans le dossier ressource. 
+  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  **/
 void AffichageReseau::configEntreprise()
 {
     QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png");
@@ -162,6 +208,12 @@ void AffichageReseau::configEntreprise()
     m_Image->setIcon(ButtonIcon);
 }
 
+ /**
+  * @brief Permet de sauvegarder le graphique du contrôle de congestion.
+  * 
+  * Création d'une variable QImage pour transporter le résultat du graphique. 
+  * Puis on sauvegarde l'image au format PNG de nom "Graphique_congestion". 
+  **/
 void AffichageReseau::sauvegarderGraphe()
 {
   QPixmap png_graphe = m_Vue->grab();
@@ -169,6 +221,15 @@ void AffichageReseau::sauvegarderGraphe()
   image.save("Graphique_congestion.png","PNG");
 }
 
+ /**
+  * @brief Permet d'afficher les informations concernant le réseau étudié.
+  * 
+  * Création d'une nouvelle fenêtre pour afficher les informations manquante 
+  * à la configuration du réseau.
+  * Ajout d'une variable QLabel pour présenter le réseau accompagné du débit. 
+  * Puis on instancie un QTextEdit pour pouvoir y instaurer les caractéristiques
+  * de chaque machine (ip,mac,masque). 
+  **/
 void AffichageReseau::informationsReseau()
 {
     QWidget *wdg = new QWidget;
@@ -217,12 +278,18 @@ void AffichageReseau::informationsReseau()
             "mac: 81-216-176-118-154-102\n"
             "masque: 255.255.255.0\n"
     );
-    //m_InfoReseau->setMaximumHeight(300);
+
     m_InfoReseau->setReadOnly(true);
     lyt->addWidget(m_InfoReseau,0,1);
     wdg->show();
 }
 
+ /**
+  * @brief Permet d'initialiser le graphique.
+  * 
+  * On ajoute la légende au deux axes abscisses et ordonnées. 
+  * Puis on définit la taille des deux axes. 
+  **/
 void AffichageReseau::initialiserGraphe()
 {
     m_Graphique->removeAllSeries();
