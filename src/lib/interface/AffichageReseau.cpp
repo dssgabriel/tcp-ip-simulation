@@ -3,14 +3,14 @@
 AffichageReseau::AffichageReseau() : QHBoxLayout()
 {
     // Definition de la StyleSheet pour les widgets(fond degrade orange vers rose, texte blanc de taille 20 pixel, bordure arrondie etc...)
-    QString s("QPushButton {background-color: rgba(50, 50, 50, 255);"
+    QString s("QPushButton {background-color: rgba(64, 68, 75, 255);"
                "font: bold;"
                "border-radius: 5px;"
                "color: White;"
                "border-width: 10px;"
                "padding: 15px;}"
-               "QPushButton:hover {background-color: rgba(70, 70, 70, 255);}"
-               "QPushButton:pressed {background-color: rgba(30, 30, 30, 255);}");
+               "QPushButton:hover {background-color: rgba(74, 78, 85, 255);}"
+               "QPushButton:pressed {background-color: rgba(54, 58, 65, 255);}");
 
     m_Image = new QPushButton("");
     m_Image ->setStyleSheet(s);
@@ -25,7 +25,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
 
     m_Vue = new QChartView();
     m_Vue->setRenderHint(QPainter::Antialiasing);
-    m_Vue->setStyleSheet("background-color: rgba(50, 50, 50, 255); border-radius: 5px; font: bold;");
+    m_Vue->setStyleSheet("background-color: rgba(64, 68, 75, 255); border-radius: 5px; font: bold;");
 
     m_Graphique = m_Vue->chart();
     m_Graphique->setTitle("Controle de Congestion TCP/IP");
@@ -172,22 +172,19 @@ void AffichageReseau::sauvegarderGraphe()
 void AffichageReseau::informationsReseau()
 {
     QWidget *wdg = new QWidget;
+    wdg->setStyleSheet("background-color: rgba(44, 47, 51, 255);");
     QGridLayout* lyt = new QGridLayout();
     wdg->setLayout(lyt);
     QLabel* lbl = new QLabel();
-    lbl->resize(QSize(1000, 1000));
-    
-    // mise à l'échelle de l'image dans le label //
-    int w = lbl->width();
-    int h = lbl->height();
-    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau1_debit.png").scaled(w,h,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/simple.png"));
     lyt->addWidget(lbl,0,0);
 
     // QTextEdit + AddWidget //
     QTextEdit * m_InfoReseau = new QTextEdit();
-    m_InfoReseau->setTextColor(Qt::red);
-    m_InfoReseau->append("Réseau Simple\n");
-    m_InfoReseau->setTextColor(Qt::black);
+    m_InfoReseau->setStyleSheet("background-color: rgba(64, 68, 75, 255); font: bold; border-radius: 5px;");
+    m_InfoReseau->setTextColor(QColor(88, 101, 242, 255));
+    m_InfoReseau->append("Reseau Simple\n");
+    m_InfoReseau->setTextColor(Qt::white);
     m_InfoReseau->append
     (
         "ORDINATEUR 1:\n"
@@ -218,7 +215,7 @@ void AffichageReseau::informationsReseau()
         "ROUTEUR 2:\n"
             "ip: 192.168.1.66\n"
             "mac: 81-216-176-118-154-102\n"
-            "masque: 255.255.255.0);\n"
+            "masque: 255.255.255.0\n"
     );
     //m_InfoReseau->setMaximumHeight(300);
     m_InfoReseau->setReadOnly(true);
