@@ -4,95 +4,97 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 {
 
     // Definition de la StyleSheet pour les widgets(fond degrade orange vers rose, texte blanc de taille 20 pixel, bordure arrondie etc...)
-    QString s("QPushButton {background-color: rgba(50, 50, 50, 255);"
+    QString s("QPushButton {background-color: rgba(64, 68, 75, 255);"
                "font: bold;"
                "border-radius: 5px;"
                "color: White;"
                "border-width: 10px;"
                "padding: 15px;}"
-               "QPushButton:hover {background-color: rgba(70, 70, 70, 255);}"
-               "QPushButton:pressed {background-color: rgba(30, 30, 30, 255);}");
+               "QPushButton:hover {background-color: rgba(74, 78, 85, 255);}"
+               "QPushButton:pressed {background-color: rgba(54, 58, 65, 255);}");
 
 
     QVBoxLayout* m_Vlayout = new QVBoxLayout();
 
+    // Ajout d'une frame dans le layout m_Vlayout
+    QFrame* frame = new QFrame();
+    m_Vlayout->addWidget(frame);
+    frame->setStyleSheet("background-color: rgba(64, 68, 75, 255); border-radius: 5px;");
+
+    // Ajout d'un layout dans la frame
+    QVBoxLayout* Framelayout = new QVBoxLayout();
+    frame->setLayout(Framelayout);
 
     //les QComboBox des machines d'arriver et de depart
 
     QLabel* m_LabelDepart = new QLabel("Machine de depart");
-    m_LabelDepart->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
+    m_LabelDepart->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     m_Depart = new QComboBox();
-    m_Depart->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
+    m_Depart->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     for(int i = 0; i<15; i++){
         m_Depart->addItem("Machine "+ QString::number(i));
     }
-    m_Vlayout->addWidget(m_LabelDepart);
-    m_Vlayout->addWidget(m_Depart);
+    Framelayout->addWidget(m_LabelDepart);
+    Framelayout->addWidget(m_Depart);
 
-    QLabel* m_LabelArriver = new QLabel("Machine d'arriver");
-    m_LabelArriver->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
+    QLabel* m_LabelArriver = new QLabel("Machine d'arrivee");
+    m_LabelArriver->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     m_Arrive = new QComboBox();
-    m_Arrive->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
+    m_Arrive->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     for(int i = 0; i<15; i++){
         m_Arrive->addItem("Machine "+ QString::number(i));
     }
-    m_Vlayout->addWidget(m_LabelArriver);
-    m_Vlayout->addWidget(m_Arrive);
-
-
+    Framelayout->addWidget(m_LabelArriver);
+    Framelayout->addWidget(m_Arrive);
 
     //les QSpinBox du QVBoxLayout
 
-    QLabel* m_LabelSsthresh = new QLabel("Entrez la taille de la fenetre");
-    m_LabelSsthresh->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
-    m_Vlayout->addWidget(m_LabelSsthresh);
+    QLabel* m_LabelSsthresh = new QLabel("Taille de la fenetre");
+    m_LabelSsthresh->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
+    Framelayout->addWidget(m_LabelSsthresh);
     m_Ssthresh = new QSpinBox;
     m_Ssthresh->setRange(128,256);
-    m_Ssthresh->setMinimum(128);
-    m_Ssthresh->setMaximum(256);
-    m_Ssthresh->setStyleSheet("color : white;");
-    m_Vlayout->addWidget(m_Ssthresh);
+    m_Ssthresh->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
+    Framelayout->addWidget(m_Ssthresh);
 
-    QLabel* m_LabelPaquetNombre = new QLabel("Entrez le nombre de paquet a envoyer");
-    m_LabelPaquetNombre->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
-    m_Vlayout->addWidget(m_LabelPaquetNombre);
+    QLabel* m_LabelPaquetNombre = new QLabel("Nombre de paquets");
+    m_LabelPaquetNombre->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
+    Framelayout->addWidget(m_LabelPaquetNombre);
     m_PaquetNombre = new QSpinBox;
     m_PaquetNombre->setRange(1,65536);
-    m_PaquetNombre->setMaximum(65536);
-    m_PaquetNombre->setStyleSheet("color : white;");
-    m_Vlayout->addWidget(m_PaquetNombre);
+    m_PaquetNombre->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
+    Framelayout->addWidget(m_PaquetNombre);
 
     //QComboBox types paquet
 
-    QLabel* m_LabelPaquetTypes = new QLabel("types de paquets a envoyer");
-    m_LabelPaquetTypes->setStyleSheet("background-color: rgba(0, 0, 0, 0); color : white;");
+    QLabel* m_LabelPaquetTypes = new QLabel("Type de paquet");
+    m_LabelPaquetTypes->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     m_PaquetType = new QComboBox();
-    m_PaquetType->setStyleSheet("background-color: rgba(255, 255, 255, 220);");
+    m_PaquetType->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     m_PaquetType->addItem("FTP");
     m_PaquetType->addItem("HTTP");
     m_PaquetType->addItem("SMTP");
     m_PaquetType->addItem("VTP");
-    m_Vlayout->addWidget(m_LabelPaquetTypes);
-    m_Vlayout->addWidget(m_PaquetType);
+    Framelayout->addWidget(m_LabelPaquetTypes);
+    Framelayout->addWidget(m_PaquetType);
 
-    QHBoxLayout* m_Hlayout = new QHBoxLayout();
-    m_Vlayout->addLayout(m_Hlayout);
+    //Label vide pour faire de l'espace au dessus du bouton
+    QLabel* empty = new QLabel();
+    empty->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
+    empty->setMinimumHeight(10);
+    Framelayout->addWidget(empty);
 
     //boutton du QVBoxLayout
-
-    m_Valider = new QPushButton();
-    m_Valider->setStyleSheet("QPushButton {background-color: rgba(180, 180, 180, 255);"
-                             "border-radius: 28px;"
-                             "border-width: 5px;"
+    m_Valider = new QPushButton(" Valider ");
+    m_Valider->setStyleSheet("QPushButton {background-color: rgba(88, 101, 242, 255);"
+                             "font: bold;"
+                             "border-radius: 5px;"
+                             "color: White;"
+                             "border-width: 10px;"
                              "padding: 15px;}"
-                             "QPushButton:hover {background-color: white;}"
-                             "QPushButton:pressed {background-color: rgba(180, 180, 180, 255);}");
-    m_Valider->setMaximumHeight(58);
-    m_Valider->setMaximumWidth(58);
-    m_Valider->setIcon(QIcon("../src/lib/interface/ressources/Valider.png"));
-    m_Valider->setIconSize(QSize(56,56));
-    m_Hlayout->setAlignment(Qt::AlignCenter);
-    m_Hlayout->addWidget(m_Valider);
+                             "QPushButton:hover {background-color: rgba(68, 81, 222, 255);}"
+                             "QPushButton:pressed {background-color: rgba(48, 61, 202, 255);}");
+    Framelayout->addWidget(m_Valider);
 
 
     m_ConfigSimple = new QPushButton();
@@ -150,27 +152,24 @@ void ChoixReseau::verifConfigMessage(){
 
     if("contexte" == 0){
         QMessageBox m_Information;
-        m_Information.setText("vous devez selectionner le reseau desire avant de faire les differents choix dans le reseaux");
+        m_Information.setText("Veuillez verifier vos parametres");
         m_Information.exec();
 
     }
     else{
         QMessageBox m_VerifConfig;
-        m_VerifConfig.setText("Etes vous sure des choix selectioner ");
+        m_VerifConfig.setText("Voulez-vous vraiment valider vos choix ?");
         m_VerifConfig.setStandardButtons(QMessageBox::Yes);
         m_VerifConfig.addButton(QMessageBox::No);
         m_VerifConfig.setDefaultButton(QMessageBox::No);
         if(m_VerifConfig.exec() == QMessageBox::Yes){
-
             Contexte::GetInstance().getConfig().m_Source;
             Contexte::GetInstance().getConfig().m_Destination;
             Contexte::GetInstance().getConfig().m_Ssthresh;
             Contexte::GetInstance().getConfig().m_NbPaquet;
             Contexte::GetInstance().getConfig().m_TypeFichier;
-        }
-        else{
             QMessageBox m_Information;
-            m_Information.setText("veuillez rentrer les parametres desirer");
+            m_Information.setText("Vos choix ont ete valides");
             m_Information.exec();
         }
     }
