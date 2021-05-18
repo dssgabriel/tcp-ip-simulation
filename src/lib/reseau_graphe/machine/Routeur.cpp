@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "Routeur.hpp"
+#include "../ReseauGraphe.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
 
@@ -64,7 +65,7 @@ const std::vector<Liaison> Routeur::getPlusCourtChemin(Routeur& dest) {
 */
 
 // Methodes
-void Routeur::envoyer() {
+void Routeur::envoyer(const uint32_t) {
     // TODO : A faire
 }
 
@@ -72,12 +73,12 @@ void Routeur::recevoir() {
     // TODO : A faire
 }
 
-void Routeur::envoyer(Routeur& dest, PaquetOSPF& ospf) {
-    dest.recevoir(ospf);
+void Routeur::envoyerOSPF(Routeur& dest, PaquetOSPF& ospf) {
+    dest.recevoirOSPF(ospf);
 }
 
-void Routeur::recevoir(PaquetOSPF& ospf) {
-//     m_FilePaquetsOSPF.emplace(ospf);
+void Routeur::recevoirOSPF(PaquetOSPF& ospf) {
+    m_FilePaquetsOSPF.emplace(ospf);
 }
 
 void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
@@ -113,10 +114,11 @@ void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     trame.push(macDestFE);
 }
 
-/*
 void Routeur::traitementPaquetOSPF() {
-    PaquetOSPF &paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
+    // Recuperation du paquet en debut de file.
+    PaquetOSPF& paquet = dynamic_cast<PaquetOSPF&>(m_FilePaquetsOSPF.front());
 
+    // Appel a la methode adequate en fonction du type de paquet.
     switch (paquet.getType()) {
         case 1:
             traitementPaquetHello(dynamic_cast<PaquetHello&>(paquet));
@@ -141,20 +143,17 @@ void Routeur::traitementPaquetOSPF() {
 
 // Methodes privees
 void Routeur::traitementPaquetHello(const PaquetHello& hello) {
-    // Si l'identifiant du voisin ne correspond pas avec l'identifiant
-    // du routeur, le paquet ne nous est pas destine
+    // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
     if (hello.getIdVoisin() != m_IdRouteur) {
         return;
     }
 
-    // On parcourt la table de routage pour verifier si le routeur nous
-    // envoyant le paquet Hello est connu
     for (auto iter: m_TableRoutage) {
-        // Si le routeur est connu, alors on lui envoie un paquet DBD
+        // Le routeur est connu, on lui envoie un paquet DBD.
         if (iter.first->getIdRouteur() == hello.getIdRouteur()) {
             std::vector<LSA> annonces;
 
-            // On initialise la liste des annonces LSA
+            // Initialisions de la liste des annonces LSA.
             for (auto routeur: m_TableRoutage) {
                 LSA lsa(routeur.first->getIdRouteur(),
                         routeur.first->getIdRouteur(),
@@ -163,33 +162,16 @@ void Routeur::traitementPaquetHello(const PaquetHello& hello) {
                 annonces.emplace_back(lsa);
             }
 
-            // On envoie un paquet DBD au routeur nous envoyant le paquet Hello
+            // Envoie d'un paquet DBD au routeur nous envoyant le paquet Hello.
             auto destinataire = iter.first;
-
             PaquetDBD reponse(annonces);
             reponse.setEntete(DBD, m_IdRouteur);
-            envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+            envoyerOSPF(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
 
+            // Sortie immediate de la fonction.
             return;
         }
     }
-
-    // TODO : Revoir l'initialisation du reseau
-    
-    for (auto iter: m_Voisins) {
-        auto routeur = dynamic_cast<Routeur*>(iter);
-
-        if (routeur) {
-            if (routeur->getIdRouteur() == hello.getIdRouteur()) {
-                PaquetHello reponse(hello.getIdRouteur());
-                reponse.setEntete(Hello, m_IdRouteur);
-                envoyer(*routeur, reponse);
-
-                return;
-            }
-        }
-    }
-    
 }
 
 void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
@@ -200,35 +182,41 @@ void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
         for (auto iter: m_TableRoutage) {
             auto routeur = iter.first;
 
+            // Le routeur de l'annonce est inconnu.
             if (annonce.getIdRouteur() != routeur->getIdRouteur()) {
                 bool trouve = false;
 
+                // Verification qu'il ne se trouve pas plus loin dans la table de routage.
                 for (auto verif: m_TableRoutage) {
-                    if (verif.first->getIdRouteur() ==
-                        routeur->getIdRouteur())
-                    {
+                    if (verif.first->getIdRouteur() == routeur->getIdRouteur()) {
                         trouve = true;
                         break;
                     }
                 }
 
+                // Le routeur est inconnu, on ajoute l'identifiant du LSA
+                // aux identifiant a demander.
                 if (!trouve) {
                     idADemander.emplace_back(annonce.getIdLSA());
-                    m_TableLSADemandes.emplace(*routeur, annonce.getIdLSA());
                 }
             }
         }
     }
 
+    // Le vecteur d'identifiant n'est pas vide, on doit envoyer un paquet LSR.
     if (!idADemander.empty()) {
         for (auto iter: m_TableRoutage) {
             if (iter.first->getIdRouteur() == dbd.getIdRouteur()) {
                 auto destinataire = iter.first;
+                // Ajout des identifiants demandes a la table.
+                m_TableLSADemandes.emplace(std::make_pair(*destinataire, idADemander));
 
+                // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
                 PaquetLSR reponse(dbd.getIdRouteur(), idADemander);
                 reponse.setEntete(LSR, m_IdRouteur);
-                envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+                envoyerOSPF(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
 
+                // Sortie immediate de la fonction.
                 return;
             }
         }
@@ -236,9 +224,8 @@ void Routeur::traitementPaquetDBD(PaquetDBD& dbd) {
 }
 
 void Routeur::traitementPaquetLSR(PaquetLSR& lsr) {
+    // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
     if (lsr.getIdAnnonceur() != m_IdRouteur) {
-        // Le paquet LSR ne nous est pas destine,
-        // on sort directement de la methode
         return;
     }
 
@@ -249,6 +236,7 @@ void Routeur::traitementPaquetLSR(PaquetLSR& lsr) {
         for (auto iter: m_TableRoutage) {
             auto routeur = iter.first;
 
+            // L'identifiant du routeur correspond au LSA demande, on l'ajoute a la liste.
             if (routeur->getIdRouteur() == (uint8_t)(id.to_ulong())) {
                 LSA lsa(routeur->getIdRouteur(),
                         routeur->getIdRouteur(),
@@ -263,24 +251,121 @@ void Routeur::traitementPaquetLSR(PaquetLSR& lsr) {
         if (lsr.getIdRouteur() == iter.first->getIdRouteur()) {
             auto destinataire = iter.first;
 
+            // Ajout des identifiants des annonces a la table des LSA envoyes
+            std::vector<std::bitset<32>> idAnnoncesDemandes;
             for (auto annonce: annoncesDemandes) {
-                m_TableLSAEnvoyes.emplace(*destinataire, annonce.getIdLSA());
+                idAnnoncesDemandes.push_back(annonce.getIdLSA());
             }
+            m_TableLSAEnvoyes.emplace(std::make_pair(*destinataire, idAnnoncesDemandes));
 
+            // Envoie d'un paquet DBD au routeur envoyant le paquet Hello.
             PaquetLSU reponse(annoncesDemandes);
             reponse.setEntete(LSU, m_IdRouteur);
-            envoyer(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+            envoyerOSPF(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
 
+            // Sortie immediate de la fonction.
             return;
         }
     }
 }
 
-void Routeur::traitementPaquetLSU(const PaquetLSU& lsu) {
-    // TODO : A faire
+// TODO : Renvoyer des LSUs lorsqu'on en recoit et que l'on fait des mises a jours.
+void Routeur::traitementPaquetLSU(PaquetLSU& lsu) {
+    auto annonces = lsu.getLSADemandes();
+    std::vector<std::bitset<32>> idLSARecus;
+
+    for (auto annonce: annonces) {
+        for (auto verif: m_TableLSADemandes) {
+            if (verif.first->getIdRouteur() == lsu.getIdRouteur()) {
+                for (auto id: *verif.second) {
+                    if (id == annonce.getIdLSA()) {
+                        idLSARecus.push_back(id);
+                        m_TableLSADemandes.erase(verif.first);
+
+                        auto routeur = ReseauGraphe::getRouteur(verif.first->getIdRouteur());
+                        std::vector<Liaison> plusCourtChemin = ReseauGraphe::routageDynamique(
+                            routeur.getIdRouteur(),
+                            m_IdRouteur
+                        );
+                        m_TableRoutage.emplace(routeur, plusCourtChemin);
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto iter: m_TableLSADemandes) {
+        if (iter.first->getIdRouteur() == lsu.getIdRouteur() && !iter.second->empty()) {
+            // Envoie d'un paquet LSR au routeur envoyant le paquet LSU,
+            // dans le cas ou il manque des LSAs.
+            PaquetLSR reponse(iter.first->getIdRouteur(), *iter.second);
+            reponse.setEntete(LSR, m_IdRouteur);
+            envoyerOSPF(*iter.first, dynamic_cast<PaquetOSPF&>(reponse));
+
+            // Sortie immediate de la fonction.
+            return;
+        }
+    }
+
+    for (auto iter: m_TableRoutage) {
+        auto destinataire = iter.first;
+
+        // Envoie d'un paquet LSAck au routeur envoyant le paquet LSU.
+        if (destinataire->getIdRouteur() == lsu.getIdRouteur()) {
+            PaquetLSAck reponse(idLSARecus);
+            reponse.setEntete(LSAck, m_IdRouteur);
+            envoyerOSPF(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+
+            // Sortie immediate de la fonction.
+            return;
+        }
+    }
 }
 
-void Routeur::traitementPaquetLSAck(const PaquetLSAck& ack) {
-    // TODO : A faire
+void Routeur::traitementPaquetLSAck(PaquetLSAck& ack) {
+    auto idLSARecus = ack.getIdLSARecus();
+    std::vector<LSA> LSAManquants;
+
+    for (auto idAnnonce: idLSARecus) {
+        for (auto iter: m_TableLSAEnvoyes) {
+            if (iter.first->getIdRouteur() == ack.getIdRouteur()) {
+                auto vec = *iter.second;
+
+                for (auto idEnvoye = 0; idEnvoye < vec.size(); idEnvoye++) {
+                    if (vec[idEnvoye] == idAnnonce) {
+                        vec.erase(vec.cbegin() + idEnvoye - 1);
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto iter: m_TableLSAEnvoyes) {
+        if (iter.first->getIdRouteur() == ack.getIdRouteur() && !iter.second->empty()) {
+            auto destinataire = iter.first;
+
+            for (auto idManquant: *iter.second) {
+                for (auto iter2: m_TableRoutage) {
+                    auto routeur = iter2.first;
+
+                    if (routeur->getIdRouteur() == (uint8_t)(idManquant.to_ulong())) {
+                        LSA LSAManquant(routeur->getIdRouteur(),
+                                        routeur->getIdRouteur(),
+                                        routeur->getSousReseau()
+                        );
+                        LSAManquants.emplace_back(LSAManquant);
+                    }
+                }
+            }
+
+            // Envoie d'un paquet LSU au routeur envoyant le paquet LSAck,
+            // dans le cas ou il des LSA n'ont pas ete recus.
+            PaquetLSU reponse(LSAManquants);
+            reponse.setEntete(LSU, m_IdRouteur);
+            envoyerOSPF(*destinataire, dynamic_cast<PaquetOSPF&>(reponse));
+
+            // Sortie immediate de la fonction.
+            return;
+        }
+    }
 }
-*/

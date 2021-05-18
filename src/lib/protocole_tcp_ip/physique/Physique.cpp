@@ -13,8 +13,6 @@
   * @brief Constructeur de la classe Physique.
   * 
   * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
-  * 
-  * @return NULL.
   **/
 Physique::Physique() {
     m_SrcMac = macMax;
@@ -25,8 +23,6 @@ Physique::Physique() {
   * @brief Destructeur de la classe Physique.
   * 
   * Le destructeur est vide car tout est géré par le 'garbage collector'.
-  * 
-  * @return NULL.
   **/
 Physique::~Physique() {}
 
@@ -168,6 +164,12 @@ std::stack<std::bitset<16>> Physique::desencapsuler(
     return trame;
 }
 
+/**
+ * @brief Surcharge l'opérateur d'affichage pour afficher tout les attributs de classe.
+ * 
+ * @param flux Permet de d'afficher dans le terminal.
+ * @param couchePhy La couche a afficher.
+ **/
 std::ostream& operator<<(std::ostream& flux, const Physique& couchePhy) {
     flux << "m_SrcMac : " << couchePhy.getMacSrc() << std::endl;
     flux << "m_DestMac : " << couchePhy.getMacDest() << std::endl;

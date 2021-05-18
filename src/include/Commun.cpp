@@ -1,5 +1,11 @@
 #include "Commun.hpp"
 
+/**
+ * @brief Permet d'afficher le contenu d'une pile contenant des bitset de 16 bits. 
+ * 
+ * @param pile La pile que l'on veut afficher.
+ * @return void.
+ **/
 void afficher(std::stack<std::bitset<16>> pile) {
     std::cout << "> debut stack <\n\n";
 
@@ -93,6 +99,12 @@ void afficher(std::stack<std::bitset<16>> pile) {
     std::cout << "\n< fin stack >\n";
 }
 
+/**
+ * @brief Permet d'afficher le contenu d'une file contenant des bitset de 16 bits. 
+ * 
+ * @param pile La file que l'on veut afficher.
+ * @return void.
+ **/
 void afficher(std::queue<std::stack<std::bitset<16>>> file) {
     std::cout << "debut queue\n";
     while (!file.empty()) {
@@ -102,6 +114,12 @@ void afficher(std::queue<std::stack<std::bitset<16>>> file) {
     std::cout << "fin queue\n";
 }
 
+/**
+ * @brief Permet d'afficher le contenu d'une double file (deque) contenant des bitset de 16 bits. 
+ * 
+ * @param pile La double file que l'on veut afficher.
+ * @return void.
+ **/
 void afficher(std::deque<std::stack<std::bitset<16>>> doubleFile) {
     std::cout << "debut deque\n";
     while (!doubleFile.empty()) {
