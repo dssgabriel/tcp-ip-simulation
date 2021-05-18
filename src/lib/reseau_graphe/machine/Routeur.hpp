@@ -3,6 +3,7 @@
 #include <bitset>
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <queue>
 #include <vector>
 
@@ -20,17 +21,17 @@ class Routeur : public Machine {
         // Attributs
         static uint8_t m_NbRouteur;
         uint8_t m_IdRouteur;
-        std::map<Routeur*, std::vector<Liaison*>*> m_TableRoutage;
-        std::queue<PaquetOSPF> m_FilePaquetsOSPF;
+        std::map<Routeur*, std::vector<Liaison*>> m_TableRoutage;
+        std::queue<PaquetOSPF*> m_FilePaquetsOSPF;
         std::map<Routeur*, std::vector<std::bitset<32>>*> m_TableLSADemandes;
         std::map<Routeur*, std::vector<std::bitset<32>>*> m_TableLSAEnvoyes;
 
         // Methodes
-        void traitementPaquetHello(const PaquetHello& hello);
-        void traitementPaquetDBD(PaquetDBD& dbd);
-        void traitementPaquetLSR(PaquetLSR& lsr);
-        void traitementPaquetLSU(PaquetLSU& lsu);
-        void traitementPaquetLSAck(PaquetLSAck& ack);
+        void traitementPaquetHello(PaquetHello* hello);
+        void traitementPaquetDBD(PaquetDBD* dbd);
+        void traitementPaquetLSR(PaquetLSR* lsr);
+        void traitementPaquetLSU(PaquetLSU* lsu);
+        void traitementPaquetLSAck(PaquetLSAck* ack);
 
     public:
         // Constructeurs
@@ -46,8 +47,8 @@ class Routeur : public Machine {
         //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
-        void envoyerOSPF(Routeur& dest, PaquetOSPF& ospf);
-        void recevoirOSPF(PaquetOSPF& ospf);
+        void envoyerOSPF(Routeur* dest, PaquetOSPF* ospf);
+        void recevoirOSPF(PaquetOSPF* ospf);
         void traitementPaquetOSPF();
 
         void envoyer(const uint32_t);
