@@ -98,7 +98,7 @@ void Machine::setSousReseau(const IPv4& sousReseau) {
     m_SousReseau.emplace_back(sousReseau);
 }
 
-const std::vector<IPv4>& Machine::getSousReseau() const {
+const std::vector<IPv4>& Machine::getSousReseaux() const {
     return m_SousReseau;
 }
 
@@ -106,30 +106,86 @@ void Machine::setVoisin(Machine& voisin) {
     m_Voisins.emplace_back(&voisin);
 }
 
-Machine* Machine::getVoisin(MAC adresseVoisin) {
+Machine* Machine::getVoisin(MAC adresseVoisin) const {
     for(size_t i = 0; i < m_Voisins.size(); ++i) {
         if(m_Voisins[i]->getMac() == adresseVoisin) {
             return m_Voisins[i];
         }
     }
 
+    std::cout << "ERREUR : Dans la fonction 'getVoisin' : Aucune voisin trouve.\n";
     return nullptr;
+}
+
+std::vector<Machine*> Machine::getVoisins() const {
+    return m_Voisins;
 }
 
 void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
     m_FileDonnees.emplace(trame);
 }
 
-const std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
+std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
 std::stack<std::bitset<16>> Machine::suppDonnee() {
-    std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
-    m_FileDonnees.pop();
-    return donnee;
+    if (!m_FileDonnees.empty()) {
+        std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
+        m_FileDonnees.pop();
+        return donnee;
+    } else {
+        std::cout << "ERREUR : Dans la fonction 'suppDonnee' : File vide.\n";
+        exit(EXIT_FAILURE);
+    }
 }
 // Fin getters et setters
+
+// Methodes
+void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
+    std::cout << m_Nom << " : Debut traitement\n";
+    
+    // Recuperation du paquet.
+    Physique couchePhy;
+    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
+    
+    // Recuperation adresse MAC destination.
+    MAC ancienneDest = couchePhy.getMacDest();
+
+    // Changement adresse MAC.
+    // La destination devient la source.
+    // Ajout nouvelle destination.
+    couchePhy.setMacSrc(ancienneDest);
+    couchePhy.setMacDest(nouvelleDest);
+
+    // Encapsulation.
+    trame = couchePhy.encapsuler(paquet);
+    std::cout << m_Nom << " : fin traitement\n";
+}
+
+bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
+    while (!donnees.empty()) {
+        //
+        std::stack<std::bitset<16>> donnee = donnees.front();
+        donnees.pop();
+
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donnee);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        coucheTrans.desencapsuler(segment);
+        
+        if (coucheTrans.getAck2().to_ulong() == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 // Overloading
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {
@@ -140,9 +196,15 @@ std::ostream& operator<<(std::ostream& flux, const Machine& m) {
     flux << "Mac : " << m.getMac() << std::endl;
 
     flux << "Liste des sous réseaux : \n";
-    std::vector<IPv4> cpySousReseau = m.getSousReseau();
+    std::vector<IPv4> cpySousReseau = m.getSousReseaux();
     for(IPv4 sousReseau : cpySousReseau) {
         flux << "\t > " << sousReseau << std::endl;
+    }
+
+    flux << "Liste des voisins : \n";
+    std::vector<Machine*> cpyVoisins = m.getVoisins();
+    for(Machine* voisine : cpyVoisins) {
+        flux << "\t > " << voisine->getIp() << std::endl;
     }
 
     return flux;

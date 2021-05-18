@@ -2,10 +2,10 @@
 
 #include <map>
 #include <deque>
+#include <cassert>
 
 #include "Machine.hpp"
 #include "../../../include/ParamInterface.hpp"
-#include "../../protocole_tcp_ip/transport/Transport.hpp"
 #include "../../../include/ElementControleCongestion.hpp"
 
 class Ordinateur : public Machine {
@@ -19,7 +19,6 @@ class Ordinateur : public Machine {
     public:
        // Constructeurs
         Ordinateur();
-        // // Ordinateur(const std::string& nom);
         
         // Destructeur
         ~Ordinateur();
@@ -48,9 +47,8 @@ class Ordinateur : public Machine {
         void synchroniser();
         void finDeSession();
         
-        void envoyer(const uint32_t cwnd);
-        void recevoir();
-        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
+        void envoyer(const uint32_t cwnd, const bool isAck);
+        void recevoir(const uint32_t cwnd, const bool isAck);
 
         void congestionAvoidance(std::bitset<16>& cwnd);
         void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);

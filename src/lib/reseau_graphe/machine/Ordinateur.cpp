@@ -13,12 +13,8 @@ Ordinateur::Ordinateur() : Machine() {
     m_TempsTraitementPaquet.clear();
 }
 
-// // Ordinateur(const std::string& nom) {}
-
 // Destructeur
-Ordinateur::~Ordinateur() {
-
-}
+Ordinateur::~Ordinateur() {}
 
 // Getters
 const uint8_t& Ordinateur::getNbrOrdinateur() const {
@@ -281,17 +277,6 @@ std::stack<std::bitset<16>> trouverDonnee(
     exit(EXIT_FAILURE); 
 }
 
-bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
-    while (!donnees.empty()) {
-        if (donnees.front().size() > 2) {
-            return false;
-        }
-        donnees.pop();
-    }
-
-    return true;
-}
-
 // ######## //
 // Methodes //
 // ######## //
@@ -349,8 +334,10 @@ void Ordinateur::finDeSession() {
     // TODO : A faire
 }
 
-void Ordinateur::envoyer(const uint32_t cwnd) {
+void Ordinateur::envoyer(const uint32_t cwnd, const bool isAck) {
     std::cout << m_Nom << " : Debut envoie\n";
+
+    // afficher(m_FileDonnees);
     
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
@@ -360,7 +347,7 @@ void Ordinateur::envoyer(const uint32_t cwnd) {
     for (int i = 0; i < int(cwnd); ++i) {
         //
         if (estVide(m_FileDonnees)) {
-            std::cout << m_Nom << " : Plus de paquets en envoyer, fin de la session\n";
+            std::cout << m_Nom << " : Plus de paquets a envoyer, fin de la session\n";
             return;
         }
         // Vide la file de donnees.
@@ -392,54 +379,22 @@ void Ordinateur::envoyer(const uint32_t cwnd) {
     }
 
     //
-    voisine->recevoir();
+    voisine->recevoir(cwnd, isAck);
+    std::cout << m_Nom << " : Fin envoie\n";
 }
 
-void Ordinateur::recevoir() {
+void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
+    [[maybe_unused]] const bool isAck)
+{
     std::cout << m_Nom << " : Debut recevoir\n";
+
+    if (isAck) {
+        return;
+    }
 
     //
     std::deque<std::stack<std::bitset<16>>> donneesDeque;
     donneesDeque = convertirQueueDeque(m_FileDonnees);
-
-    if (int(donneesDeque.size()) == 1) {
-        //
-        Physique couchePhy;
-        Internet coucheInt;
-        Transport coucheTrans;
-
-        // On desencapsule.
-        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[0]);
-        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
-        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
-
-        // On re encapusle.
-        segment = coucheTrans.encapsuler(donnee);
-        paquet = coucheInt.encapsuler(segment);
-        donneesDeque[0] = couchePhy.encapsuler(paquet);
-
-        //
-        std::stack<std::bitset<16>> recep;
-        std::bitset<32> paquetRecep;
-        std::bitset<16> paquetRecepGauche, paquetRecepDroit;
-
-        //
-        std::cout << "Un paquet ok" << std::endl;
-        paquetRecep = coucheTrans.getSeq();
-        diviser(paquetRecep, paquetRecepGauche, paquetRecepDroit);
-
-        //
-        recep.push(paquetRecepGauche);
-        recep.push(paquetRecepDroit);
-        setDonnee(recep);
-        std::cout << "Fin recevoir\n";
-
-        // Trouver la machine voisine.
-        // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
-        Machine* voisine = m_Voisins.front();
-        voisine->envoyer(1);
-    }
-
     //
     Physique couchePhy;
     Internet coucheInt;
@@ -451,41 +406,34 @@ void Ordinateur::recevoir() {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
+        //
+        std::bitset<32> ack = std::bitset<32>(coucheTrans.getSeq().to_ulong() + 1);
+        coucheTrans.setAck2(ack);
+
         // On re encapusle.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneesDeque[0] = couchePhy.encapsuler(paquet);
 
         //
-        std::stack<std::bitset<16>> recep;
-        std::bitset<32> paquetRecep;
-        std::bitset<16> paquetRecepGauche, paquetRecepDroit;
-
-        //
-        std::cout << m_Nom << " : Un paquet ok" << std::endl;
-        paquetRecep = coucheTrans.getSeq();
-        diviser(paquetRecep, paquetRecepGauche, paquetRecepDroit);
-
-        //
-        recep.push(paquetRecepGauche);
-        recep.push(paquetRecepDroit);
-        setDonnee(recep);
+        std::cout << m_Nom << " : Paquet ok" << std::endl;
         std::cout << m_Nom << " : Fin recevoir\n";
 
         // Trouver la machine voisine.
         // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
         Machine* voisine = m_Voisins.front();
-        voisine->envoyer(1);
+
+        // Traitement de la donnee.
+        // traitement(donneesDeque[0], voisine->getMac());
+
+        voisine->setDonnee(donneesDeque[0]);
+        voisine->envoyer(1, true);
         return;
     }
 
     //
-    std::stack<std::bitset<16>> recep;
-    std::bitset<32> paquetRecep;
-    std::bitset<16> paquetRecepGauche, paquetRecepDroit;
-
-    //
-    for (int i = 1; i < int(donneesDeque.size()); ++i) {
+    int i;
+    for (i = 1; i < int(donneesDeque.size()); ++i) {
         //
         Physique couchePhy2;
         Internet coucheInt2;
@@ -500,73 +448,58 @@ void Ordinateur::recevoir() {
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i-1]);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
-
-        // On re encapusle.
-        segment = coucheTrans.encapsuler(donnee);
-        paquet = coucheInt.encapsuler(segment);
-        donneesDeque[i-1] = couchePhy.encapsuler(paquet);
-
-        segment2 = coucheTrans2.encapsuler(donnee2);
-        paquet2 = coucheInt2.encapsuler(segment2);
-        donneesDeque[i] = couchePhy2.encapsuler(paquet2);
         
         //
         if (int(coucheTrans.getSeq().to_ulong()) + 1 != int(coucheTrans2.getSeq().to_ulong())) {
             //
             std::cout << m_Nom << " : Manque un paquet" << std::endl;
-            paquetRecep = coucheTrans2.getSeq();
-            diviser(paquetRecep, paquetRecepGauche, paquetRecepDroit);
+            std::bitset<32> ack = std::bitset<32>(coucheTrans.getSeq().to_ulong() + 1);
+            coucheTrans.setAck2(ack);
+
+            // On re encapusle.
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneesDeque[i-1] = couchePhy.encapsuler(paquet);
 
             //
-            recep.push(paquetRecepGauche);
-            recep.push(paquetRecepDroit);
-            setDonnee(recep);
             std::cout << m_Nom << " : Fin recevoir\n";
 
             // Trouver la machine voisine.
             // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
             Machine* voisine = m_Voisins.front();
-            voisine->envoyer(1);
+
+            // Traitement de la donnee.
+            // traitement(donneesDeque[i-1], voisine->getMac());
+
+            voisine->setDonnee(donneesDeque[i-1]);
+            voisine->envoyer(1, true);
             return;
         }
 
-        paquetRecep = coucheTrans2.getSeq();
+        std::bitset<32> ack = std::bitset<32>(coucheTrans2.getSeq().to_ulong() + 1);
+        coucheTrans2.setAck2(ack);
+
+        // On re encapusle.
+        segment2 = coucheTrans2.encapsuler(donnee2);
+        paquet2 = coucheInt2.encapsuler(segment2);
+        donneesDeque[i] = couchePhy2.encapsuler(paquet2);
     }
 
     //
     std::cout << m_Nom << " : Tous les paquets sont ok" << std::endl;
-    diviser(paquetRecep, paquetRecepGauche, paquetRecepDroit);
-
-    //
-    recep.push(paquetRecepGauche);
-    recep.push(paquetRecepDroit);
-    setDonnee(recep);
     std::cout << m_Nom << " : Fin recevoir\n";
 
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
     Machine* voisine = m_Voisins.front();
-    voisine->envoyer(1);
-}
 
-void Ordinateur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
-    std::cout << m_Nom << " : Debut traitement\n";
-    // Recuperation du paquet.
-    Physique couchePhy;
-    std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
-    
-    // Recuperation adresse MAC destination.
-    MAC ancienneDest = couchePhy.getMacDest();
+    // Traitement de la donnee.
+    // traitement(donneesDeque[i-1], voisine->getMac());
 
-    // Changement adresse MAC.
-    // La destination devient la source.
-    // Ajout nouvelle destination.
-    couchePhy.setMacSrc(ancienneDest);
-    couchePhy.setMacDest(nouvelleDest);
-
-    // Encapsulation.
-    trame = couchePhy.encapsuler(paquet);
-    std::cout << m_Nom << " : fin traitement\n";
+    voisine->setDonnee(donneesDeque[i-1]);
+    // std::cout << "donneesDeque[i-1]\n";
+    // afficher(donneesDeque[i-1]);
+    voisine->envoyer(1, true);
 }
 
 void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
@@ -614,7 +547,7 @@ void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
 
                     //
                     std::cout << "On envoie\n";
-                    envoyer(cwndConvert);
+                    envoyer(cwndConvert, false);
                 }
             }
         }
