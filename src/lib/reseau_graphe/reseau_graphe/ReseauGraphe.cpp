@@ -59,9 +59,33 @@ std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
 }
 
 // Methodes
-bool ReseauGraphe::estConnexe() {
+void DFS(int v, bool visiter[]) 
+{   
+    visiter[v] = true; 
+   
+    for(int i = 0; i < size().m_Liaisons; ++i){
+        if(!visiter[*i]){
+        DFS_util(*i, visiter);
+        }
+    } 
+} 
 
-    return false;
+bool ReseauGraphe::estConnexe() {
+    bool connexe = false;
+    int V = size().m_Machines;
+    bool *visiter = new bool[V];
+    
+    for(int i = 0; i < V; i++){
+        visiter[i] = false;
+    }
+
+    for(int i = 0; i < V; i++){
+        if(visiter[i] = false){
+            DFS(i,vister);
+        }
+    }
+
+    return connexe;
 }
 
 void ReseauGraphe::ajouter(Machine m) {
