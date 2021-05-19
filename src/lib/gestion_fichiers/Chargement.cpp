@@ -22,11 +22,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 
     // Remplissage du reseau.
     reseau->setNom(j["Nom du reseau"]);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 1451a1037ed666f3030dc74040c179b794b06f4e
     // Initialisation variables.
     Machine* m = nullptr;
     IPv4 ip;
@@ -186,11 +182,7 @@ void chargerConfig(const std::string& cheminFichier,
         reseau = chargerReseau("../../src/include/configReseau/ReseauPme.json");
     } else if (choixReseau == "ReseauEntreprise") {
         reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
-<<<<<<< HEAD
     } else { 
-=======
-    } else {
->>>>>>> 1451a1037ed666f3030dc74040c179b794b06f4e
         std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
         std::cout << "Reseau choisi inconnu.\n";
         exit(EXIT_FAILURE);
