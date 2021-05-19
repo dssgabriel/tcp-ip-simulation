@@ -40,13 +40,12 @@ class ReseauGraphe {
         static Routeur& getRouteur(const uint8_t idRouteur);
         static uint8_t getIdRouteurDepuisIdMachine(const uint16_t idMachine);
 
-        Machine& getMachine(const IPv4& ip);
-<<<<<<< HEAD
-        Machine* getMachine(const unsigned int& indice);
-=======
+        static Machine& getMachine(const IPv4& ip);
+        static Machine* getMachinePtr(const IPv4& ip);
         Machine* getMachine(const uint16_t& id);
 
->>>>>>> 1451a1037ed666f3030dc74040c179b794b06f4e
+        static IPv4 getSousReseau(const IPv4& ipMachine);
+
         const std::vector<Machine>& getMachines() const;
 
         const std::vector<Liaison>& getLiaisons() const;
