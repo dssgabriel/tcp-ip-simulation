@@ -14,6 +14,7 @@ class PaquetOSPF {
 
     public:
         // Setter & Getters
+        virtual ~PaquetOSPF() {}
         virtual void setEntete(const TypePaquet& type, const uint8_t& idRouteur) = 0;
         virtual const TypePaquet& getType() const = 0;
         virtual const uint8_t& getIdRouteur() const = 0;
