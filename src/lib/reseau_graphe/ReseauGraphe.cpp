@@ -4,7 +4,7 @@
 #include "ReseauGraphe.hpp"
 #include "machine/Routeur.hpp"
 
-std::vector<Machine> ReseauGraphe::m_Machines;
+std::vector<Machine*> ReseauGraphe::m_Machines;
 std::vector<Liaison> ReseauGraphe::m_Liaisons;
 
 ReseauGraphe::ReseauGraphe() {
@@ -25,79 +25,72 @@ const std::string& ReseauGraphe::getNom() const{
 
 uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
     for (auto iter: m_Machines) {
-        Routeur& routeur = dynamic_cast<Routeur&>(iter);
+        Routeur* routeur = dynamic_cast<Routeur*>(iter);
 
-        if (routeur.getIdMachine() == idMachine) {
-            return routeur.getIdRouteur();
+        if (routeur->getIdMachine() == idMachine) {
+            return routeur->getIdRouteur();
         }
     }
 
-    std::cout << "ERREUR : Dans la fonction 'getIdRouteurDepuisIdMachine' : ";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
+    std::cout << "Dans la fonction 'getIdRouteurDepuisIdMachine'. ";
     std::cout << "idMachine introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
 Routeur& ReseauGraphe::getRouteur(const uint8_t idRouteur) {
     for (size_t i = 0; i < m_Machines.size(); ++i) {
-        Routeur& routeur = dynamic_cast<Routeur&>(m_Machines[i]);
+        Routeur* routeur = dynamic_cast<Routeur*>(m_Machines[i]);
 
-        if (routeur.getIdRouteur() == idRouteur) {
-            return dynamic_cast<Routeur&>(m_Machines[i]);
+        if (routeur->getIdRouteur() == idRouteur) {
+            return dynamic_cast<Routeur&>(*m_Machines[i]);
         }
     }
 
-    std::cout << "ERREUR : Dans la fonction 'getRouteur' : ";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
+    std::cout << "Dans la fonction 'getRouteur'. ";
     std::cout << "idRouteur introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
-Machine& ReseauGraphe::getMachine(const IPv4& ip) {
-   for (size_t i = 0; i < m_Machines.size(); ++i) {
-       if (m_Machines[i].getIp() == ip) {
-           return m_Machines[i];
+Machine* ReseauGraphe::getMachine(const IPv4& ip) {
+   for (Machine* m : m_Machines) {
+       if (m->getIp() == ip) {
+           return m;
        }
    }
 
-    std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
-    std::cout << "Adresse IP introuvable sur le reseau.\n";
-    exit(EXIT_FAILURE);
-}
-
-Machine* ReseauGraphe::getMachinePtr(const IPv4& ip) {
-   for (size_t i = 0; i < m_Machines.size(); ++i) {
-       if (m_Machines[i].getIp() == ip) {
-           return &m_Machines[i];
-       }
-   }
-
-    std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
+    std::cout << "Dans la fonction 'getMachine(ip)'. ";
     std::cout << "Adresse IP introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
 Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     if (id > m_Machines.size()) {
-        std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
+        std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
+        std::cout << "Dans la fonction 'getMachine(id)'. ";
         std::cout << "Indice en dehors du tableau.\n";
         exit(EXIT_FAILURE);
     }
 
-    return &m_Machines[id];
+    return m_Machines[id-1];
 }
 
 IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
     for (auto iter : m_Machines) {
-        if (iter.getIp() == ipMachine) {
-            return iter.getSousReseaux()[0];
+        if (iter->getIp() == ipMachine) {
+            return iter->getSousReseaux()[0];
         }
     }
 
-    std::cout << "ERREUR : Dans la fonction 'getSousReseau' : ";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
+    std::cout << "Dans la fonction 'getSousReseau'. ";
     std::cout << "Aucune ipMachine trouvee.\n";
     exit(EXIT_FAILURE);
 }
 
-const std::vector<Machine>& ReseauGraphe::getMachines() const {
+const std::vector<Machine*>& ReseauGraphe::getMachines() const {
     return m_Machines;
 }
 
@@ -110,9 +103,9 @@ std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
     flux << "Nom du réseau : " << reseau.getNom() << "\n";
 
     // Affichage de la liste des machines.
-    std::vector<Machine> cpyMachines = reseau.getMachines();
-    for (Machine m : cpyMachines) {
-        flux << m << "\n";
+    std::vector<Machine*> cpyMachines = reseau.getMachines();
+    for (Machine* m : cpyMachines) {
+        flux << *m << "\n";
     }
 
     // Affichage de la liste des liaisons.
@@ -129,7 +122,7 @@ bool ReseauGraphe::estConnexe() {
     return false;
 }
 
-void ReseauGraphe::ajouter(Machine m) {
+void ReseauGraphe::ajouter(Machine* m) {
     m_Machines.emplace_back(m);
 }
 
