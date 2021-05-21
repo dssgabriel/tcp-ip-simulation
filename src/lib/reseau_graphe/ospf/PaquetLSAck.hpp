@@ -1,12 +1,9 @@
 /**
- * 
- * @file        PaquetLSAck.hpp
- * @brief       Déclaration de la classe PaquetLSAck.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetLSAck.hpp
+ * @brief   Declaration de la classe PaquetLSAck.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
 
 #pragma once
 
@@ -27,7 +24,7 @@ class PaquetLSAck: public PaquetOSPF {
         // Destructeur
         ~PaquetLSAck();
 
-        // Setter & Getters
+        // Getters et setter
         void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
         const TypePaquet& getType() const override;
         const uint8_t& getIdRouteur() const override;
