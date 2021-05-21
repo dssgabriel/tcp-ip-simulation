@@ -1,12 +1,10 @@
 /**
- * 
- * @file        LSA.cpp
- * @brief       Implémentation de la classe LSA.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    LSA.cpp
+ * @brief   Declaration de la classe LSA.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #pragma once
 
 #include <bitset>
@@ -20,20 +18,20 @@ class LSA {
         // Attributs
         std::bitset<32> m_IdLSA;
         uint8_t m_IdRouteur;
-        std::vector<IPv4> m_SousAdressesRouteur;
+        std::vector<IPv4> m_AdrSousReseaux;
 
     public:
         // Constructeur
         LSA(const std::bitset<32>& idLSA,
             const uint8_t& idRouteur,
-            const std::vector<IPv4>& sousAdressesRouteur
+            const std::vector<IPv4>& AdrSousReseaux
         );
-        
+
         // Destructeur
         ~LSA();
 
         // Getters
         const std::bitset<32>& getIdLSA() const;
         const uint8_t& getIdRouteur() const;
-        const std::vector<IPv4>& getSousAdressesRouteur() const;
+        const std::vector<IPv4>& getAdrSousReseaux() const;
 };

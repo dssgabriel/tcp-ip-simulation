@@ -1,3 +1,11 @@
+/**
+ * @file        DonneeReseau.hpp
+ * @brief       Déclaration de la classe DonneeReseau.
+ * 
+ * @author      Johann RAMANANDRAISIORY 
+ * @date        2021
+ **/
+
 #ifndef DONNEERESEAU_H
 #define DONNEERESEAU_H
 

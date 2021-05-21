@@ -1,72 +1,66 @@
 /**
- * 
- * @file        PaquetDBD.cpp
- * @brief       Implementation de la classe PaquetDBD.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetDBD.cpp
+ * @brief   Implementation de la classe PaquetDBD.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
 
 #include "PaquetDBD.hpp"
 
 /**
- * @brief Constructeur de la classe PaquetDBD.
- * 
- * Le constructeur se charge de remplir le vecteur m_AnnoncesLSA avec tout les lsa.
- * 
- * @param annoncesLSA
-**/
-PaquetDBD::PaquetDBD(const std::vector<LSA>& annoncesLSA) {
-    for (auto lsa: annoncesLSA) {
-        m_AnnoncesLSA.emplace_back(lsa);
+ * @brief Cree un objet PaquetDBD.
+ *
+ * @param LSAs La liste des LSAs a envoyer.
+ */
+PaquetDBD::PaquetDBD(const std::vector<LSA>& LSAs) {
+    for (LSA lsa: LSAs) {
+        m_LSAs.emplace_back(lsa);
     }
 }
 
 /**
- * @brief Destructeur de la classe PaquetDBD.
- * 
- * Le destructeur est vide car tout est directement gere par le 'garbage collector'.
- **/ 
+ * @brief Detruit un objet PaquetDBD.
+ *
+ * Le corps du destructeur est vide car tout les attributs
+ * de la classe sont declares statiquement.
+ */
 PaquetDBD::~PaquetDBD() {}
 
-
 /**
- * @brief Setter de l'attribut des attributs de la classe PaquetOSPF.
- * 
- * @param type Defini le type de paquet ici DBD.
- * @param idRouteur Identifiant du routeur emetteur du paquet.
- * 
- * @return void.
- **/
+ * @brief Modifie les valeurs de l'entete definis par
+ * la classe mere abstraite PaquetOSPF.
+ *
+ * @param type Le type du paquet.
+ * @param idRouteur L'identifiant du routeur emetteur du paquet.
+ */
 void PaquetDBD::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
 
 /**
- * @brief Getter de l'agurment m_Type.
- * 
- * @return Le type du paquet. 
- **/ 
+ * @brief Retourne une reference sur l'attribut m_Type.
+ *
+ * @return Le type du paquet.
+ */
 const TypePaquet& PaquetDBD::getType() const {
     return m_Type;
 }
 
 /**
- * @brief Getter de l'argument de clase m_IdRouteur.
- * 
+ * @brief Retourne une reference sur l'attribut m_IdRouteur.
+ *
  * @return L'identifiant du routeur emetteur du paquet.
- **/ 
+ */
 const uint8_t& PaquetDBD::getIdRouteur() const {
     return m_IdRouteur;
 }
 
 /**
- * @brief Getter de l'argument de classe m_AnnoncesLSA.
- * 
- * @return Le vecteur contenant tout les LSA.
- **/ 
+ * @brief Retourne une reference sur l'attribut m_LSAs.
+ *
+ * @return La liste des LSAs envoyes dans le paquet.
+ */
 std::vector<LSA>& PaquetDBD::getAnnoncesLSA() {
-    return m_AnnoncesLSA;
+    return m_LSAs;
 }
