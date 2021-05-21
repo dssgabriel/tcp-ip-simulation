@@ -1,11 +1,24 @@
+/**
+ * @file Machine.hpp
+ * @author Mickael LE DENMAT
+ * @brief Vous trouverez ici la definition de la classe Machine.
+ * @date 2021-05-21
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
-#include <bitset>
-#include <iostream>
-#include <queue>
+// Import des librairies deja definies.
 #include <stack>
+#include <queue>
 #include <vector>
+#include <bitset>
+#include <string>
+#include <iostream>
 
+// Import des librairies exterieures.
 #include "../../../include/MAC.hpp"
 #include "../../../include/IPv4.hpp"
 #include "../../horloge/Horloge.hpp"
@@ -14,14 +27,16 @@
 #include "../../protocole_tcp_ip/physique/Physique.hpp"
 #include "../../protocole_tcp_ip/transport/Transport.hpp"
 
+/**
+ * @brief Classe Machine qui represente tout objet present sur le reseau.
+ * 
+ */
 class Machine {
     private:
-        // Attributs prives
         static uint16_t m_NbMachine;
         uint16_t m_IdMachine;
 
     protected:
-        // Attributs proteges
         std::string m_Nom;
 
         IPv4 m_Ip;
@@ -70,11 +85,9 @@ class Machine {
 
         // Methodes
         // NE PAS NOMMER LES VARIABLES.
-        virtual void envoyer(const uint32_t, bool) {};
+        virtual void envoyer(const uint32_t, bool) {}
         void traitement(std::stack<std::bitset<16>>&, MAC);
-        virtual void recevoir(const uint32_t, bool) {};
-
-
+        virtual void recevoir(const uint32_t, bool) {}
 
         // Overloading
         friend std::ostream& operator<<(
@@ -83,4 +96,5 @@ class Machine {
         );
 };
 
+//
 bool estVide(std::queue<std::stack<std::bitset<16>>> donnees);

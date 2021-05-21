@@ -1,3 +1,13 @@
+/**
+ * @file Commutateur.cpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici toutes les fonctions implementees
+ *          pour la classe Commutateur.
+ * @date 2021-05-21
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "Commutateur.hpp"
 
 uint8_t Commutateur::m_NbrCommutateur = 0;
@@ -31,12 +41,12 @@ const std::map<const IPv4*, const MAC*>& Commutateur::getMemoire() const {
 }
 
 // Methode
-void Commutateur::envoyer(const uint32_t cwnd, const bool isAck) {
+void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut envoie\n";
 
     //
-    if (isAck) {
-        std::cout << "Retour\n";
+    if (estAck) {
+        std::cout << m_Nom << " : Retour\n";
 
         //
         std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
@@ -65,7 +75,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool isAck) {
         return;
     }
     else {
-        std::cout << "Aller\n";
+        std::cout << m_Nom << " : Aller\n";
         //
         Physique couchePhy;
         Internet coucheInt;
@@ -121,14 +131,13 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool isAck) {
     }
 }
 
-void Commutateur::recevoir(const uint32_t cwnd, const bool isAck) {
+void Commutateur::recevoir(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut recevoir\n";
-    envoyer(cwnd, isAck);
+    envoyer(cwnd, estAck);
     std::cout << m_Nom << " : Fin recevoir\n";
 }
 
 MAC Commutateur::trouverMacDest(const IPv4 ip) {
-    
     //
     for (auto it = m_CacheMem.begin(); it != m_CacheMem.end(); ++it) {
         if(*it->first == ip) {
@@ -137,9 +146,10 @@ MAC Commutateur::trouverMacDest(const IPv4 ip) {
     }
 
     //
-    std::cout << "ERREUR : Dans la fonction 'trouverMacDest' : ";
-    std::cout << "Aucune adresse MAC ne correspond à l'adresse IP indiqué\n";
-    return macZero;
+    std::cout << "ERREUR : Dans le fichier 'Commutateur.cpp'. ";
+    std::cout << "Dans la fonction 'trouverMacDest'. ";
+    std::cout << "Aucune adresse MAC ne correspond à l'adresse IP indiqué.\n";
+    exit(EXIT_FAILURE);
 }
 
 // Overloading
@@ -148,10 +158,8 @@ std::ostream& operator<<(std::ostream& flux, Commutateur& c) {
     flux << *m;
 
     std::map<const IPv4*, const MAC*> cpyCacheMem = c.getMemoire();
-    flux << "Cache memoire (taille : " << cpyCacheMem.size() << ") : \n";
     for (auto itMap = cpyCacheMem.begin(); itMap != cpyCacheMem.end(); ++itMap) {
-        // flux << *itMap->first << " -> " << *itMap->second << std::endl;
-        flux << itMap->first << " -> " << itMap->second << std::endl;
+        flux << *itMap->first << " -> " << *itMap->second << std::endl;
     }
 
     return flux;

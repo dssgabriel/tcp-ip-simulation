@@ -1,8 +1,23 @@
+/**
+ * @file Routeur.cpp
+ * @author Mickael LE DENMAT
+ *          Gabriel DOS SANTOS
+ * @brief Vous trouverez ici toutes les fonctions implementees
+ *          pour la classe Routeur.
+ * @date 2021-05-21
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "../ReseauGraphe.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
 
-// Constructeur
+/**
+ * @brief Constructeur de la classe Routeur.
+ * 
+ */
 Routeur::Routeur() : Machine() {
     m_NbRouteur++;
     m_IdRouteur = m_NbRouteur;
@@ -14,46 +29,65 @@ Routeur::Routeur() : Machine() {
     m_TableLSAEnvoyes.clear();
 }
 
-// Desctructeur
+/**
+ * @brief Destructeur de la classe Routeur.
+ * 
+ */
 Routeur::~Routeur() {}
 
-// Getters & setters
+/**
+ * @brief Accesseur du nombre de routeur.
+ * 
+ * @return uint8_t le nombre de routeur.
+ */
 uint8_t Routeur::getNbRouteur() {
     return m_NbRouteur;
 }
 
+/**
+ * @brief Accesseur de l'identifiant du routeur.
+ * 
+ * @return uint8_t l'identifiant du routeur.
+ */
 uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
-// Methodes
-void Routeur::envoyer(const uint32_t cwnd, const bool isAck) {
+/**
+ * @brief Envoie les trames de la file d'attente à la machine voisine.
+ * 
+ * @param cwnd le nombre de trame a envoyer. 
+ * @param estAck indique la trame est un accuse de reception ou non.
+ */
+void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut envoie\n";
 
-    //
-    if (isAck) {
-        std::cout << "Retour\n";
+    // Utilise pour le retour.
+    if (estAck) {
+        std::cout << m_Nom << " : Retour\n";
 
-        //
+        // L'accuse de reception est la derniere valeur ajoute.
         std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
 
-        //
+        // Creation des couches pour desencapsulation.
         Physique couchePhy;
         Internet coucheInt;
         Transport coucheTrans;
 
-        // On desencapsule.
+        // Desencapsulation.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        //
+        // Encapsulation
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
 
-        //
+        // Trouve le voisin.
         Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpSrc()));
+        
+        // Ajout de trame dans la file de donnee de la machine voisine.
         voisine->setDonnee(donneeRecu);
         voisine->recevoir(cwnd, true);
         
@@ -61,8 +95,9 @@ void Routeur::envoyer(const uint32_t cwnd, const bool isAck) {
         return;
     }
     else {
-        std::cout << "Aller\n";
-        //
+        std::cout << m_Nom << " : Aller\n";
+
+        // Creation des couches pour desencapsulation.
         Physique couchePhy;
         Internet coucheInt;
         Transport coucheTrans;
@@ -70,44 +105,44 @@ void Routeur::envoyer(const uint32_t cwnd, const bool isAck) {
         // Vide la file de donnees.
         std::stack<std::bitset<16>> donneeRecu = suppDonnee();
 
-        // On desencapsule.
+        // Desencapsulation.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Trouver la machine voisine.
-        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpDest()));
-
-        //
+        // Encapsulation
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
 
+        // Trouve le voisin.
+        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpDest()));
+
         // Traitement de la donnee.
         traitement(donneeRecu, voisine->getMac());
 
-        // La machine suivante recois le paquet
+        // Ajout de trame dans la file de donnee de la machine voisine.
         voisine->setDonnee(donneeRecu);
 
-        //
+        // Envoie des cwnd trames.
         for (int i = 1; i < int(cwnd); ++i) {
             // Vide la file de donnees.
             std::stack<std::bitset<16>> donneeRecu = suppDonnee();
 
-            // On desencapsule.
+            // Desencapsulation.
             std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
             std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
             std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-            //
+            // Encapsulation
             segment = coucheTrans.encapsuler(donnee);
             paquet = coucheInt.encapsuler(segment);
             donneeRecu = couchePhy.encapsuler(paquet);
             
-            // Traitement de la donnee.
+            // Traitement de la trame.
             traitement(donneeRecu, voisine->getMac());
 
-            // La machine suivante recois le paquet
+            // Ajout de trame dans la file de donnee de la machine voisine.
             voisine->setDonnee(donneeRecu);
         }
 
@@ -117,34 +152,46 @@ void Routeur::envoyer(const uint32_t cwnd, const bool isAck) {
     }
 }
 
-void Routeur::recevoir(const uint32_t cwnd, const bool isAck) {
+/**
+ * @brief Recois la trame.
+ * 
+ * @param cwnd Le nombre de trame recu.
+ * @param estAck La trame recu est un accuse de reception ou non.
+ */
+void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut recevoir\n";
-    envoyer(cwnd, isAck);
+    envoyer(cwnd, estAck);
     std::cout << m_Nom << " : Fin recevoir\n";
 }
 
+/**
+ * @brief Renvoie l'adresse MAC de la machine correspondante a l'adresse IP.
+ * 
+ * @param ip de la machine qui nous interesse.
+ * @return MAC correspondante.
+ */
 MAC Routeur::trouverMacDest(const IPv4 ip) {
-    Machine* m = ReseauGraphe::getMachinePtr(ip);
+    Machine* m = ReseauGraphe::getMachine(ip);
     
-    //
+    // Convertion de la machine en ordinateur ou en commutateur.
     if (static_cast<Ordinateur*>(m)
     || static_cast<Commutateur*>(m))
     {   
-        //
-        for (IPv4 masque : m->getSousReseaux()) {
-            if (ReseauGraphe::getSousReseau(ip) == masque) {
+        // ???
+        for (IPv4 masqueSousReseau : m->getSousReseaux()) {
+            if (masqueSousReseau == ReseauGraphe::getSousReseau(ip)) {
                 return m->getMac();
             }
         }
     }
 
-    //
+    // ???
     for (auto iter : m_TableRoutage) {
         std::vector<Liaison*> tabLiaison = iter.second;
         uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
         Routeur r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
         
-        //
+        // ???
         for (IPv4 sousRes : r.getSousReseaux()) {
             if (sousRes == ReseauGraphe::getSousReseau(ip)) {
                 return r.getMac();
@@ -153,7 +200,8 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     }
 
     //
-    std::cout << "ERREUR : Dans la fonction 'trouverMacDest' : ";
+    std::cout << "ERREUR : Dans le fichier 'Routeur.cpp. ";
+    std::cout << "Dans la fonction 'trouverMacDest'. ";
     std::cout << "Aucune adresse MAC trouvee\n";
     exit(EXIT_FAILURE);
 }
@@ -188,6 +236,8 @@ void Routeur::traitementPaquetOSPF() {
             traitementPaquetLSAck(dynamic_cast<PaquetLSAck*>(paquet));
             break;
         default:
+            std::cout << "ERREUR : Dans le fichier 'Routeur.cpp'. ";
+            std::cout << "Dans la fonction 'traitementPaquetOSPF'. ";
             std::cout << "Type de PaquetOSPF inconnu\n";
             return;
     }
