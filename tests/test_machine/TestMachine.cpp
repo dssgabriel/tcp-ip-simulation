@@ -39,18 +39,15 @@ void test2() {
     sauvegarderConfig("ecriture.json", "ReseauSimple", p);
     chargerConfig("ecriture.json", reseau, p);
 
-    Machine& clientM = reseau->getMachine(p.m_Source);
-    Machine& serveurM = reseau->getMachine(p.m_Destination);
-
-    // Erreur : `std::bad_cast`
-    Ordinateur client = dynamic_cast<Ordinateur&>(clientM);
-    Ordinateur serveur = dynamic_cast<Ordinateur&>(serveurM);
+    Machine* client = reseau->getMachinePtr(p.m_Source);
+    Machine serveur = reseau->getMachine(p.m_Destination);
 
     MAC macDest = {35, 11, 122, 213, 123, 169};
-    client.remplirFileDonnees(p, macDest);
+    Ordinateur* pc = static_cast<Ordinateur*>(client);
+    pc->remplirFileDonnees(p, macDest);
 
-    std::cout << "clientM \n" << clientM;
-    std::cout << "serveurM \n" << serveurM;
+    std::cout << "client \n" << *client;
+    std::cout << "serveur \n" << serveur;
 }
 
 void test3() {
@@ -73,7 +70,7 @@ void test3() {
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
-
+    
     //
     // std::bitset<16> cwnd = 1;
     // pc.slowStart(cwnd, p.m_Ssthresh);
@@ -127,12 +124,50 @@ void test4() {
     pc.envoyer(nbrPaquet, false);
 }
 
+void test5() {
+    //
+    int nbrPaquet = 1;
+
+    //
+    ParamInterface p;
+    p.m_Source = {192, 168, 1, 1};
+    p.m_Destination = {192, 168, 1, 129};
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 136;
+    p.m_TypeFichier = FTP;
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
+
+    //
+    std::unique_ptr<ReseauGraphe> reseau;
+    chargerConfig("ecriture.json", reseau, p);
+
+    //
+    Machine* m = reseau->getMachinePtr(p.m_Source);
+    Ordinateur* pc = static_cast<Ordinateur*>(m);
+    std::cout << pc->getNom() << std::endl;
+    
+    //
+    Machine* m2 = reseau->getMachinePtr(p.m_Destination);
+    Ordinateur* pc2 = static_cast<Ordinateur*>(m2);
+    std::cout << pc2->getNom() << std::endl;
+
+    //
+    // std::cout << "Reseau : " << *reseau << std::endl;
+
+    //
+    pc->remplirFileDonnees(p, pc2->getMac());
+
+    //
+    pc->envoyer(nbrPaquet, false);
+}
+
 int main(void) {
     srand(time(NULL));
-    //test1();
-    //test2();
-    //test3();
-    test4();
+    // test1();
+    // test2();
+    // test3();
+    // test4();
+    test5();
 
     return 0;
 }
