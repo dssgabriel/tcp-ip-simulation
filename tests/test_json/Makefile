@@ -10,5 +10,5 @@ RESEAU = ../../src/lib/reseau_graphe/ReseauGraphe.cpp
 FILES = $(OSPF) $(FICHIER) $(MACHINE) $(PROTOCOLE) $(RESEAU)
 
 all:
-	$(CC) $(CFLAGS) $(FILES) Json.cpp -o ../test/testsJson/test
+	$(CC) $(CFLAGS) $(FILES) Json.cpp -o test
 	./test
