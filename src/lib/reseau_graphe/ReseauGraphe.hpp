@@ -37,7 +37,7 @@ class ReseauGraphe {
         void setNom(const std::string nom);
         const std::string& getNom() const;
 
-        static Routeur& getRouteur(const uint8_t idRouteur);
+        static Routeur* getRouteur(const uint8_t idRouteur);
         static uint8_t getIdRouteurDepuisIdMachine(const uint16_t idMachine);
 
         static Machine* getMachine(const IPv4& ip);
@@ -48,6 +48,8 @@ class ReseauGraphe {
         const std::vector<Machine*>& getMachines() const;
 
         const std::vector<Liaison>& getLiaisons() const;
+
+        static const std::vector<uint8_t> getIdsRouteurs();
 
         // Overloading
         friend std::ostream& operator<<(

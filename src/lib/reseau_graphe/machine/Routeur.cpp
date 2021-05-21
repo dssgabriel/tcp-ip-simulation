@@ -189,12 +189,12 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     for (auto iter : m_TableRoutage) {
         std::vector<Liaison*> tabLiaison = iter.second;
         uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
-        Routeur r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
+        Routeur* r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
         
         // ???
-        for (IPv4 sousRes : r.getSousReseaux()) {
+        for (IPv4 sousRes : r->getSousReseaux()) {
             if (sousRes == ReseauGraphe::getSousReseau(ip)) {
-                return r.getMac();
+                return r->getMac();
             }
         }
     }
@@ -330,7 +330,7 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
 
 void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
-    if (lsr->getIdAnnonceur() != m_IdRouteur) {
+    if (lsr->getIdEmetteur() != m_IdRouteur) {
         delete lsr;
         return;
     }
@@ -389,10 +389,10 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
                         idLSARecus.push_back(id);
                         m_TableLSADemandes.erase(verif.first);
 
-                        Routeur routeur = ReseauGraphe::getRouteur(verif.first->getIdRouteur());
+                        Routeur* routeur = ReseauGraphe::getRouteur(verif.first->getIdRouteur());
                         std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
-                            routeur.getIdRouteur(),
-                            m_IdRouteur
+                            m_IdRouteur,
+                            routeur->getIdRouteur()
                         );
                         m_TableRoutage.emplace(&routeur, plusCourtChemin);
                     }
