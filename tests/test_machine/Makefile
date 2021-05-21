@@ -11,7 +11,7 @@ RESEAU = ../../src/lib/reseau_graphe/ReseauGraphe.cpp
 FILES = $(COMMUN) $(OSPF) $(FICHIER) $(MACHINE) $(PROTOCOLE) $(RESEAU)
 
 all:
-	$(CC) $(CFLAGS) $(FILES) TestMachine.cpp -o test
+	$(CC) $(CFLAGS) $(FILES) TestMachine.cpp -o ../test/testsMachine/test
 	./test
 
 clean:
