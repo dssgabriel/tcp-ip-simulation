@@ -423,9 +423,6 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
         // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
         Machine* voisine = m_Voisins.front();
 
-        // Traitement de la donnee.
-        // traitement(donneesDeque[0], voisine->getMac());
-
         voisine->setDonnee(donneesDeque[0]);
         voisine->envoyer(1, true);
         return;
@@ -468,9 +465,6 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
             // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
             Machine* voisine = m_Voisins.front();
 
-            // Traitement de la donnee.
-            // traitement(donneesDeque[i-1], voisine->getMac());
-
             voisine->setDonnee(donneesDeque[i-1]);
             voisine->envoyer(1, true);
             return;
@@ -493,12 +487,7 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
     Machine* voisine = m_Voisins.front();
 
-    // Traitement de la donnee.
-    // traitement(donneesDeque[i-1], voisine->getMac());
-
     voisine->setDonnee(donneesDeque[i-1]);
-    // std::cout << "donneesDeque[i-1]\n";
-    // afficher(donneesDeque[i-1]);
     voisine->envoyer(1, true);
 }
 

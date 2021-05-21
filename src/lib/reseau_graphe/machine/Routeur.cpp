@@ -1,8 +1,3 @@
-#include <cstdlib>
-#include <string>
-#include <utility>
-
-#include "Routeur.hpp"
 #include "../ReseauGraphe.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
@@ -31,46 +26,136 @@ uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
-// TODO: A refaire
-/*
-std::vector<Routeur> Routeur::getRouteursVoisins() {
-    std::vector<Routeur> voisins;
-
-    for (auto iter: m_Voisins) {
-        auto routeur = dynamic_cast<Routeur*>(iter);
-
-        if (routeur) {
-            voisins.emplace_back(routeur);
-        }
-    }
-
-    return voisins;
-}
-*/
-
-// TODO: A refaire
-/*
-const std::vector<Liaison> Routeur::getPlusCourtChemin(Routeur& dest) {
-    std::vector<Liaison> chemin;
-
-    for (auto iter: m_TableRoutage) {
-        if (iter.first->getIdRouteur() != dest.getIdRouteur()) {
-            chemin.emplace_back(iter.second);
-            break;
-        }
-    }
-
-    return chemin;
-}
-*/
-
 // Methodes
-void Routeur::envoyer(const uint32_t) {
-    // TODO : A faire
+void Routeur::envoyer(const uint32_t cwnd, const bool isAck) {
+    std::cout << m_Nom << " : Debut envoie\n";
+
+    //
+    if (isAck) {
+        std::cout << "Retour\n";
+
+        //
+        std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
+
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        //
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneeRecu = couchePhy.encapsuler(paquet);
+
+        //
+        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpSrc()));
+        voisine->setDonnee(donneeRecu);
+        voisine->recevoir(cwnd, true);
+        
+        std::cout << m_Nom << " : Fin envoie\n";
+        return;
+    }
+    else {
+        std::cout << "Aller\n";
+        //
+        Physique couchePhy;
+        Internet coucheInt;
+        Transport coucheTrans;
+
+        // Vide la file de donnees.
+        std::stack<std::bitset<16>> donneeRecu = suppDonnee();
+
+        // On desencapsule.
+        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+        std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+        // Trouver la machine voisine.
+        Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpDest()));
+
+        //
+        segment = coucheTrans.encapsuler(donnee);
+        paquet = coucheInt.encapsuler(segment);
+        donneeRecu = couchePhy.encapsuler(paquet);
+
+        // Traitement de la donnee.
+        traitement(donneeRecu, voisine->getMac());
+
+        // La machine suivante recois le paquet
+        voisine->setDonnee(donneeRecu);
+
+        //
+        for (int i = 1; i < int(cwnd); ++i) {
+            // Vide la file de donnees.
+            std::stack<std::bitset<16>> donneeRecu = suppDonnee();
+
+            // On desencapsule.
+            std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
+            std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+            std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+            //
+            segment = coucheTrans.encapsuler(donnee);
+            paquet = coucheInt.encapsuler(segment);
+            donneeRecu = couchePhy.encapsuler(paquet);
+            
+            // Traitement de la donnee.
+            traitement(donneeRecu, voisine->getMac());
+
+            // La machine suivante recois le paquet
+            voisine->setDonnee(donneeRecu);
+        }
+
+        //
+        voisine->recevoir(cwnd, false);
+        std::cout << m_Nom << " : Fin envoie\n";
+    }
 }
 
-void Routeur::recevoir() {
-    // TODO : A faire
+void Routeur::recevoir(const uint32_t cwnd, const bool isAck) {
+    std::cout << m_Nom << " : Debut recevoir\n";
+    envoyer(cwnd, isAck);
+    std::cout << m_Nom << " : Fin recevoir\n";
+}
+
+MAC Routeur::trouverMacDest(const IPv4 ip) {
+    Machine* m = ReseauGraphe::getMachinePtr(ip);
+    
+    //
+    if (static_cast<Ordinateur*>(m)
+    || static_cast<Commutateur*>(m))
+    {   
+        //
+        for (IPv4 masque : m->getSousReseaux()) {
+            if (ReseauGraphe::getSousReseau(ip) == masque) {
+                return m->getMac();
+            }
+        }
+    }
+
+    //
+    for (auto iter : m_TableRoutage) {
+        std::vector<Liaison*> tabLiaison = iter.second;
+        uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
+        Routeur r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
+        
+        //
+        for (IPv4 sousRes : r.getSousReseaux()) {
+            if (sousRes == ReseauGraphe::getSousReseau(ip)) {
+                return r.getMac();
+            }
+        }
+    }
+
+    //
+    std::cout << "ERREUR : Dans la fonction 'trouverMacDest' : ";
+    std::cout << "Aucune adresse MAC trouvee\n";
+    exit(EXIT_FAILURE);
 }
 
 void Routeur::envoyerOSPF(Routeur* dest, PaquetOSPF* ospf) {
@@ -79,39 +164,6 @@ void Routeur::envoyerOSPF(Routeur* dest, PaquetOSPF* ospf) {
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
     m_FilePaquetsOSPF.emplace(ospf);
-}
-
-void Routeur::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
-    // Recuperation du paquet.
-    Physique couchePhy;
-
-    // Recuperation adresse MAC destination.
-    std::bitset<16> macDestBA, macDestDC, macDestFE;
-    macDestFE = trame.top();
-    trame.pop();
-    macDestDC = trame.top();
-    trame.pop();
-    macDestBA = trame.top();
-    trame.pop();
-
-    // Desencapsule la MAC Source d'origine qui ne nous interesse plus.
-    for (size_t i = 0; i < 3; ++i) {
-        trame.pop();
-    }
-
-    // Changement adresse MAC.
-    // La destination devient la source.
-    trame.push(macDestBA);
-    trame.push(macDestDC);
-    trame.push(macDestFE);
-
-    // Ajout nouvelle destination
-    std::bitset<48> nouvelleDestBit = couchePhy.convertir(nouvelleDest);
-    macDestBA = macDestDC = macDestFE = 0;
-    diviser(nouvelleDestBit, macDestFE, macDestDC, macDestBA);
-    trame.push(macDestBA);
-    trame.push(macDestDC);
-    trame.push(macDestFE);
 }
 
 void Routeur::traitementPaquetOSPF() {
@@ -339,7 +391,7 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             if (iter.first->getIdRouteur() == ack->getIdRouteur()) {
                 auto vec = *iter.second;
 
-                for (auto idEnvoye = 0; idEnvoye < vec.size(); idEnvoye++) {
+                for (size_t idEnvoye = 0; idEnvoye < vec.size(); idEnvoye++) {
                     if (vec[idEnvoye] == idAnnonce) {
                         vec.erase(vec.cbegin() + idEnvoye - 1);
                     }

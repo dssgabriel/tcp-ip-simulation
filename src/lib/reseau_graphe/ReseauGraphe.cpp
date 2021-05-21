@@ -12,8 +12,7 @@ ReseauGraphe::ReseauGraphe() {
     m_Liaisons.clear();
 }
 
-ReseauGraphe::~ReseauGraphe() {
-}
+ReseauGraphe::~ReseauGraphe() {}
 
 // Getters & setters
 void ReseauGraphe::setNom(const std::string nom) {
@@ -33,7 +32,8 @@ uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
         }
     }
 
-    std::cout << "ERREUR : Machine `" << idMachine << "` introuvable sur le reseau." << std::endl;
+    std::cout << "ERREUR : Dans la fonction 'getIdRouteurDepuisIdMachine' : ";
+    std::cout << "idMachine introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
@@ -46,7 +46,8 @@ Routeur& ReseauGraphe::getRouteur(const uint8_t idRouteur) {
         }
     }
 
-    std::cout << "ERREUR : Routeur `" << idRouteur << "` introuvable sur le reseau." << std::endl;
+    std::cout << "ERREUR : Dans la fonction 'getRouteur' : ";
+    std::cout << "idRouteur introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
@@ -57,19 +58,43 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
        }
    }
 
-    std::cout << "ERREUR : Dans la fonction 'getMachine' : Adresse IP <" << ip;
-    std::cout << "> introuvable sur le reseau.\n";
+    std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
+    std::cout << "Adresse IP introuvable sur le reseau.\n";
+    exit(EXIT_FAILURE);
+}
+
+Machine* ReseauGraphe::getMachinePtr(const IPv4& ip) {
+   for (size_t i = 0; i < m_Machines.size(); ++i) {
+       if (m_Machines[i].getIp() == ip) {
+           return &m_Machines[i];
+       }
+   }
+
+    std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
+    std::cout << "Adresse IP introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
 Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     if (id > m_Machines.size()) {
-        std::cout << "ERREUR : Dans la fonction 'getMachine' :";
-        std::cout << " Indice en dehors du tableau.\n";
+        std::cout << "ERREUR : Dans la fonction 'getMachine' : ";
+        std::cout << "Indice en dehors du tableau.\n";
         exit(EXIT_FAILURE);
     }
 
-    return &m_Machines[id - 1];
+    return &m_Machines[id];
+}
+
+IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
+    for (auto iter : m_Machines) {
+        if (iter.getIp() == ipMachine) {
+            return iter.getSousReseaux()[0];
+        }
+    }
+
+    std::cout << "ERREUR : Dans la fonction 'getSousReseau' : ";
+    std::cout << "Aucune ipMachine trouvee.\n";
+    exit(EXIT_FAILURE);
 }
 
 const std::vector<Machine>& ReseauGraphe::getMachines() const {
@@ -86,13 +111,13 @@ std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
 
     // Affichage de la liste des machines.
     std::vector<Machine> cpyMachines = reseau.getMachines();
-    for(Machine m : cpyMachines) {
+    for (Machine m : cpyMachines) {
         flux << m << "\n";
     }
 
     // Affichage de la liste des liaisons.
     std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
-    for(Liaison l : cpyLiaisons) {
+    for (Liaison l : cpyLiaisons) {
         flux << l << "\n";
     }
 

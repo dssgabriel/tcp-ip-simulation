@@ -40,10 +40,14 @@ class ReseauGraphe {
         static Routeur& getRouteur(const uint8_t idRouteur);
         static uint8_t getIdRouteurDepuisIdMachine(const uint16_t idMachine);
 
-        Machine& getMachine(const IPv4& ip);
+        static Machine& getMachine(const IPv4& ip);
+        static Machine* getMachinePtr(const IPv4& ip);
         Machine* getMachine(const uint16_t& id);
 
+        static IPv4 getSousReseau(const IPv4& ipMachine);
+
         const std::vector<Machine>& getMachines() const;
+
         const std::vector<Liaison>& getLiaisons() const;
 
         // Overloading
