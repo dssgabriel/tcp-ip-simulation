@@ -42,8 +42,9 @@ void test2() {
     Machine& clientM = reseau->getMachine(p.m_Source);
     Machine& serveurM = reseau->getMachine(p.m_Destination);
 
-    Ordinateur client = dynamic_cast<Ordinateur&> (clientM);
-    Ordinateur serveur = dynamic_cast<Ordinateur&> (serveurM);
+    // Erreur : `std::bad_cast`
+    Ordinateur client = dynamic_cast<Ordinateur&>(clientM);
+    Ordinateur serveur = dynamic_cast<Ordinateur&>(serveurM);
 
     MAC macDest = {35, 11, 122, 213, 123, 169};
     client.remplirFileDonnees(p, macDest);
@@ -72,7 +73,7 @@ void test3() {
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
-    
+
     //
     // std::bitset<16> cwnd = 1;
     // pc.slowStart(cwnd, p.m_Ssthresh);
@@ -128,10 +129,10 @@ void test4() {
 
 int main(void) {
     srand(time(NULL));
-    // test1();
-    // test2();
-    // test3();
-    // test4();
+    //test1();
+    //test2();
+    //test3();
+    test4();
 
     return 0;
 }

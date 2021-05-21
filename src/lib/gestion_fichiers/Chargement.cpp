@@ -6,9 +6,9 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     ReseauGraphe* reseau = new ReseauGraphe();
     if (!reseau) {
         std::cout << "ERREUR : Dans la fonction 'chargerReseau' : pointeur nul.\n";
-        std::unique_ptr<ReseauGraphe>(nullptr); 
+        return std::unique_ptr<ReseauGraphe>(nullptr);
     }
-    
+
     // Lecture du fichier.
     std::ifstream lecture(nomFichier);
     if (lecture.fail()) {
@@ -22,7 +22,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 
     // Remplissage du reseau.
     reseau->setNom(j["Nom du reseau"]);
-    
+
     // Initialisation variables.
     Machine* m = nullptr;
     IPv4 ip;
@@ -42,7 +42,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
             std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Type de machine inconnu\n.";
             exit(EXIT_FAILURE);
         }
-            
+
         // Initialisation des attributs la machine.
         // Adresse IP.
         ip.a = std::bitset<8>(machineJ["ip"][0]);
@@ -152,7 +152,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 /**
  * @brief Lit le fichier de configuration en parametre pour connaitre le reseau
  *        souhaite par l'utilisateur.
- * 
+ *
  * @param cheminFichier : L'emplacement du fichier de configuration.
  * @param reseau : Le reseau a renvoyer avec les informations du ficheirs.
  * @param param : La configuration du l'utilisateur.
@@ -182,7 +182,7 @@ void chargerConfig(const std::string& cheminFichier,
         reseau = chargerReseau("../../src/include/configReseau/ReseauPme.json");
     } else if (choixReseau == "ReseauEntreprise") {
         reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
-    } else { 
+    } else {
         std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
         std::cout << "Reseau choisi inconnu.\n";
         exit(EXIT_FAILURE);

@@ -4,6 +4,9 @@
 #include "ReseauGraphe.hpp"
 #include "machine/Routeur.hpp"
 
+std::vector<Machine> ReseauGraphe::m_Machines;
+std::vector<Liaison> ReseauGraphe::m_Liaisons;
+
 ReseauGraphe::ReseauGraphe() {
     m_Machines.clear();
     m_Liaisons.clear();
@@ -21,7 +24,7 @@ const std::string& ReseauGraphe::getNom() const{
     return m_Nom;
 }
 
-uint8_t ReseauGraphe::getRouteur(const uint16_t idMachine) {
+uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
     for (auto iter: m_Machines) {
         Routeur& routeur = dynamic_cast<Routeur&>(iter);
 
@@ -34,12 +37,12 @@ uint8_t ReseauGraphe::getRouteur(const uint16_t idMachine) {
     exit(EXIT_FAILURE);
 }
 
-Routeur ReseauGraphe::getRouteur(const uint8_t idRouteur) {
-    for (auto iter: m_Machines) {
-        Routeur& routeur = dynamic_cast<Routeur&>(iter);
+Routeur& ReseauGraphe::getRouteur(const uint8_t idRouteur) {
+    for (size_t i = 0; i < m_Machines.size(); ++i) {
+        Routeur& routeur = dynamic_cast<Routeur&>(m_Machines[i]);
 
         if (routeur.getIdRouteur() == idRouteur) {
-            return routeur;
+            return dynamic_cast<Routeur&>(m_Machines[i]);
         }
     }
 
@@ -48,8 +51,8 @@ Routeur ReseauGraphe::getRouteur(const uint8_t idRouteur) {
 }
 
 Machine& ReseauGraphe::getMachine(const IPv4& ip) {
-   for(size_t i = 0; i < m_Machines.size(); ++i) {
-       if(m_Machines[i].getIp() == ip) {
+   for (size_t i = 0; i < m_Machines.size(); ++i) {
+       if (m_Machines[i].getIp() == ip) {
            return m_Machines[i];
        }
    }
@@ -57,6 +60,16 @@ Machine& ReseauGraphe::getMachine(const IPv4& ip) {
     std::cout << "ERREUR : Dans la fonction 'getMachine' : Adresse IP <" << ip;
     std::cout << "> introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
+}
+
+Machine* ReseauGraphe::getMachine(const uint16_t& id) {
+    if (id > m_Machines.size()) {
+        std::cout << "ERREUR : Dans la fonction 'getMachine' :";
+        std::cout << " Indice en dehors du tableau.\n";
+        exit(EXIT_FAILURE);
+    }
+
+    return &m_Machines[id - 1];
 }
 
 const std::vector<Machine>& ReseauGraphe::getMachines() const {
@@ -100,32 +113,33 @@ void ReseauGraphe::ajouter(Liaison l) {
 }
 
 // TODO : Verifications
-const uint8_t getRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
-                                    std::vector<uint8_t>& visites,
-                                    std::vector<uint8_t>& nonVisites)
+uint8_t getRouteurPlusProche(
+    std::vector<uint64_t>& sommeMetrique,
+    std::vector<uint8_t>& visites,
+    std::vector<uint8_t>& nonVisites)
 {
     uint64_t metriqueMinimale = UINT64_MAX;
-    uint8_t id = 0;
+    uint8_t idRouteurPlusProche;
 
-    for (auto routeur: nonVisites) {
-        if (sommeMetrique[routeur] < metriqueMinimale) {
-            metriqueMinimale = sommeMetrique[routeur];
-            id = routeur;
+    for (size_t i = 0; i < nonVisites.size(); ++i) {
+        if (sommeMetrique[nonVisites[i]] < metriqueMinimale) {
+            metriqueMinimale = sommeMetrique[nonVisites[i]];
+            idRouteurPlusProche = nonVisites[i];
         }
     }
 
-    nonVisites.erase((nonVisites.begin() + id) - 1);
-    visites.emplace_back(id);
+    nonVisites.erase(nonVisites.begin() + idRouteurPlusProche);
+    visites.emplace_back(idRouteurPlusProche);
 
-    return id;
+    return idRouteurPlusProche;
 }
 
 std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint8_t& routeurCourant) {
     std::vector<Liaison> cheminsVoisins;
 
     for (auto chemin: m_Liaisons) {
-        uint8_t routeur1 = getRouteur(chemin.m_NumMachine1);
-        uint8_t routeur2 = getRouteur(chemin.m_NumMachine2);
+        uint8_t routeur1 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine1);
+        uint8_t routeur2 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine2);
 
         if (routeur1 == routeurCourant || routeur2 == routeurCourant) {
             cheminsVoisins.emplace_back(chemin);
@@ -135,10 +149,11 @@ std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint8_t& routeurCoura
     return cheminsVoisins;
 }
 
-void ReseauGraphe::getPlusCourtChemin(const uint8_t& depart,
-                                      const uint8_t& arrivee,
-                                      std::vector<int16_t> peres,
-                                      std::vector<Liaison> plusCourtChemin)
+void ReseauGraphe::getPlusCourtChemin(
+    const uint8_t& depart,
+    const uint8_t& arrivee,
+    std::vector<int16_t> peres,
+    std::vector<Liaison*> plusCourtChemin)
 {
     uint8_t routeurCourant = arrivee;
 
@@ -153,7 +168,7 @@ void ReseauGraphe::getPlusCourtChemin(const uint8_t& depart,
             if ((chemin.m_NumMachine1 == idMachine1 && chemin.m_NumMachine2 == idMachine2) ||
                 (chemin.m_NumMachine1 == idMachine2 && chemin.m_NumMachine2 == idMachine1))
             {
-                plusCourtChemin.emplace_back(chemin);
+                plusCourtChemin.emplace_back(&chemin);
             }
         }
 
@@ -163,12 +178,12 @@ void ReseauGraphe::getPlusCourtChemin(const uint8_t& depart,
     std::reverse(plusCourtChemin.begin(), plusCourtChemin.end());
 }
 
-std::vector<Liaison> ReseauGraphe::routageDynamique(const uint8_t depart, const uint8_t arrivee) {
+std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart, const uint8_t arrivee) {
     std::vector<uint8_t> visites;
     std::vector<uint8_t> nonVisites(m_Machines.size(), 0);
     std::vector<uint64_t> sommeMetrique(m_Machines.size(), UINT64_MAX);
     std::vector<int16_t> peres(m_Machines.size(), -1);
-    std::vector<Liaison> plusCourtChemin;
+    std::vector<Liaison*> plusCourtChemin;
 
     sommeMetrique[depart] = 0;
 
@@ -181,8 +196,8 @@ std::vector<Liaison> ReseauGraphe::routageDynamique(const uint8_t depart, const 
         std::vector<Liaison> cheminsVoisins = getCheminsVoisins(routeurCourant);
 
         for (auto routeurSuivant: cheminsVoisins) {
-            uint8_t routeur1 = getRouteur(routeurSuivant.m_NumMachine1) - 1;
-            uint8_t routeur2 = getRouteur(routeurSuivant.m_NumMachine2) - 1;
+            uint8_t routeur1 = getIdRouteurDepuisIdMachine(routeurSuivant.m_NumMachine1) - 1;
+            uint8_t routeur2 = getIdRouteurDepuisIdMachine(routeurSuivant.m_NumMachine2) - 1;
 
             if (routeur1 == routeurCourant) {
                 if (sommeMetrique[routeur2] > sommeMetrique[routeurCourant] + routeurSuivant.m_Debit) {
