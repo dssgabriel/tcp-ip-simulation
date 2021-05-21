@@ -1,3 +1,11 @@
+/**
+ * @file    Routeur.hpp
+ * @brief   Declaration de la classe Routeur.
+ * @author  Mickael Le Denmat
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #pragma once
 
 #include <map>
@@ -50,9 +58,9 @@ class Routeur : public Machine {
         // Getters
         uint8_t getNbRouteur();
         uint8_t getIdRouteur();
-        MAC trouverMacDest(const IPv4 ip);
 
         // Methodes
+        MAC trouverMacDest(const IPv4 ip);
         void envoyerOSPF(Routeur* dest, PaquetOSPF* ospf);
         void recevoirOSPF(PaquetOSPF* ospf);
         void traitementPaquetOSPF();
