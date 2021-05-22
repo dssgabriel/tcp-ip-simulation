@@ -128,7 +128,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Encapsulation
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
@@ -152,7 +152,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
             std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
             std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-            // Encapsulation
+            // Encapsulation.
             segment = coucheTrans.encapsuler(donnee);
             paquet = coucheInt.encapsuler(segment);
             donneeRecu = couchePhy.encapsuler(paquet);
@@ -189,8 +189,6 @@ void Commutateur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @return MAC correspondante.
  */
 MAC Commutateur::trouverMacDest(const IPv4 ip) {
-    // std::cout << ip << std::endl;
-    //
     for (auto it : m_CacheMem) {
         if(*it.first == ip) {
             return *it.second;
@@ -198,9 +196,9 @@ MAC Commutateur::trouverMacDest(const IPv4 ip) {
     }
 
     //
-    std::cout << "ERREUR : Dans le fichier 'Commutateur.cpp'. ";
-    std::cout << "Dans la fonction 'trouverMacDest'. ";
-    std::cout << "Aucune adresse MAC ne correspond à l'adresse IP indiqué.\n";
+    std::cout << "ERREUR : Dans le fichier 'Commutateur.cpp'. "
+        "Dans la fonction 'trouverMacDest'. "
+        "Aucune adresse MAC ne correspond à l'adresse IP indiqué.\n";
     exit(EXIT_FAILURE);
 }
 

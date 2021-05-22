@@ -1,9 +1,11 @@
 /**
  * @file    Routeur.hpp
- * @brief   Declaration de la classe Routeur.
+ * @brief   Vous trouverez ici la declaration de la classe Ordinateur
  * @author  Mickael Le Denmat
  * @author  Gabriel Dos Santos
- * @date    Mai 2021
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
  */
 
 #pragma once
@@ -56,6 +58,9 @@ class Routeur : public Machine {
         // Getters
         uint8_t getNbRouteur();
         uint8_t getIdRouteur();
+        
+        void setTableRoutage(Routeur* r, Liaison* l);
+        const std::map<Routeur*, std::vector<Liaison*>>& getTableRoutage();
 
         // Methodes
         MAC trouverMacDest(const IPv4 ip);
@@ -65,4 +70,10 @@ class Routeur : public Machine {
 
         virtual void envoyer(const uint32_t cwnd, const bool isAck);
         virtual void recevoir(const uint32_t cwnd, const bool isAck);
+
+        // Overloading
+        friend std::ostream& operator<<(
+            std::ostream& flux, 
+            Routeur& r
+        );
 };
