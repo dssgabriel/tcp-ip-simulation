@@ -76,7 +76,7 @@ Machine* ReseauGraphe::getMachine(const uint16_t& id) {
         exit(EXIT_FAILURE);
     }
 
-    return m_Machines[id-1];
+    return m_Machines[id];
 }
 
 IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
