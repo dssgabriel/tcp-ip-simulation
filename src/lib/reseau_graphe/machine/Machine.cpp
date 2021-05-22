@@ -71,6 +71,12 @@ Machine::Machine() {
     }
 }
 
+Machine::~Machine() {
+    for (Machine *m : m_Voisins) {
+        delete m;
+    }
+}
+
 /**
  * @brief Accesseur du nombre de machine.
  * 

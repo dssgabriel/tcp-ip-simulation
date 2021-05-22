@@ -3,7 +3,7 @@
  * @author Mickael LE DENMAT
  *          Gabriel DOS SANTOS
  * @brief Vous trouverez ici toutes les fonctions implementees
- *          pour la classe Routeur.
+ *          pour la classe Routeur
  * @date 2021-05-21
  * 
  * @copyright Copyright (c) 2021
@@ -171,27 +171,28 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @return MAC correspondante.
  */
 MAC Routeur::trouverMacDest(const IPv4 ip) {
+    // std::cout << ip << std::endl;
+    //
     Machine* m = ReseauGraphe::getMachine(ip);
-    
-    // Convertion de la machine en ordinateur ou en commutateur.
-    if (static_cast<Ordinateur*>(m)
-    || static_cast<Commutateur*>(m))
-    {   
-        // ???
-        for (IPv4 masqueSousReseau : m->getSousReseaux()) {
-            if (masqueSousReseau == ReseauGraphe::getSousReseau(ip)) {
+    // std::cout << *m << std::endl;
+
+    // Le routeur est il dans le meme sous reseau que l'ip ?
+    for (IPv4 sousReseauRouteur : m_SousReseau) {
+        for (IPv4 sousReseauDest : m->getSousReseaux()) {
+            if (sousReseauRouteur == sousReseauDest) {
                 return m->getMac();
             }
         }
     }
 
-    // ???
+    // Trouver le chemin pour aller au routeur dans le meme sous reseau que l'ip dest.
     for (auto iter : m_TableRoutage) {
-        std::vector<Liaison*> tabLiaison = iter.second;
+        auto tabLiaison = iter.second;
         uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
         Routeur* r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
+        std::cout << *r << std::endl;
         
-        // ???
+        // Renvoie du routeur voisin.
         for (IPv4 sousRes : r->getSousReseaux()) {
             if (sousRes == ReseauGraphe::getSousReseau(ip)) {
                 return r->getMac();

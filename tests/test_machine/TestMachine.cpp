@@ -195,11 +195,11 @@ void test6() {
     //
     ParamInterface p;
     p.m_Source = {192, 168, 1, 1};
-    p.m_Destination = {192, 168, 1, 128};
+    p.m_Destination = {192, 168, 1, 194};
     p.m_NbPaquet = nbrPaquet;
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
-    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
 
     //
     std::unique_ptr<ReseauGraphe> reseau;
@@ -214,14 +214,7 @@ void test6() {
     Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
 
     //
-    // std::cout << "\n##########\n" << *reseau << "##########\n";
-
-    //
     pc->remplirFileDonnees(p, pc2->getMac());
-
-    //
-    std::cout << "\n##########\n" << *pc << "##########\n";
-    std::cout << "\n##########\n" << *pc2 << "##########\n";
     m->envoyer(nbrPaquet, false);
 }
 
