@@ -53,6 +53,22 @@ uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
+void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
+    std::vector<Liaison*> tab;
+    tab.emplace_back(l);
+    std::pair<Routeur*, std::vector<Liaison*>> p(r, tab);
+    m_TableRoutage.insert(p);
+}
+
+/**
+ * @brief Accesseur pour la table de routage.
+ * 
+ * @return const std::map<Routeur*, std::vector<Liaison*>>& la table de routage.
+ */
+const std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
+    return m_TableRoutage;
+}
+
 /**
  * @brief Envoie les trames de la file d'attente à la machine voisine.
  * 
@@ -79,7 +95,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Encapsulation
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
@@ -110,7 +126,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Encapsulation
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
@@ -201,9 +217,9 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     }
 
     //
-    std::cout << "ERREUR : Dans le fichier 'Routeur.cpp. ";
-    std::cout << "Dans la fonction 'trouverMacDest'. ";
-    std::cout << "Aucune adresse MAC trouvee\n";
+    std::cout << "ERREUR : Dans le fichier 'Routeur.cpp. "
+        << "Dans la fonction 'trouverMacDest'. "
+        << "Aucune adresse MAC trouvee\n";
     exit(EXIT_FAILURE);
 }
 
@@ -213,6 +229,7 @@ void Routeur::envoyerOSPF(Routeur* dest, PaquetOSPF* ospf) {
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
     m_FilePaquetsOSPF.emplace(ospf);
+    traitementPaquetOSPF();
 }
 
 void Routeur::traitementPaquetOSPF() {
@@ -237,9 +254,9 @@ void Routeur::traitementPaquetOSPF() {
             traitementPaquetLSAck(dynamic_cast<PaquetLSAck*>(paquet));
             break;
         default:
-            std::cout << "ERREUR : Dans le fichier 'Routeur.cpp'. ";
-            std::cout << "Dans la fonction 'traitementPaquetOSPF'. ";
-            std::cout << "Type de PaquetOSPF inconnu\n";
+            std::cout << "ERREUR : Dans le fichier 'Routeur.cpp'. "
+                << "Dans la fonction 'traitementPaquetOSPF'. "
+                << "Type de PaquetOSPF inconnu\n";
             return;
     }
 }
@@ -480,4 +497,18 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             return;
         }
     }
+}
+
+std::ostream& operator<<(std::ostream& flux, Routeur& r) {
+    Machine& m = dynamic_cast<Machine&>(r);
+    flux << m;
+
+    for (auto it : r.getTableRoutage()) {
+        flux << *it.first << " : \n";
+        for (Liaison* l : it.second) {
+            flux << "\t" << *l << std::endl;
+        }
+    }
+
+    return flux;
 }

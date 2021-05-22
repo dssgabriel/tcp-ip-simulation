@@ -64,4 +64,5 @@ class ReseauGraphe {
         void ajouter(Liaison l);
 
         static std::vector<Liaison*> routageDynamique(const uint8_t depart, const uint8_t arrivee);
+        void lancerOSPF();
 };

@@ -151,19 +151,29 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     // Remplissage de la liste des liaisons.
     auto listeLiaisonsJ = j["Liste liaisons"];
     for (auto liaisonJ : listeLiaisonsJ) {
-        Liaison l;
-        l.m_NumMachine1 = liaisonJ["Depart"];
-        l.m_NumMachine2 = liaisonJ["Arrivee"];
-        l.m_Debit = liaisonJ["Debit"];
+        Liaison* l = new Liaison;
+        l->m_NumMachine1 = liaisonJ["Depart"];
+        l->m_NumMachine2 = liaisonJ["Arrivee"];
+        l->m_Debit = liaisonJ["Debit"];
 
         // Ajout de la liaison dans le reseau.
-        reseau->ajouter(l);
+        reseau->ajouter(*l);
 
         // Configuration des voisins.
-        Machine* a = reseau->getMachine(l.m_NumMachine1);
-        Machine* b = reseau->getMachine(l.m_NumMachine2);
+        Machine* a = reseau->getMachine(l->m_NumMachine1);
+        Machine* b = reseau->getMachine(l->m_NumMachine2);
         a->setVoisin(*b);
         b->setVoisin(*a);
+
+        // Remplir table de routage.
+        Routeur* r = dynamic_cast<Routeur*>(a);
+        Routeur* r2 = dynamic_cast<Routeur*>(b);
+        if (r && r2) {
+            r->setTableRoutage(r2, l);
+            r2->setTableRoutage(r, l);
+        }
+
+        delete l;
     }
 
     // Convertion.
@@ -184,9 +194,9 @@ void chargerConfig(const std::string& cheminFichier,
     // Lecture du fichier de configuration.
     std::ifstream lecture(cheminFichier);
     if (lecture.fail()) {
-        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
-        std::cout << "Dans la fonction 'chargerConfig'. ";
-        std::cout << "Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. "
+            << "Dans la fonction 'chargerConfig'. "
+            << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 
