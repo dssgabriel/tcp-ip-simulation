@@ -28,5 +28,5 @@ class PaquetHello: public PaquetOSPF {
         virtual const TypePaquet& getType() const override;
         virtual const uint8_t& getIdRouteur() const override;
 
-        const uint8_t& getIdVoisin() const;
+        const uint8_t& getIdDestinataire() const;
 };
