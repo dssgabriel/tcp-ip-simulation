@@ -10,7 +10,7 @@ TEST = *.cpp
 FILES = $(TEST) $(COMMUN) $(FICHIER) $(PROTOCOLE) $(RESEAU)
 
 all:
-	$(CC) $(CFLAGS) $(FILES) TestMachine.cpp -o test
+	$(CC) $(CFLAGS) $(FILES) -o test
 	./test
 
 clean:
