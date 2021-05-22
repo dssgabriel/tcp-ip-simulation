@@ -24,8 +24,8 @@ class Commutateur : public Machine {
         const std::map<const IPv4*, const MAC*>& getMemoire() const;
         
         // Methode
-        void envoyer(const uint32_t cwnd, const bool isAck);
-        void recevoir(const uint32_t cwnd, const bool isAck);
+        virtual void envoyer(const uint32_t cwnd, const bool isAck);
+        virtual void recevoir(const uint32_t cwnd, const bool isAck);
         MAC trouverMacDest(const IPv4 ip);
 
         // Overloading

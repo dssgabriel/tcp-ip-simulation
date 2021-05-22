@@ -65,6 +65,6 @@ class Routeur : public Machine {
         void recevoirOSPF(PaquetOSPF* ospf);
         void traitementPaquetOSPF();
 
-        void envoyer(const uint32_t cwnd, const bool isAck);
-        void recevoir(const uint32_t cwnd, const bool isAck);
+        virtual void envoyer(const uint32_t cwnd, const bool isAck);
+        virtual void recevoir(const uint32_t cwnd, const bool isAck);
 };

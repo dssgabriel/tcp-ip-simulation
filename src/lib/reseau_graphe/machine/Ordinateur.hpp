@@ -47,8 +47,8 @@ class Ordinateur : public Machine {
         void synchroniser();
         void finDeSession();
         
-        void envoyer(const uint32_t cwnd, const bool isAck);
-        void recevoir(const uint32_t cwnd, const bool isAck);
+        virtual void envoyer(const uint32_t cwnd, const bool isAck);
+        virtual void recevoir(const uint32_t cwnd, const bool isAck);
 
         void congestionAvoidance(std::bitset<16>& cwnd);
         void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);

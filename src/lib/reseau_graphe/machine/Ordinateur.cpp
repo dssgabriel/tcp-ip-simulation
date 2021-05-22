@@ -273,7 +273,9 @@ std::stack<std::bitset<16>> trouverDonnee(
         }
     }
 
-    std::cout << "ERREUR : Dans la fonction 'trouverDonnee' : Aucune donnée\n";
+    std::cout << "ERREUR : Dans le fichier 'Ordinateur.cpp'. ";
+    std::cout << "Dans la fonction 'trouverDonnee'. ";
+    std::cout << "Aucune donnée\n";
     exit(EXIT_FAILURE); 
 }
 
@@ -334,7 +336,7 @@ void Ordinateur::finDeSession() {
     // TODO : A faire
 }
 
-void Ordinateur::envoyer(const uint32_t cwnd, const bool isAck) {
+void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut envoie\n";
 
     // afficher(m_FileDonnees);
@@ -379,16 +381,16 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool isAck) {
     }
 
     //
-    voisine->recevoir(cwnd, isAck);
+    voisine->recevoir(cwnd, estAck);
     std::cout << m_Nom << " : Fin envoie\n";
 }
 
 void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
-    [[maybe_unused]] const bool isAck)
+    [[maybe_unused]] const bool estAck)
 {
     std::cout << m_Nom << " : Debut recevoir\n";
 
-    if (isAck) {
+    if (estAck) {
         return;
     }
 
