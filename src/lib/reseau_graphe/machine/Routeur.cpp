@@ -1,9 +1,9 @@
 /**
  * @file    Routeur.cpp
- * @author  Mickael LE DENMAT
+ * @author  Mickael Le Denmat
  * @author  Gabriel Dos Santos
  * @brief   Vous trouverez ici toutes les fonctions implementees
- * pour la classe Routeur
+ *          pour la classe Routeur
  * @date    2021-05-21
  */
 
@@ -202,9 +202,19 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     exit(EXIT_FAILURE);
 }
 
-// TODO: Send to correct neighboor
-void Routeur::envoyerOSPF(Routeur* dest, PaquetOSPF* ospf) {
-    dest->recevoirOSPF(ospf);
+void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
+    auto recherche = m_TableRoutage.find(destination);
+
+    if (recherche != m_TableRoutage.end()) {
+        Liaison chemin = *recherche->second[0];
+
+        uint16_t idMachineProchain = chemin.m_NumMachine1 != m_IdRouteur ?
+            chemin.m_NumMachine1 : chemin.m_NumMachine2;
+        uint8_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
+        Routeur* prochain = ReseauGraphe::getRouteur(idRouteurProchain);
+
+        prochain->recevoirOSPF(ospf);
+    }
 }
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
@@ -387,68 +397,81 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     }
 }
 
-// TODO : Renvoyer des LSUs lorsqu'on en recoit et que l'on fait des mises a jours.
 void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
-/*
     std::vector<LSA> LSAs = lsu->getLSADemandes();
     std::vector<std::bitset<32>> idLSARecus;
-    bool misAJour = false;
+    std::vector<LSA> LSAMisAJour;
+    bool estMisAJour = false;
 
     for (LSA lsa: LSAs) {
-        bool connu = false;
+        bool estConnu = false;
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
 
             if (routeur->getIdRouteur() == lsa.getIdRouteur()) {
-                misAJour = true;
-                // TODO: Add router to routing table
-                Routeur* routeur = ReseauGraphe::getRouteur(lsa.getIdRouteur());
-                std::vector<Liaison> chemin;
-                m_TableRoutage.emplace(routeur, chemin);
+                estConnu = true;
+            }
+        }
+
+        if (!estConnu) {
+            estMisAJour = true;
+
+            idLSARecus.emplace_back(lsa.getIdLSA());
+            LSA misAJour(lsa.getIdLSA(),
+                         lsa.getIdRouteur(),
+                         lsa.getAdrSousReseaux()
+            );
+            LSAMisAJour.emplace_back(misAJour);
+
+            Routeur* routeur = ReseauGraphe::getRouteur(lsa.getIdRouteur());
+            std::vector<Liaison*> chemin;
+            m_TableRoutage.emplace(routeur, chemin);
+        }
+    }
+
+    if (estMisAJour) {
+        for (auto iter: m_TableRoutage) {
+            Routeur* routeur = iter.first;
+            std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
+                m_IdRouteur,
+                routeur->getIdRouteur()
+            );
+            iter.second = plusCourtChemin;
+        }
+
+        for (Machine* machine: m_Voisins) {
+            Routeur* routeur = dynamic_cast<Routeur*>(machine);
+
+            if (routeur) {
+                PaquetLSU* miseAJour = new PaquetLSU(LSAMisAJour);
+                miseAJour->setEntete(LSU, m_IdRouteur);
+                envoyerOSPF(routeur, miseAJour);
             }
         }
     }
 
-    for (auto iter: m_TableRoutage) {
-        Routeur* routeur = ReseauGraphe::getRouteur(iter.first->getIdRouteur());
-        std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
-            m_IdRouteur,
-            routeur->getIdRouteur()
-        );
-        m_TableRoutage.emplace(routeur, plusCourtChemin);
-        // TODO: send LSUs to all router neighboors
-    }
+    auto recherche = m_TableLSAEnvoyes.find(ReseauGraphe::getRouteur(lsu->getIdRouteur()));
+    if (recherche != m_TableLSAEnvoyes.end()) {
+        std::vector<std::bitset<32>> idLSAEnvoyes = recherche->second;
 
-    for (auto iter: m_TableLSADemandes) {
-        if (iter.first->getIdRouteur() == lsu->getIdRouteur() && !iter.second.empty()) {
-            // Envoie d'un paquet LSR au routeur envoyant le paquet LSU,
-            // dans le cas ou il manque des LSAs.
-            auto destinataire = iter.first;
-            PaquetLSR* reponse = new PaquetLSR(iter.first->getIdRouteur(), iter.second);
-            reponse->setEntete(LSR, m_IdRouteur);
-            envoyerOSPF(destinataire, reponse);
-
-            // Sortie immediate de la fonction.
-            delete lsu;
-            return;
+        for (size_t i = 0; i < idLSAEnvoyes.size(); ++i) {
+            for (size_t j = 0; j < idLSARecus.size(); ++j) {
+                if (idLSAEnvoyes[i] == idLSARecus[j]) {
+                    idLSAEnvoyes.erase(idLSAEnvoyes.begin() + i);
+                }
+            }
         }
-    }
 
-    for (auto iter: m_TableRoutage) {
-        auto destinataire = iter.first;
+        if (!idLSAEnvoyes.empty()) {
+            Routeur* destinataire = recherche->first;
 
-        // Envoie d'un paquet LSAck au routeur envoyant le paquet LSU.
-        if (destinataire->getIdRouteur() == lsu->getIdRouteur()) {
             PaquetLSAck* reponse = new PaquetLSAck(idLSARecus);
             reponse->setEntete(LSAck, m_IdRouteur);
             envoyerOSPF(destinataire, reponse);
-
-            // Sortie immediate de la fonction.
-            delete lsu;
-            return;
         }
     }
-*/
+
+    delete lsu;
 }
 
 void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
