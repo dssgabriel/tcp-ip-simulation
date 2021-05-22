@@ -1,12 +1,10 @@
 /**
- * 
- * @file        PaquetLSU.hpp
- * @brief       Déclaration de la classe PaquetLSU.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetLSU.hpp
+ * @brief   Declaration de la classe PaquetLSU.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #pragma once
 
 #include <vector>
@@ -26,10 +24,10 @@ class PaquetLSU: public PaquetOSPF {
         // Destructeur
         ~PaquetLSU();
 
-        // Setter & Getters
-        void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
-        const TypePaquet& getType() const override;
-        const uint8_t& getIdRouteur() const override;
+        // Getters et setter
+        virtual void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
+        virtual const TypePaquet& getType() const override;
+        virtual const uint8_t& getIdRouteur() const override;
 
         std::vector<LSA>& getLSADemandes();
 };

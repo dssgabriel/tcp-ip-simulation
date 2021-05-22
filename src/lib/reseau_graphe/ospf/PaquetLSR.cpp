@@ -1,82 +1,79 @@
 /**
- * 
- * @file        PaquetLSR.cpp
- * @brief       Déclaration de la classe PaquetLSR.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetLSR.cpp
+ * @brief   Implementation de la classe PaquetLSR.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #include "PaquetLSR.hpp"
 
 /**
- * @brief Constructeur de la classe PaquetLSR.
- * 
- * @param idAnnonceur L'identifiant de l'annonceur.
- * @param idLSADemandes Le vecteur des identifiants des LSA demandes.
- **/ 
-PaquetLSR::PaquetLSR(
-    const uint8_t& idAnnonceur,
-    const std::vector<std::bitset<32>>& idLSADemandes
-) : m_IdAnnonceur(idAnnonceur)
+ * @brief Cree un objet PaquetLSR.
+ *
+ * @param idEmetteur L'identifiant du routeur ayant emis les LSA demandes.
+ * @param idLSADemandes La liste d'identifiants des LSA demandes.
+ */
+PaquetLSR::PaquetLSR(const uint8_t& idEmetteur,
+                     const std::vector<std::bitset<32>>& idLSADemandes)
+    : m_IdEmetteur(idEmetteur)
 {
-    for (auto idLSA: idLSADemandes) {
+    for (std::bitset<32> idLSA: idLSADemandes) {
         m_IdLSADemandes.emplace_back(idLSA);
     }
 }
 
 /**
- * @brief Destructeur de la classe PaquetLSR.
- * 
- * Le destructeur est vide car tout est gere directement par le 'garbage collector'.
- **/ 
+ * @brief Detruit un objet PaquetLSR.
+ *
+ * Le corps du destructeur est vide car tout les attributs
+ * de la classe sont declares statiquement.
+ */
 PaquetLSR::~PaquetLSR() {}
 
 /**
- * @brief Setter de l'ensemble des attributs de la classe PaquetOSPF.
- * 
- * @param type Le type du paquet, ici LSR.
+ * @brief Modifie les valeurs de l'entete definis par
+ * la classe mere abstraite PaquetOSPF.
+ *
+ * @param type Le type du paquet.
  * @param idRouteur L'identifiant du routeur emetteur du paquet.
- * 
- * @return void.
- **/ 
+ */
 void PaquetLSR::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
 
 /**
- * @brief Getter de l'attribut de classe m_Type.
- * 
+ * @brief Retourne une reference sur l'attribut m_Type.
+ *
  * @return Le type du paquet.
- **/ 
+ */
 const TypePaquet& PaquetLSR::getType() const {
     return m_Type;
 }
 
 /**
- * @brief Getter de l'attribut m_IdRouteur.
- * 
- * @return L'identifiant du routeur emetteur.
- **/ 
+ * @brief Retourne une reference sur l'attribut m_IdRouteur.
+ *
+ * @return L'identifiant du routeur emetteur du paquet.
+ */
 const uint8_t& PaquetLSR::getIdRouteur() const {
     return m_IdRouteur;
 }
 
 /**
- * @brief Getter de l'attribut m_IdAnnonceur.
- * 
- * @return L'identifiant de l'annonceur.
- */ 
-const uint8_t& PaquetLSR::getIdAnnonceur() const {
-    return m_IdAnnonceur;
+ * @brief Retourne une reference sur l'attribut m_IdEmetteur.
+ *
+ * @return L'identifiant du routeur emetteur.
+ */
+const uint8_t& PaquetLSR::getIdEmetteur() const {
+    return m_IdEmetteur;
 }
 
 /**
- * @brief Getter de l'attribut m_IdLSADemandes.
- * 
- * @return Un vecteur contenant l'ensemble des identifiants des LSA demandees.
- **/ 
+ * @brief Retourne une reference sur l'attribut m_IdLSADemandes.
+ *
+ * @return La liste d'identifiants des LSAs demandes.
+ */
 std::vector<std::bitset<32>>& PaquetLSR::getIdLSADemandes() {
     return m_IdLSADemandes;
 }

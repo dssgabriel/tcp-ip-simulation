@@ -1,12 +1,9 @@
 /**
- * 
- * @file        PaquetHello.hpp
- * @brief       Déclaration de la classe PaquetHello.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetHello.hpp
+ * @brief   Declaration de la classe PaquetHello.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
 
 #pragma once
 
@@ -26,10 +23,10 @@ class PaquetHello: public PaquetOSPF {
         // Destructeur
         ~PaquetHello();
 
-        // Setter & Getters
-        void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
-        const TypePaquet& getType() const override;
-        const uint8_t& getIdRouteur() const override;
+        // Getters et setter
+        virtual void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
+        virtual const TypePaquet& getType() const override;
+        virtual const uint8_t& getIdRouteur() const override;
 
         const uint8_t& getIdVoisin() const;
 };
