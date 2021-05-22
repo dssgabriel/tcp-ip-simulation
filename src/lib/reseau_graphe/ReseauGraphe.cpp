@@ -1,3 +1,14 @@
+/**
+
+ * @file        ReseauGraphe.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ReseauGraphe.
+ * 
+ * @author      Florian CAMBRESY
+ * @author      Gabriel DOS SANTOS 
+ * @date        2021
+
+ **/
+
 #include <algorithm>
 #include <cstdlib>
 
