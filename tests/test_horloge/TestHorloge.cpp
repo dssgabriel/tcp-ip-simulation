@@ -19,7 +19,7 @@ void test2() {
     chrono1.pause();
     std::cout << "Temps d'execution chrono1 a la pause : " << chrono1.getTempsSec().count() << std::endl;
 
-    chrono1.pause();
+    chrono1.lancer();
     chrono1.arreter();
     std::cout << "Temps d'execution chrono1 arrete : " << chrono1.getTempsSec().count() << std::endl;
 }

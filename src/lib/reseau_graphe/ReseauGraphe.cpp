@@ -1,3 +1,14 @@
+/**
+
+ * @file        ReseauGraphe.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ReseauGraphe.
+ * 
+ * @author      Florian CAMBRESY
+ * @author      Gabriel DOS SANTOS 
+ * @date        2021
+
+ **/
+
 #include <algorithm>
 #include <cstdlib>
 
@@ -76,7 +87,7 @@ Machine* ReseauGraphe::getMachine(const uint16_t& id) {
         exit(EXIT_FAILURE);
     }
 
-    return m_Machines[id-1];
+    return m_Machines[id];
 }
 
 IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
