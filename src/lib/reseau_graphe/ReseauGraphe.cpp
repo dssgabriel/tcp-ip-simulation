@@ -1,19 +1,15 @@
 /**
-
- * @file        ReseauGraphe.cpp
- * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ReseauGraphe.
- * 
- * @author      Florian CAMBRESY
- * @author      Gabriel DOS SANTOS 
- * @date        2021
-
+ * @file    ReseauGraphe.cpp
+ * @brief   Vous trouverez ici toutes les fonctions implementees pour la classe ReseauGraphe.
+ * @author  Florian CAMBRESY
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
  **/
 
 #include <algorithm>
 #include <cstdlib>
 
 #include "ReseauGraphe.hpp"
-#include "machine/Routeur.hpp"
 
 std::vector<Machine*> ReseauGraphe::m_Machines;
 std::vector<Liaison> ReseauGraphe::m_Liaisons;
