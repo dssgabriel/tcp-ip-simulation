@@ -206,16 +206,20 @@ void test6() {
     chargerConfig("ecriture.json", reseau, p);
 
     //
-    Machine* m = reseau->getMachine(p.m_Source);
-    Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
+    // Machine* m = reseau->getMachine(p.m_Source);
+    // Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
     
     //
-    Machine* m2 = reseau->getMachine(p.m_Destination);
-    Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
+    // Machine* m2 = reseau->getMachine(p.m_Destination);
+    // Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
 
     //
-    pc->remplirFileDonnees(p, pc2->getMac());
-    m->envoyer(nbrPaquet, false);
+    reseau->lancerOSPF();
+    std::cout << *reseau << std::endl;
+
+    //
+    // pc->remplirFileDonnees(p, pc2->getMac());
+    // m->envoyer(nbrPaquet, false);
 }
 
 void test7() {
