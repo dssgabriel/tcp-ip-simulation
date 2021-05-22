@@ -39,7 +39,9 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         } else if (machineJ["type"] == "Commutateur") {
             m = new Commutateur();
         } else {
-            std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Type de machine inconnu\n.";
+            std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
+            std::cout << "Dans la fonction 'chargerReseau'. ";
+            std::cout << "Type de machine inconnu\n.";
             exit(EXIT_FAILURE);
         }
 
@@ -105,7 +107,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         }
 
         // Ajout de la machine creee dans le reseau.
-        reseau->ajouter(*m);
+        reseau->ajouter(m);
     }
 
     // Remplissage de la liste des liaisons.
@@ -163,7 +165,8 @@ void chargerConfig(const std::string& cheminFichier,
     // Lecture du fichier de configuration.
     std::ifstream lecture(cheminFichier);
     if (lecture.fail()) {
-        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
+        std::cout << "Dans la fonction 'chargerConfig'. ";
         std::cout << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
@@ -183,7 +186,8 @@ void chargerConfig(const std::string& cheminFichier,
     } else if (choixReseau == "ReseauEntreprise") {
         reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
     } else { 
-        std::cout << "ERREUR : Dans la fonction 'chargerConfig' : ";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
+        std::cout << "Dans la fonction 'chargerConfig'. ";
         std::cout << "Reseau choisi inconnu.\n";
         exit(EXIT_FAILURE);
     }
