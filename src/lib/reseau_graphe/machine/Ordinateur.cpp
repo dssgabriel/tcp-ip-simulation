@@ -1,8 +1,21 @@
+/**
+ * @file Ordinateur.cpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici toutes les fonctions implementees
+ *          pour la classe Ordinateur.
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "Ordinateur.hpp"
 
 uint8_t Ordinateur::m_NbrOrdinateur = 0;
 
-// Constructeurs
+/**
+ * @brief Constructeur de la classe Ordinateur.
+ * 
+ */
 Ordinateur::Ordinateur() : Machine() {
     m_NbrOrdinateur++;
     m_IdOrdinateur = m_NbrOrdinateur;
@@ -13,53 +26,100 @@ Ordinateur::Ordinateur() : Machine() {
     m_TempsTraitementPaquet.clear();
 }
 
-// Destructeur
+/**
+ * @brief Destructeur de la classe Ordinateur.
+ * 
+ */
 Ordinateur::~Ordinateur() {}
 
-// Getters
+/**
+ * @brief Accesseur du nombre d'ordinateur.
+ * 
+ * @return const uint8_t& le nombre d'ordinateur.
+ */
 const uint8_t& Ordinateur::getNbrOrdinateur() const {
     return m_NbrOrdinateur;
 }
 
+/**
+ * @brief Acceseur de l'identifiant de l'ordinateur.
+ * 
+ * @return const uint8_t& l'identifiant.
+ */
 const uint8_t& Ordinateur::getIdOrdinateur() const {
     return m_IdOrdinateur;
 }
 
+/**
+ * @brief Accesseur du tableau de controle de congestion.
+ * 
+ * @return const std::vector<ElementControleCongestion>& le tableau de controle
+ *          de congestion.
+ */
 const std::vector<ElementControleCongestion>& Ordinateur::getControleCongestion() const {
     return m_ControleCongestion;
 }
-    
+
+/**
+ * @brief Accesseur du tableau de temps de traitement des paquets.
+ * 
+ * @return const std::map<uint16_t, double> le tableau de temps de traitement.
+ */
+const std::map<uint16_t, double> Ordinateur::getTempsTraitementPaquet() const {
+    return m_TempsTraitementPaquet;
+}
+
+/**
+ * @brief Accesseur d'un element dans le tableau de controle de congestion.
+ * 
+ * @param position dans le tableau.
+ * @return const ElementControleCongestion& 
+ */
 const ElementControleCongestion& Ordinateur::getControleCongestion(const int& position) const {
     if (position < 0 || position > (int)m_ControleCongestion.size()) {
-        std::cout << "ERREUR : position en dehors du tableau.\n";
+        std::cout << "ERREUR : Dans le fichier 'Ordinateur.cpp'. "
+            << "Dans la fonction 'getControleCongestion'. "
+            << "Position en dehors du tableau.\n";
         exit(EXIT_FAILURE);
     }
 
     return m_ControleCongestion[position];
 }
 
-const std::map<uint16_t, double> Ordinateur::getTempsTraitementPaquet() const {
-    return m_TempsTraitementPaquet;
-}
-
+/**
+ * @brief Accesseur d'un element dans le tableau de temps de traitement.
+ * 
+ * @param cle le numero du paquet.
+ * @return double le temps de traitement du paquet.
+ */
 double Ordinateur::getTempsTraitementPaquet(const uint16_t& cle) const {
     auto trouve = m_TempsTraitementPaquet.find(cle);
     if (trouve != m_TempsTraitementPaquet.end()) {
         return trouve->second;
-    } else {
-        std::cout << "ERREUR : Aucun paquet ne correspond au numero demandé.\n";
-        return -1;
     }
+
+    std::cout << "ERREUR : Dans le fichier 'Ordinateur.cpp'. "
+        << "Dans la fonction 'getTempsTraitementPaquet'. "
+        << "Aucun paquet ne correspond au numero demande.\n";
+    exit(EXIT_FAILURE);
 }
 
-// ################ //
-// Methodes externe //
-// ################ //
+/**
+ * @brief Genere un message aleatoire pour les trames.
+ * 
+ * @return std::bitset<16> le message.
+ */
 std::bitset<16> genererMessage() {
     uint16_t tmp = rand() % 2^16;
     return std::bitset<16> (tmp);
 }
 
+/**
+ * @brief Convertir une file en double file.
+ * 
+ * @param queue a convertir.
+ * @return std::deque<std::stack<std::bitset<16>>> la double file.
+ */
 std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(
     std::queue<std::stack<std::bitset<16>>> queue)
 {
@@ -279,9 +339,12 @@ std::stack<std::bitset<16>> trouverDonnee(
     exit(EXIT_FAILURE); 
 }
 
-// ######## //
-// Methodes //
-// ######## //
+/**
+ * @brief Rempli la file de donnee avec la configuration donnee par l'utilisateur.
+ * 
+ * @param config donnee par l'utilisateur.
+ * @param destination l'adresse MAC de destination.
+ */
 void Ordinateur::remplirFileDonnees(
     const ParamInterface& config, const MAC& destination) 
 {
@@ -300,7 +363,7 @@ void Ordinateur::remplirFileDonnees(
         coucheTrans.setAck1(std::bitset<16>(0));
         coucheTrans.setSeq(std::bitset<32>(i+1));
         coucheTrans.setAck2(std::bitset<32>(0));
-        coucheTrans.calculerChecksum(); // <=> setChecksum
+        coucheTrans.calculerChecksum(); // <=> setChecksum()
         std::stack<std::bitset<16>> segment;
         segment = coucheTrans.encapsuler(genererMessage());
         // std::cout << coucheTrans;
@@ -336,42 +399,47 @@ void Ordinateur::finDeSession() {
     // TODO : A faire
 }
 
+/**
+ * @brief Envoie une trame.
+ * 
+ * @param cwnd le nombre de trame a envoyer.
+ * @param estAck indique si la trame est un accuse de reception.
+ */
 void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Debut envoie\n";
 
-    // afficher(m_FileDonnees);
-    
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
     Machine* voisine = m_Voisins.front();
 
-    //
+    // Envoie des cwnd trames.
     for (int i = 0; i < int(cwnd); ++i) {
         //
         if (estVide(m_FileDonnees)) {
             std::cout << m_Nom << " : Plus de paquets a envoyer, fin de la session\n";
             return;
         }
+
         // Vide la file de donnees.
         std::stack<std::bitset<16>> donneeRecu = suppDonnee();
 
-        //
+        // Creation des couches pour desencapsulation.
         Physique couchePhy;
         Internet coucheInt;
         Transport coucheTrans;
 
-        // On desencapsule.
+        // Desencapsulation.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneeRecu);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        //
-        coucheTrans.setCwnd(cwnd);
-
-        //
+        // Encapsulation
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
+        
+        //
+        coucheTrans.setCwnd(cwnd);
         
         // Traitement de la donnee.
         traitement(donneeRecu, voisine->getMac());
@@ -385,6 +453,12 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
     std::cout << m_Nom << " : Fin envoie\n";
 }
 
+/**
+ * @brief Recois la trame.
+ * 
+ * @param cwnd Le nombre de trame recu.
+ * @param estAck La trame recu est un accuse de reception ou non.
+ */
 void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     [[maybe_unused]] const bool estAck)
 {
@@ -397,12 +471,14 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     //
     std::deque<std::stack<std::bitset<16>>> donneesDeque;
     donneesDeque = convertirQueueDeque(m_FileDonnees);
-    //
+
+    // Creation des couches pour desencapsulation.
     Physique couchePhy;
     Internet coucheInt;
     Transport coucheTrans;
     
     if (int(donneesDeque.size()) == 1) {
+
         // On desencapsule.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[0]);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
@@ -412,7 +488,7 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
         std::bitset<32> ack = std::bitset<32>(coucheTrans.getSeq().to_ulong() + 1);
         coucheTrans.setAck2(ack);
 
-        // On re encapusle.
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneesDeque[0] = couchePhy.encapsuler(paquet);
@@ -433,17 +509,17 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     //
     int i;
     for (i = 1; i < int(donneesDeque.size()); ++i) {
-        //
+        // Creation des couches pour desencapsulation.
         Physique couchePhy2;
         Internet coucheInt2;
         Transport coucheTrans2;
 
-        // On desencapsule.
+        // Desencapsulation.
         std::stack<std::bitset<16>> paquet2 = couchePhy2.desencapsuler(donneesDeque[i]);
         std::stack<std::bitset<16>> segment2 = coucheInt2.desencapsuler(paquet2);
         std::bitset<16> donnee2 = coucheTrans2.desencapsuler(segment2);
 
-        // On desencapsule.
+        // Desencapsulation.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donneesDeque[i-1]);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
@@ -455,7 +531,7 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
             std::bitset<32> ack = std::bitset<32>(coucheTrans.getSeq().to_ulong() + 1);
             coucheTrans.setAck2(ack);
 
-            // On re encapusle.
+            // Encapsulation.
             segment = coucheTrans.encapsuler(donnee);
             paquet = coucheInt.encapsuler(segment);
             donneesDeque[i-1] = couchePhy.encapsuler(paquet);
@@ -475,7 +551,7 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
         std::bitset<32> ack = std::bitset<32>(coucheTrans2.getSeq().to_ulong() + 1);
         coucheTrans2.setAck2(ack);
 
-        // On re encapusle.
+        // Encapsulation.
         segment2 = coucheTrans2.encapsuler(donnee2);
         paquet2 = coucheInt2.encapsuler(segment2);
         donneesDeque[i] = couchePhy2.encapsuler(paquet2);

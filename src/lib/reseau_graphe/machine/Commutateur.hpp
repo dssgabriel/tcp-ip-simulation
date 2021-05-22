@@ -1,11 +1,24 @@
+/**
+ * @file Commutateur.hpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici la declaration de la classe Commutateur
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #include <map>
 #include "Machine.hpp"
 
+/**
+ * @brief Declaration de la classe Commutateur.
+ * 
+ */
 class Commutateur : public Machine {
     private:
-        // Attributs
         static uint8_t m_NbrCommutateur;
         uint8_t m_IdCommutateur;
         std::map<const IPv4*, const MAC*> m_CacheMem;

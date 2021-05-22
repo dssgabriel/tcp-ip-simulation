@@ -1,22 +1,19 @@
 /**
- * @file Routeur.cpp
- * @author Mickael LE DENMAT
- *          Gabriel DOS SANTOS
- * @brief Vous trouverez ici toutes les fonctions implementees
- *          pour la classe Routeur.
- * @date 2021-05-21
- * 
- * @copyright Copyright (c) 2021
- * 
+ * @file    Routeur.cpp
+ * @author  Mickael LE DENMAT
+ * @author  Gabriel Dos Santos
+ * @brief   Vous trouverez ici toutes les fonctions implementees
+ * pour la classe Routeur
+ * @date    2021-05-21
  */
 
 #include "../ReseauGraphe.hpp"
+#include <cstdlib>
 
 uint8_t Routeur::m_NbRouteur = 0;
 
 /**
  * @brief Constructeur de la classe Routeur.
- * 
  */
 Routeur::Routeur() : Machine() {
     m_NbRouteur++;
@@ -31,13 +28,12 @@ Routeur::Routeur() : Machine() {
 
 /**
  * @brief Destructeur de la classe Routeur.
- * 
  */
 Routeur::~Routeur() {}
 
 /**
  * @brief Accesseur du nombre de routeur.
- * 
+ *
  * @return uint8_t le nombre de routeur.
  */
 uint8_t Routeur::getNbRouteur() {
@@ -46,17 +42,33 @@ uint8_t Routeur::getNbRouteur() {
 
 /**
  * @brief Accesseur de l'identifiant du routeur.
- * 
+ *
  * @return uint8_t l'identifiant du routeur.
  */
 uint8_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
+void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
+    std::vector<Liaison*> tab;
+    tab.emplace_back(l);
+    std::pair<Routeur*, std::vector<Liaison*>> p(r, tab);
+    m_TableRoutage.insert(p);
+}
+
+/**
+ * @brief Accesseur pour la table de routage.
+ * 
+ * @return const std::map<Routeur*, std::vector<Liaison*>>& la table de routage.
+ */
+const std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
+    return m_TableRoutage;
+}
+
 /**
  * @brief Envoie les trames de la file d'attente à la machine voisine.
- * 
- * @param cwnd le nombre de trame a envoyer. 
+ *
+ * @param cwnd le nombre de trame a envoyer.
  * @param estAck indique la trame est un accuse de reception ou non.
  */
 void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
@@ -79,22 +91,21 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Encapsulation
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
 
         // Trouve le voisin.
         Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpSrc()));
-        
+
         // Ajout de trame dans la file de donnee de la machine voisine.
         voisine->setDonnee(donneeRecu);
         voisine->recevoir(cwnd, true);
-        
+
         std::cout << m_Nom << " : Fin envoie\n";
         return;
-    }
-    else {
+    } else {
         std::cout << m_Nom << " : Aller\n";
 
         // Creation des couches pour desencapsulation.
@@ -110,7 +121,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-        // Encapsulation
+        // Encapsulation.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
@@ -138,7 +149,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
             segment = coucheTrans.encapsuler(donnee);
             paquet = coucheInt.encapsuler(segment);
             donneeRecu = couchePhy.encapsuler(paquet);
-            
+
             // Traitement de la trame.
             traitement(donneeRecu, voisine->getMac());
 
@@ -154,7 +165,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
 
 /**
  * @brief Recois la trame.
- * 
+ *
  * @param cwnd Le nombre de trame recu.
  * @param estAck La trame recu est un accuse de reception ou non.
  */
@@ -166,32 +177,33 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
 
 /**
  * @brief Renvoie l'adresse MAC de la machine correspondante a l'adresse IP.
- * 
+ *
  * @param ip de la machine qui nous interesse.
  * @return MAC correspondante.
  */
 MAC Routeur::trouverMacDest(const IPv4 ip) {
+    // std::cout << ip << std::endl;
+    //
     Machine* m = ReseauGraphe::getMachine(ip);
-    
-    // Convertion de la machine en ordinateur ou en commutateur.
-    if (static_cast<Ordinateur*>(m)
-    || static_cast<Commutateur*>(m))
-    {   
-        // ???
-        for (IPv4 masqueSousReseau : m->getSousReseaux()) {
-            if (masqueSousReseau == ReseauGraphe::getSousReseau(ip)) {
+    // std::cout << *m << std::endl;
+
+    // Le routeur est il dans le meme sous reseau que l'ip ?
+    for (IPv4 sousReseauRouteur : m_SousReseau) {
+        for (IPv4 sousReseauDest : m->getSousReseaux()) {
+            if (sousReseauRouteur == sousReseauDest) {
                 return m->getMac();
             }
         }
     }
 
-    // ???
+    // Trouver le chemin pour aller au routeur dans le meme sous reseau que l'ip dest.
     for (auto iter : m_TableRoutage) {
-        std::vector<Liaison*> tabLiaison = iter.second;
+        auto tabLiaison = iter.second;
         uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
         Routeur* r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
-        
-        // ???
+        std::cout << *r << std::endl;
+
+        // Renvoie du routeur voisin.
         for (IPv4 sousRes : r->getSousReseaux()) {
             if (sousRes == ReseauGraphe::getSousReseau(ip)) {
                 return r->getMac();
@@ -200,18 +212,20 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     }
 
     //
-    std::cout << "ERREUR : Dans le fichier 'Routeur.cpp. ";
-    std::cout << "Dans la fonction 'trouverMacDest'. ";
-    std::cout << "Aucune adresse MAC trouvee\n";
+    std::cout << "ERREUR : Dans le fichier 'Routeur.cpp. "
+        << "Dans la fonction 'trouverMacDest'. "
+        << "Aucune adresse MAC trouvee\n";
     exit(EXIT_FAILURE);
 }
 
+// TODO: Send to correct neighboor
 void Routeur::envoyerOSPF(Routeur* dest, PaquetOSPF* ospf) {
     dest->recevoirOSPF(ospf);
 }
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
     m_FilePaquetsOSPF.emplace(ospf);
+    traitementPaquetOSPF();
 }
 
 void Routeur::traitementPaquetOSPF() {
@@ -223,124 +237,138 @@ void Routeur::traitementPaquetOSPF() {
         case 1:
             traitementPaquetHello(dynamic_cast<PaquetHello*>(paquet));
             break;
+
         case 2:
             traitementPaquetDBD(dynamic_cast<PaquetDBD*>(paquet));
             break;
+
         case 3:
             traitementPaquetLSR(dynamic_cast<PaquetLSR*>(paquet));
             break;
+
         case 4:
             traitementPaquetLSU(dynamic_cast<PaquetLSU*>(paquet));
             break;
+
         case 5:
             traitementPaquetLSAck(dynamic_cast<PaquetLSAck*>(paquet));
             break;
+
         default:
-            std::cout << "ERREUR : Dans le fichier 'Routeur.cpp'. ";
-            std::cout << "Dans la fonction 'traitementPaquetOSPF'. ";
-            std::cout << "Type de PaquetOSPF inconnu\n";
-            return;
+            std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+                << "\tmethode `traitementPaquetOSPF`: "
+                << "Type de PaquetOSPF inconnu"
+                << std::endl;
+            exit(EXIT_FAILURE);
     }
 }
 
 // Methodes privees
 void Routeur::traitementPaquetHello(PaquetHello* hello) {
     // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
-    if (hello->getIdVoisin() != m_IdRouteur) {
+    if (hello->getIdDestinataire() != m_IdRouteur) {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetHello` : "
+            << "Identifiant du routeur (#" << m_IdRouteur
+            << ") ne correspond pas avec le routeur destinataire du paquet (#"
+            << hello->getIdDestinataire() << ")" << std::endl;
+
         delete hello;
-        return;
+        exit(EXIT_FAILURE);
     }
 
-    for (auto iter: m_TableRoutage) {
-        // Le routeur est connu, on lui envoie un paquet DBD.
-        if (iter.first->getIdRouteur() == hello->getIdRouteur()) {
-            std::vector<LSA> annonces;
+    Routeur* destinataire = ReseauGraphe::getRouteur(hello->getIdRouteur());
+    if (destinataire) {
+        std::vector<LSA> listeLSAs;
 
-            // Initialisions de la liste des annonces LSA.
-            for (auto routeur: m_TableRoutage) {
-                LSA lsa(routeur.first->getIdRouteur(),
-                        routeur.first->getIdRouteur(),
-                        routeur.first->getSousReseaux()
-                );
-                annonces.emplace_back(lsa);
-            }
-
-            // Envoie d'un paquet DBD au routeur nous envoyant le paquet Hello.
-            auto destinataire = iter.first;
-            PaquetDBD* reponse = new PaquetDBD(annonces);
-            reponse->setEntete(DBD, m_IdRouteur);
-            envoyerOSPF(destinataire, reponse);
-
-            // Sortie immediate de la fonction.
-            delete hello;
-            return;
+        // Initialisions de la liste des annonces LSA.
+        for (auto iter: m_TableRoutage) {
+            Routeur* routeur = iter.first;
+            LSA lsa(routeur->getIdRouteur(),
+                    routeur->getIdRouteur(),
+                    routeur->getSousReseaux()
+            );
+            listeLSAs.emplace_back(lsa);
         }
+
+        // Envoie d'un paquet DBD au routeur emetteur du paquet Hello.
+        PaquetDBD* reponse = new PaquetDBD(listeLSAs);
+        reponse->setEntete(DBD, m_IdRouteur);
+        envoyerOSPF(destinataire, reponse);
+
+        delete hello;
+    } else {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetHello` : "
+            << "Le routeur destinataire (#" << hello->getIdRouteur() << ") n'existe pas"
+            << std::endl;
+
+        delete hello;
+        exit(EXIT_FAILURE);
     }
 }
 
 void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
-    auto annonces = dbd->getAnnoncesLSA();
+    std::vector<LSA> LSAs = dbd->getLSAs();
     std::vector<std::bitset<32>> idADemander;
 
-    for (auto annonce: annonces) {
+    for (LSA lsa: LSAs) {
+        bool trouve = false;
+
         for (auto iter: m_TableRoutage) {
-            auto routeur = iter.first;
-
-            // Le routeur de l'annonce est inconnu.
-            if (annonce.getIdRouteur() != routeur->getIdRouteur()) {
-                bool trouve = false;
-
-                // Verification qu'il ne se trouve pas plus loin dans la table de routage.
-                for (auto verif: m_TableRoutage) {
-                    if (verif.first->getIdRouteur() == routeur->getIdRouteur()) {
-                        trouve = true;
-                        break;
-                    }
-                }
-
-                // Le routeur est inconnu, on ajoute l'identifiant du LSA
-                // aux identifiant a demander.
-                if (!trouve) {
-                    idADemander.emplace_back(annonce.getIdLSA());
-                }
+            Routeur* routeur = iter.first;
+            if (lsa.getIdRouteur() == routeur->getIdRouteur()) {
+                trouve = true;
             }
+        }
+
+        if (!trouve) {
+            idADemander.emplace_back(lsa.getIdLSA());
         }
     }
 
+    Routeur* destinataire = ReseauGraphe::getRouteur(dbd->getIdRouteur());
     // Le vecteur d'identifiant n'est pas vide, on doit envoyer un paquet LSR.
-    if (!idADemander.empty()) {
-        for (auto iter: m_TableRoutage) {
-            if (iter.first->getIdRouteur() == dbd->getIdRouteur()) {
-                auto destinataire = iter.first;
-                // Ajout des identifiants demandes a la table.
-                m_TableLSADemandes.emplace(std::make_pair(destinataire, &idADemander));
+    if (destinataire != nullptr && !idADemander.empty()) {
+        // Ajout des identifiants demandes a la table.
+        m_TableLSADemandes.emplace(std::make_pair(destinataire, &idADemander));
 
-                // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
-                PaquetLSR* reponse = new PaquetLSR(dbd->getIdRouteur(), idADemander);
-                reponse->setEntete(LSR, m_IdRouteur);
-                envoyerOSPF(destinataire, reponse);
+        // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
+        PaquetLSR* reponse = new PaquetLSR(dbd->getIdRouteur(), idADemander);
+        reponse->setEntete(LSR, m_IdRouteur);
+        envoyerOSPF(destinataire, reponse);
 
-                // Sortie immediate de la fonction.
-                delete dbd;
-                return;
-            }
-        }
+        delete dbd;
+    } else {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetDBD` : "
+            << "Le routeur destinataire (#" << dbd->getIdRouteur() << ") n'existe pas"
+            << std::endl;
+
+        delete dbd;
+        exit(EXIT_FAILURE);
     }
 }
 
 void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
     if (lsr->getIdEmetteur() != m_IdRouteur) {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetLSR` : "
+            << "Identifiant du routeur (#" << m_IdRouteur
+            << ") ne correspond pas avec le routeur emetteur du paquet DBD (#"
+            << lsr->getIdEmetteur() << ")" << std::endl;
+
         delete lsr;
-        return;
+        exit(EXIT_FAILURE);
     }
 
-    auto vec = lsr->getIdLSADemandes();
-    std::vector<LSA> annoncesDemandes;
+    std::vector<std::bitset<32>> idDemandes = lsr->getIdLSADemandes();
+    std::vector<LSA> LSAsDemandes;
 
-    for (auto id: vec) {
+    for (std::bitset<32> id: idDemandes) {
         for (auto iter: m_TableRoutage) {
-            auto routeur = iter.first;
+            Routeur* routeur = iter.first;
 
             // L'identifiant du routeur correspond au LSA demande, on l'ajoute a la liste.
             if (routeur->getIdRouteur() == (uint8_t)(id.to_ulong())) {
@@ -348,65 +376,71 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
                         routeur->getIdRouteur(),
                         routeur->getSousReseaux()
                 );
-                annoncesDemandes.emplace_back(lsa);
+                LSAsDemandes.emplace_back(lsa);
             }
         }
     }
 
-    for (auto iter: m_TableRoutage) {
-        if (lsr->getIdRouteur() == iter.first->getIdRouteur()) {
-            auto destinataire = iter.first;
+    Routeur* destinataire = ReseauGraphe::getRouteur(lsr->getIdRouteur());
+    if (destinataire) {
+        // Ajout des identifiants des annonces a la table des LSA envoyes
+        m_TableLSAEnvoyes.emplace(std::make_pair(destinataire, &lsr->getIdLSADemandes()));
 
-            // Ajout des identifiants des annonces a la table des LSA envoyes
-            std::vector<std::bitset<32>> idAnnoncesDemandes;
-            for (auto annonce: annoncesDemandes) {
-                idAnnoncesDemandes.push_back(annonce.getIdLSA());
-            }
-            m_TableLSAEnvoyes.emplace(std::make_pair(destinataire, &idAnnoncesDemandes));
+        // Envoie d'un paquet DBD au routeur envoyant le paquet Hello.
+        PaquetLSU* reponse = new PaquetLSU(LSAsDemandes);
+        reponse->setEntete(LSU, m_IdRouteur);
+        envoyerOSPF(destinataire, reponse);
 
-            // Envoie d'un paquet DBD au routeur envoyant le paquet Hello.
-            PaquetLSU* reponse = new PaquetLSU(annoncesDemandes);
-            reponse->setEntete(LSU, m_IdRouteur);
-            envoyerOSPF(destinataire, reponse);
+        delete lsr;
+    } else {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetLSR` : "
+            << "Le routeur destinataire (#" << lsr->getIdRouteur() << ") n'existe pas"
+            << std::endl;
 
-            // Sortie immediate de la fonction.
-            delete lsr;
-            return;
-        }
+        delete lsr;
+        exit(EXIT_FAILURE);
     }
 }
 
 // TODO : Renvoyer des LSUs lorsqu'on en recoit et que l'on fait des mises a jours.
 void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
-    auto annonces = lsu->getLSADemandes();
+/*
+    std::vector<LSA> LSAs = lsu->getLSADemandes();
     std::vector<std::bitset<32>> idLSARecus;
+    bool misAJour = false;
 
-    for (auto annonce: annonces) {
-        for (auto verif: m_TableLSADemandes) {
-            if (verif.first->getIdRouteur() == lsu->getIdRouteur()) {
-                for (auto id: *verif.second) {
-                    if (id == annonce.getIdLSA()) {
-                        idLSARecus.push_back(id);
-                        m_TableLSADemandes.erase(verif.first);
+    for (LSA lsa: LSAs) {
+        bool connu = false;
+        for (auto iter: m_TableRoutage) {
+            Routeur* routeur = iter.first;
 
-                        Routeur* routeur = ReseauGraphe::getRouteur(verif.first->getIdRouteur());
-                        std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
-                            m_IdRouteur,
-                            routeur->getIdRouteur()
-                        );
-                        m_TableRoutage.emplace(routeur, plusCourtChemin);
-                    }
-                }
+            if (routeur->getIdRouteur() == lsa.getIdRouteur()) {
+                misAJour = true;
+                // TODO: Add router to routing table
+                Routeur* routeur = ReseauGraphe::getRouteur(lsa.getIdRouteur());
+                std::vector<Liaison> chemin;
+                m_TableRoutage.emplace(routeur, chemin);
             }
         }
     }
 
+    for (auto iter: m_TableRoutage) {
+        Routeur* routeur = ReseauGraphe::getRouteur(iter.first->getIdRouteur());
+        std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
+            m_IdRouteur,
+            routeur->getIdRouteur()
+        );
+        m_TableRoutage.emplace(routeur, plusCourtChemin);
+        // TODO: send LSUs to all router neighboors
+    }
+
     for (auto iter: m_TableLSADemandes) {
-        if (iter.first->getIdRouteur() == lsu->getIdRouteur() && !iter.second->empty()) {
+        if (iter.first->getIdRouteur() == lsu->getIdRouteur() && !iter.second.empty()) {
             // Envoie d'un paquet LSR au routeur envoyant le paquet LSU,
             // dans le cas ou il manque des LSAs.
             auto destinataire = iter.first;
-            PaquetLSR* reponse = new PaquetLSR(iter.first->getIdRouteur(), *iter.second);
+            PaquetLSR* reponse = new PaquetLSR(iter.first->getIdRouteur(), iter.second);
             reponse->setEntete(LSR, m_IdRouteur);
             envoyerOSPF(destinataire, reponse);
 
@@ -430,35 +464,39 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             return;
         }
     }
+*/
 }
 
 void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
-    auto idLSARecus = ack->getIdLSARecus();
+    std::vector<std::bitset<32>> idLSARecus = ack->getIdLSARecus();
     std::vector<LSA> LSAManquants;
 
-    for (auto idAnnonce: idLSARecus) {
+    for (std::bitset<32> idLSARecu: idLSARecus) {
         for (auto iter: m_TableLSAEnvoyes) {
-            if (iter.first->getIdRouteur() == ack->getIdRouteur()) {
-                auto vec = *iter.second;
+            Routeur* routeur = iter.first;
+            std::vector<std::bitset<32>> idLSAEnvoyes = iter.second;
 
-                for (size_t idEnvoye = 0; idEnvoye < vec.size(); idEnvoye++) {
-                    if (vec[idEnvoye] == idAnnonce) {
-                        vec.erase(vec.cbegin() + idEnvoye - 1);
+            if (routeur->getIdRouteur() == ack->getIdRouteur()) {
+                for (size_t idLSAEnvoye = 0; idLSAEnvoye < idLSAEnvoyes.size(); ++idLSAEnvoye) {
+                    if (idLSAEnvoyes[idLSAEnvoye] == idLSARecu) {
+                        idLSAEnvoyes.erase(idLSAEnvoyes.begin() + idLSAEnvoye);
                     }
                 }
             }
         }
     }
 
-    for (auto iter: m_TableLSAEnvoyes) {
-        if (iter.first->getIdRouteur() == ack->getIdRouteur() && !iter.second->empty()) {
-            auto destinataire = iter.first;
+    Routeur* destinataire = ReseauGraphe::getRouteur(ack->getIdRouteur());
+    auto recherche = m_TableLSAEnvoyes.find(destinataire);
 
-            for (auto idManquant: *iter.second) {
-                for (auto iter2: m_TableRoutage) {
-                    auto routeur = iter2.first;
+    if (recherche != m_TableLSAEnvoyes.end()) {
+        if (!recherche->second.empty()) {
+            std::vector<std::bitset<32>> idLSAManquants = recherche->second;
+            for (std::bitset<32> idLSAManquant: idLSAManquants) {
+                for (auto iter: m_TableRoutage) {
+                    Routeur* routeur = iter.first;
 
-                    if (routeur->getIdRouteur() == (uint8_t)(idManquant.to_ulong())) {
+                    if (routeur->getIdRouteur() == (uint8_t)(idLSAManquant.to_ulong())) {
                         LSA LSAManquant(routeur->getIdRouteur(),
                                         routeur->getIdRouteur(),
                                         routeur->getSousReseaux()
@@ -474,9 +512,32 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             reponse->setEntete(LSU, m_IdRouteur);
             envoyerOSPF(destinataire, reponse);
 
-            // Sortie immediate de la fonction.
             delete ack;
-            return;
+        } else {
+            // Aucun LSA manquants, rien a renvoyer
+            delete ack;
+        }
+    } else {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetLSAck` : "
+            << "Le routeur destinataire (#" << ack->getIdRouteur() << ") n'existe pas"
+            << std::endl;
+
+        delete ack;
+        exit(EXIT_FAILURE);
+    }
+}
+
+std::ostream& operator<<(std::ostream& flux, Routeur& r) {
+    Machine& m = dynamic_cast<Machine&>(r);
+    flux << m;
+
+    for (auto it : r.getTableRoutage()) {
+        flux << *it.first << " : \n";
+        for (Liaison* l : it.second) {
+            flux << "\t" << *l << std::endl;
         }
     }
+
+    return flux;
 }

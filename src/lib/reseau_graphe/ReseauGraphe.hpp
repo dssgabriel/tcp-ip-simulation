@@ -1,3 +1,12 @@
+/**
+ * @file    ReseauGraphe.hpp
+ * @brief   Declaration de la classe ReseauGraphe.
+ * @author  Florian Cambresy
+ * @author  Gabriel Dos Santos
+ * @author  Mickael Le Denmat
+ * @date    Mai 2021
+ **/
+
 #pragma once
 
 #include <cstdint>
@@ -64,4 +73,5 @@ class ReseauGraphe {
         void ajouter(Liaison l);
 
         static std::vector<Liaison*> routageDynamique(const uint8_t depart, const uint8_t arrivee);
+        void lancerOSPF();
 };

@@ -1,4 +1,13 @@
-#pragma once
+/**
+
+ * @file        Horloge.hpp
+ * @brief       Déclaration de la classe Horloge.
+ *
+ * @author      Florian CAMBRESY
+ * @date        2021
+
+ **/
+ #pragma once
 
 #include <vector>
 #include <chrono>

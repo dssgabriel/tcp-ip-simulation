@@ -53,7 +53,7 @@ class Machine {
         Machine();
 
         // Destructeur
-       virtual ~Machine() {};
+       virtual ~Machine();
 
         // Getters & setters
         const uint16_t& getNbMachine() const;

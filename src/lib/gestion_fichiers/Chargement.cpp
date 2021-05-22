@@ -1,5 +1,22 @@
+/**
+ * @file Chargement.cpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici les fonctions implementees pour le chargement
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "Chargement.hpp"
 
+/**
+ * @brief Lit les informations du reseau dans les fichiers de configurations.
+ *          
+ * 
+ * @param nomFichier pour lire les informations.
+ * @return std::unique_ptr<ReseauGraphe> initialise avec les informations du fichier.
+ */
 std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 
     // Initialisation du reseau.
@@ -38,6 +55,27 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
             m = new Routeur();
         } else if (machineJ["type"] == "Commutateur") {
             m = new Commutateur();
+
+            // Remplissage cache memoire des commutateurs.
+            auto listeMemJ = machineJ["table memoire"];
+            Commutateur* c = dynamic_cast<Commutateur*>(m);
+            for (auto memJ : listeMemJ) {
+                IPv4* ip2 = new IPv4; MAC* mac2 = new MAC;
+
+                ip2->a = std::bitset<8>(memJ["ip"][0]);
+                ip2->b = std::bitset<8>(memJ["ip"][1]);
+                ip2->c = std::bitset<8>(memJ["ip"][2]);
+                ip2->d = std::bitset<8>(memJ["ip"][3]);
+
+                mac2->a = std::bitset<8>(memJ["mac"][0]);
+                mac2->b = std::bitset<8>(memJ["mac"][1]);
+                mac2->c = std::bitset<8>(memJ["mac"][2]);
+                mac2->d = std::bitset<8>(memJ["mac"][3]);
+                mac2->e = std::bitset<8>(memJ["mac"][4]);
+                mac2->f = std::bitset<8>(memJ["mac"][5]);
+
+                c->setMemoire(ip2, mac2);
+            }
         } else {
             std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
             std::cout << "Dans la fonction 'chargerReseau'. ";
@@ -113,38 +151,29 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     // Remplissage de la liste des liaisons.
     auto listeLiaisonsJ = j["Liste liaisons"];
     for (auto liaisonJ : listeLiaisonsJ) {
-        Liaison l;
-        l.m_NumMachine1 = liaisonJ["Depart"];
-        l.m_NumMachine2 = liaisonJ["Arrivee"];
-        l.m_Debit = liaisonJ["Debit"];
+        Liaison* l = new Liaison;
+        l->m_NumMachine1 = liaisonJ["Depart"];
+        l->m_NumMachine2 = liaisonJ["Arrivee"];
+        l->m_Debit = liaisonJ["Debit"];
 
         // Ajout de la liaison dans le reseau.
-        reseau->ajouter(l);
+        reseau->ajouter(*l);
 
         // Configuration des voisins.
-        Machine* a = reseau->getMachine(l.m_NumMachine1);
-        Machine* b = reseau->getMachine(l.m_NumMachine2);
+        Machine* a = reseau->getMachine(l->m_NumMachine1);
+        Machine* b = reseau->getMachine(l->m_NumMachine2);
         a->setVoisin(*b);
         b->setVoisin(*a);
-    }
 
-    // Remplissage cache memoire des commutateurs.
-    auto listeMemJ = j["table memoire"];
-    Commutateur* c = dynamic_cast<Commutateur*>(m);
-    for (auto memJ : listeMemJ) {
-        ip.a = std::bitset<8>(memJ["ip"][0]);
-        ip.b = std::bitset<8>(memJ["ip"][1]);
-        ip.c = std::bitset<8>(memJ["ip"][2]);
-        ip.d = std::bitset<8>(memJ["ip"][3]);
+        // Remplir table de routage.
+        Routeur* r = dynamic_cast<Routeur*>(a);
+        Routeur* r2 = dynamic_cast<Routeur*>(b);
+        if (r && r2) {
+            r->setTableRoutage(r2, l);
+            r2->setTableRoutage(r, l);
+        }
 
-        mac.a = std::bitset<8>(memJ["mac"][0]);
-        mac.b = std::bitset<8>(memJ["mac"][1]);
-        mac.c = std::bitset<8>(memJ["mac"][2]);
-        mac.d = std::bitset<8>(memJ["mac"][3]);
-        mac.e = std::bitset<8>(memJ["mac"][4]);
-        mac.f = std::bitset<8>(memJ["mac"][5]);
-
-        c->setMemoire(&ip, &mac);
+        delete l;
     }
 
     // Convertion.
@@ -155,9 +184,9 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
  * @brief Lit le fichier de configuration en parametre pour connaitre le reseau
  *        souhaite par l'utilisateur.
  *
- * @param cheminFichier : L'emplacement du fichier de configuration.
- * @param reseau : Le reseau a renvoyer avec les informations du ficheirs.
- * @param param : La configuration du l'utilisateur.
+ * @param cheminFichier l'emplacement du fichier de configuration.
+ * @param reseau le reseau a renvoyer avec les informations du fichiers.
+ * @param param la configuration du l'utilisateur.
  */
 void chargerConfig(const std::string& cheminFichier,
     std::unique_ptr<ReseauGraphe>& reseau, ParamInterface& param)
@@ -165,9 +194,9 @@ void chargerConfig(const std::string& cheminFichier,
     // Lecture du fichier de configuration.
     std::ifstream lecture(cheminFichier);
     if (lecture.fail()) {
-        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
-        std::cout << "Dans la fonction 'chargerConfig'. ";
-        std::cout << "Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. "
+            << "Dans la fonction 'chargerConfig'. "
+            << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 

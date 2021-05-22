@@ -195,34 +195,31 @@ void test6() {
     //
     ParamInterface p;
     p.m_Source = {192, 168, 1, 1};
-    p.m_Destination = {192, 168, 1, 128};
+    p.m_Destination = {192, 168, 1, 194};
     p.m_NbPaquet = nbrPaquet;
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
-    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
 
     //
     std::unique_ptr<ReseauGraphe> reseau;
     chargerConfig("ecriture.json", reseau, p);
 
     //
-    Machine* m = reseau->getMachine(p.m_Source);
-    Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
+    // Machine* m = reseau->getMachine(p.m_Source);
+    // Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
     
     //
-    Machine* m2 = reseau->getMachine(p.m_Destination);
-    Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
+    // Machine* m2 = reseau->getMachine(p.m_Destination);
+    // Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
 
     //
-    // std::cout << "\n##########\n" << *reseau << "##########\n";
+    reseau->lancerOSPF();
+    std::cout << *reseau << std::endl;
 
     //
-    pc->remplirFileDonnees(p, pc2->getMac());
-
-    //
-    std::cout << "\n##########\n" << *pc << "##########\n";
-    std::cout << "\n##########\n" << *pc2 << "##########\n";
-    m->envoyer(nbrPaquet, false);
+    // pc->remplirFileDonnees(p, pc2->getMac());
+    // m->envoyer(nbrPaquet, false);
 }
 
 void test7() {
