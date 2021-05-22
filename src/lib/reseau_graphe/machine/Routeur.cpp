@@ -394,7 +394,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
                             m_IdRouteur,
                             routeur->getIdRouteur()
                         );
-                        m_TableRoutage.emplace(&routeur, plusCourtChemin);
+                        m_TableRoutage.emplace(routeur, plusCourtChemin);
                     }
                 }
             }

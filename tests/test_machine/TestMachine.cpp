@@ -208,18 +208,10 @@ void test6() {
     //
     Machine* m = reseau->getMachine(p.m_Source);
     Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
-    if(!pc) {
-        std::cout << "va te faire enculer" << std::endl;
-        exit(EXIT_FAILURE);
-    }
     
     //
     Machine* m2 = reseau->getMachine(p.m_Destination);
     Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
-    if(!pc) {
-        std::cout << "va te faire enculer 2" << std::endl;
-        exit(EXIT_FAILURE);
-    }
 
     //
     // std::cout << "\n##########\n" << *reseau << "##########\n";
