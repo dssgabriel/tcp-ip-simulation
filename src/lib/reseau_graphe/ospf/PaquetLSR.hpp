@@ -1,12 +1,10 @@
 /**
- * 
- * @file        PaquetLSR.hpp
- * @brief       Déclaration de la classe PaquetLSR.
- * 
- * @author      Gabriel DOS SANTOS
- * @date        2021
- * 
- **/
+ * @file    PaquetLSR.hpp
+ * @brief   Declaration de la classe PaquetLSR.
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #pragma once
 
 #include <bitset>
@@ -17,24 +15,22 @@
 class PaquetLSR: public PaquetOSPF {
     private:
         // Attributs
-        uint8_t m_IdAnnonceur;
+        uint8_t m_IdEmetteur;
         std::vector<std::bitset<32>> m_IdLSADemandes;
 
     public:
         // Constructeur
-        PaquetLSR(
-            const uint8_t& idAnnonceur,
-            const std::vector<std::bitset<32>>& idLSADemandes
-        );
+        PaquetLSR(const uint8_t& idEmetteur,
+                  const std::vector<std::bitset<32>>& idLSADemandes);
 
         // Destructeur
         ~PaquetLSR();
 
-        // Setter & Getters
+        // Getters et setter
         void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
         const TypePaquet& getType() const override;
         const uint8_t& getIdRouteur() const override;
 
-        const uint8_t& getIdAnnonceur() const;
+        const uint8_t& getIdEmetteur() const;
         std::vector<std::bitset<32>>& getIdLSADemandes();
 };

@@ -49,6 +49,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->setTheme(QChart::ChartThemeDark);
     m_Graphique->titleFont().setBold(true);
 
+    // Déclaration des différents modes du contrôle de congestion //
     QLineSeries* slow_start = new QLineSeries();
     slow_start->setName("Slow Start");
     m_Lignes.push_back(slow_start);
@@ -93,55 +94,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
     m_Lignes[3]->setColor(QColor(Qt::green));
 
-    /*QLineSeries* initial = new QLineSeries();
-    initial->setName("Slow Start");
-    m_Lignes.push_back(initial);
-    m_Graphique->addSeries(initial);
-
-
-    m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
-    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
-
-
-    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 21);
-    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 6);
-
-    m_Lignes[0]->setColor(QColor(255,105,180,255));
-    m_Lignes[0]->append(0, 0);
-    m_Lignes[0]->append(20, 5);
-
-    QLineSeries* cong_avoid = new QLineSeries();
-    cong_avoid->setName("Congestion Avoidance");
-    m_Lignes.push_back(cong_avoid);
-    m_Graphique->addSeries(cong_avoid);
-
-    m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
-    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
-    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 30);
-    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 10);
-    m_Lignes[1]->setColor(QColor(Qt::cyan));
-    m_Lignes[1]->append(20, 5);
-    m_Lignes[1]->append(22,5);
-    m_Lignes[1]->append(26, 4);
-
-    m_Lignes[0]->append(20, 5);
-    m_Lignes[0]->append(22,5);
-    m_Lignes[0]->append(26, 4);
-
-    /*QLineSeries* slow2 = new QLineSeries();
-    slow2->setName("Slow Start");
-    m_Lignes.push_back(slow2);
-    m_Graphique->addSeries(slow2);
-
-    m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
-    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
-    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 40);
-    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 10);*/
-
-    //m_Lignes[0]->append(27,6);
+    rafraichirGraphe();
     addWidget(m_Vue);
 }
 
@@ -206,6 +159,65 @@ void AffichageReseau::configEntreprise()
     QPixmap pixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png");
     QIcon ButtonIcon(pixmap);
     m_Image->setIcon(ButtonIcon);
+}
+
+ /**
+  * @brief Permet d'initialiser le graphique.
+  * 
+  * On ajoute la légende au deux axes abscisses et ordonnées. 
+  * Puis on définit la taille des deux axes. 
+  **/
+void AffichageReseau::initialiserGraphe()
+{
+    m_Graphique->removeAllSeries();
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+}
+
+ /**
+  * @brief Permet de tracer et dessiner le graphique du contrôle de congestion.
+  * 
+  * On trace une courbe de couleur définit selon le mode du contrôle de congestion. 
+  * 
+  **/
+void AffichageReseau::rafraichirGraphe()
+{
+    // Slow Start //
+    m_Lignes[0]->append(0, 0);
+    m_Lignes[0]->append(25, 10);
+    m_Lignes[0]->append(30, 15);
+    m_Lignes[0]->append(35, 25);
+    m_Lignes[0]->append(40, 35);
+    m_Lignes[0]->append(45, 50);
+
+    // Congestion Avoidance //
+    m_Lignes[1]->append(45, 50);
+    m_Lignes[1]->append(100,100);
+ 
+    // Fast Retransmit //
+    m_Lignes[2]->append(100,100);
+    m_Lignes[2]->append(100,50);
+
+    // Fast Recovery //
+    m_Lignes[3]->append(100,50);
+    m_Lignes[3]->append(150,75);
+
+    // Fast Retransmit une nouvelle fois //
+    m_Lignes[2]->append(150,75);
+    m_Lignes[2]->append(150,0);
+
+    // Pour repartir en Slow Start //
+    // il faut parcourir de nouveau TOUT les tracés  //
+    m_Lignes[0]->append(100,100);
+    m_Lignes[0]->append(100,50);
+    m_Lignes[0]->append(150,75);
+    m_Lignes[0]->append(150,0);
+    m_Lignes[0]->append(165, 10);
+    m_Lignes[0]->append(170, 15);
+    m_Lignes[0]->append(175,25);
 }
 
  /**
@@ -282,20 +294,4 @@ void AffichageReseau::informationsReseau()
     m_InfoReseau->setReadOnly(true);
     lyt->addWidget(m_InfoReseau,0,1);
     wdg->show();
-}
-
- /**
-  * @brief Permet d'initialiser le graphique.
-  * 
-  * On ajoute la légende au deux axes abscisses et ordonnées. 
-  * Puis on définit la taille des deux axes. 
-  **/
-void AffichageReseau::initialiserGraphe()
-{
-    m_Graphique->removeAllSeries();
-    m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
-    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
-    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
-    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
 }

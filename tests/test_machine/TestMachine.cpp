@@ -1,5 +1,6 @@
 #include <time.h>
 #include <iostream>
+#include <typeinfo>
 
 #include "../../src/include/Commun.hpp"
 #include "../../src/include/ParamInterface.hpp"
@@ -39,18 +40,15 @@ void test2() {
     sauvegarderConfig("ecriture.json", "ReseauSimple", p);
     chargerConfig("ecriture.json", reseau, p);
 
-    Machine& clientM = reseau->getMachine(p.m_Source);
-    Machine& serveurM = reseau->getMachine(p.m_Destination);
-
-    // Erreur : `std::bad_cast`
-    Ordinateur client = dynamic_cast<Ordinateur&>(clientM);
-    Ordinateur serveur = dynamic_cast<Ordinateur&>(serveurM);
+    Machine* client = reseau->getMachine(p.m_Source);
+    Machine* serveur = reseau->getMachine(p.m_Destination);
 
     MAC macDest = {35, 11, 122, 213, 123, 169};
-    client.remplirFileDonnees(p, macDest);
+    Ordinateur* pc = dynamic_cast<Ordinateur*>(client);
+    pc->remplirFileDonnees(p, macDest);
 
-    std::cout << "clientM \n" << clientM;
-    std::cout << "serveurM \n" << serveurM;
+    std::cout << "client \n" << *client;
+    std::cout << "serveur \n" << serveur;
 }
 
 void test3() {
@@ -73,7 +71,7 @@ void test3() {
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
-
+    
     //
     // std::bitset<16> cwnd = 1;
     // pc.slowStart(cwnd, p.m_Ssthresh);
@@ -127,12 +125,152 @@ void test4() {
     pc.envoyer(nbrPaquet, false);
 }
 
+void test5() {
+    //
+    int nbrPaquet = 1;
+
+    //
+    Ordinateur pc, pc2;
+    pc.setIp({192, 168, 1, 1});
+    pc.setMac({205, 138, 107, 55, 153, 181});
+    pc2.setIp({192, 168, 1, 2});
+    pc2.setMac({35, 11, 122, 213, 123, 169});
+
+    //
+    Commutateur c, c2;
+    c.setIp({192, 168, 1, 3});
+    c.setMac({213, 73, 221, 65, 26, 32});
+    c2.setIp({192, 168, 1, 4});
+    c2.setMac({40, 51, 229, 150, 102, 83});
+
+    //
+    Routeur r, r2;
+    r.setIp({192, 168, 1, 5});
+    r.setMac({229, 73, 221, 65, 26, 32});
+    r2.setIp({192, 168, 1, 6});
+    r2.setMac({56, 51, 113, 150, 102, 83});
+    
+    //
+    ParamInterface p;
+    p.m_Source = pc.getIp();
+    p.m_Destination = pc2.getIp();
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 136;
+    p.m_TypeFichier = FTP;
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
+
+    //
+    pc.setVoisin(c);
+    c.setVoisin(pc);
+    
+    c.setVoisin(r);
+    r.setVoisin(c);
+    
+    r.setVoisin(r2);
+    r2.setVoisin(r);
+
+    r2.setVoisin(c2);
+    c2.setVoisin(r2);
+
+    c2.setVoisin(pc2);
+    pc2.setVoisin(c2);
+
+    //
+    c.setMemoire(&pc.getIp(), &pc.getMac());
+    c.setMemoire(&pc2.getIp(), &r.getMac());
+    c2.setMemoire(&pc.getIp(), &r2.getMac());
+    c2.setMemoire(&pc2.getIp(), &pc2.getMac());
+
+    //
+    pc.remplirFileDonnees(p, pc2.getMac());
+
+    //
+    pc.envoyer(nbrPaquet, false);
+}
+
+void test6() {
+    //
+    int nbrPaquet = 1;
+
+    //
+    ParamInterface p;
+    p.m_Source = {192, 168, 1, 1};
+    p.m_Destination = {192, 168, 1, 128};
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 136;
+    p.m_TypeFichier = FTP;
+    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
+
+    //
+    std::unique_ptr<ReseauGraphe> reseau;
+    chargerConfig("ecriture.json", reseau, p);
+
+    //
+    Machine* m = reseau->getMachine(p.m_Source);
+    Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
+    
+    //
+    Machine* m2 = reseau->getMachine(p.m_Destination);
+    Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
+
+    //
+    // std::cout << "\n##########\n" << *reseau << "##########\n";
+
+    //
+    pc->remplirFileDonnees(p, pc2->getMac());
+
+    //
+    std::cout << "\n##########\n" << *pc << "##########\n";
+    std::cout << "\n##########\n" << *pc2 << "##########\n";
+    m->envoyer(nbrPaquet, false);
+}
+
+void test7() {
+    //
+    int nbrPaquet = 1;
+
+    //
+    ParamInterface p;
+    p.m_Source = {192, 168, 1, 1};
+    p.m_Destination = {192, 168, 1, 194};
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 136;
+    p.m_TypeFichier = FTP;
+    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
+
+    //
+    std::unique_ptr<ReseauGraphe> reseau;
+    chargerConfig("ecriture.json", reseau, p);
+
+    //
+    Machine* m = reseau->getMachine(p.m_Source);
+    Ordinateur* pc = dynamic_cast<Ordinateur*>(m);
+    
+    //
+    Machine* m2 = reseau->getMachine(p.m_Destination);
+    Ordinateur* pc2 = dynamic_cast<Ordinateur*>(m2);
+
+    //
+    std::cout << "\n##########\n" << *reseau << "\n##########\n";
+
+    //
+    pc->remplirFileDonnees(p, pc2->getMac());
+
+    //
+    std::cout << "pc : " << *pc << std::endl;
+    std::cout << "pc2 : " << *pc2 << std::endl;
+    pc->envoyer(nbrPaquet, false);
+}
+
 int main(void) {
     srand(time(NULL));
-    //test1();
-    //test2();
-    //test3();
-    test4();
+    // test1();
+    // test2();
+    // test3();
+    // test4();
+    // test5();
+    test6();
+    // test7();
 
     return 0;
 }

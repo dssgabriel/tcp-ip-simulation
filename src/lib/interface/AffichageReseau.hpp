@@ -44,7 +44,7 @@ Q_OBJECT
         void configEntreprise();
 
         void initialiserGraphe();
-        //void rafraichirGraphe();
+        void rafraichirGraphe();
         void sauvegarderGraphe();
 
     private slots :

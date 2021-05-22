@@ -1,5 +1,20 @@
+/**
+ * @file Machine.cpp
+ * @author Mickael LE DENMAT
+ * @brief Vous trouverez ici toutes les fonctions implementees
+ *          pour la classe Machine.
+ * @date 2021-05-21
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "Machine.hpp"
 
+/**
+ * @brief Variables prédéfinies pour initialiser des adresses IP.
+ * 
+ */
 IPv4 ipZero = {
     .a = std::bitset<8>(0),
     .b = std::bitset<8>(0),
@@ -34,7 +49,10 @@ MAC macMax = {
 
 uint16_t Machine::m_NbMachine = 0;
 
-// Constructeur
+/**
+ * @brief Constructeur de la classe Machine
+ * 
+ */
 Machine::Machine() {
     m_NbMachine++;
     m_IdMachine = m_NbMachine;
@@ -53,99 +71,200 @@ Machine::Machine() {
     }
 }
 
-// Getters & setters
+/**
+ * @brief Accesseur du nombre de machine.
+ * 
+ * @return const uint16_t& nombre de machine.
+ */
 const uint16_t& Machine::getNbMachine() const {
     return m_NbMachine;
 }
 
+/**
+ * @brief Accesseur de l'identifiant de la machine.
+ * 
+ * @return const uint16_t& identifiant de la machine.
+ */
 const uint16_t& Machine::getIdMachine() const {
     return m_IdMachine;
 }
 
+/**
+ * @brief Mutateur du nom de la machine.
+ * 
+ * @param nom de la machine.
+ */
 void Machine::setNom(const std::string& nom) {
     m_Nom = nom; 
 }
 
+/**
+ * @brief Accesseur du nom de la machine.
+ * 
+ * @return const std::string& nom de la machine.
+ */
 const std::string& Machine::getNom() const {
     return m_Nom;
 }
 
+/**
+ * @brief Mutateur de l'adresse IP de la machine.
+ * 
+ * @param ip adresse IP de la machine.
+ */
 void Machine::setIp(const IPv4& ip) {
     m_Ip = ip;
 }
 
+/**
+ * @brief Accesseur de l'adresse IP de la machine.
+ * 
+ * @return const IPv4& adresse IP de la machine.
+ */
 const IPv4& Machine::getIp() const {
     return m_Ip;
 }
 
+/**
+ * @brief Mutateur du masque du reseau.
+ * 
+ * @param masque du reseau.
+ */
 void Machine::setMasque(const IPv4& masque) {
     m_Masque = masque;
 }
 
+/**
+ * @brief Accesseur du masque du reseau.
+ * 
+ * @return const IPv4& masque du reseau.
+ */
 const IPv4& Machine::getMasque() const {
     return m_Masque;
 }
 
+/**
+ * @brief Mutateur de l'adresse MAC de la machine.
+ * 
+ * @param mac de la machine.
+ */
 void Machine::setMac(const MAC& mac) {
     m_Mac = mac;
 }
 
+/**
+ * @brief Accesseur de l'adresse MAC de la machine.
+ * 
+ * @return const MAC& l'adresse MAC de la machine.
+ */
 const MAC& Machine::getMac() const {
     return m_Mac;
 }
 
+/**
+ * @brief Ajout d'un masque de sous reseau.
+ * 
+ * @param sousReseau de la machine.
+ */
 void Machine::setSousReseau(const IPv4& sousReseau) {
     m_SousReseau.emplace_back(sousReseau);
 }
 
+/**
+ * @brief Accesseur du tableau de sous reseaux.
+ * 
+ * @return const std::vector<IPv4>& le tableau de sous reseau.
+ */
 const std::vector<IPv4>& Machine::getSousReseaux() const {
     return m_SousReseau;
 }
 
+/**
+ * @brief Ajout d'un voisin a la machine.
+ * 
+ * @param voisin de la machine.
+ */
 void Machine::setVoisin(Machine& voisin) {
     m_Voisins.emplace_back(&voisin);
 }
 
+/**
+ * @brief Accesseur du voisin possedant l'adresse MAC reseigne.
+ * 
+ * @param adresseVoisin adresse MAC pour trouver le voisin.
+ * @return Machine* le voisin.
+ */
 Machine* Machine::getVoisin(MAC adresseVoisin) const {
-    for(size_t i = 0; i < m_Voisins.size(); ++i) {
-        if(m_Voisins[i]->getMac() == adresseVoisin) {
-            return m_Voisins[i];
+    // std::cout << "getVoisin : adresseVoisin : " << adresseVoisin << std::endl;
+    for(Machine *m : m_Voisins) {
+        if(m->getMac() == adresseVoisin) {
+            return m;
         }
     }
 
-    std::cout << "ERREUR : Dans la fonction 'getVoisin' : Aucune voisin trouve.\n";
-    return nullptr;
+    std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. ";
+    std::cout << "Dans la fonction 'getVoisin'. ";
+    std::cout << "Aucune voisin trouve.\n";
+    exit(EXIT_FAILURE);
 }
 
+/**
+ * @brief Accesseur du tableau du voisin.
+ * 
+ * @return std::vector<Machine*> le tableau de voisin.
+ */
 std::vector<Machine*> Machine::getVoisins() const {
     return m_Voisins;
 }
 
+/**
+ * @brief Ajout d'une trame dans la file d'attente.
+ * 
+ * @param trame a mettre dans la file d'attente.
+ */
 void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
     m_FileDonnees.emplace(trame);
 }
 
+/**
+ * @brief Accesseur de la liste de d'attente.
+ * 
+ * @return std::queue<std::stack<std::bitset<16>>>& la liste d'attente.
+ */
 std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
+/**
+ * @brief Supprime une trame dans la file d'attente.
+ * 
+ * @return std::stack<std::bitset<16>> la donnee supprime.
+ */
 std::stack<std::bitset<16>> Machine::suppDonnee() {
     if (!m_FileDonnees.empty()) {
         std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
         m_FileDonnees.pop();
         return donnee;
     } else {
-        std::cout << "ERREUR : Dans la fonction 'suppDonnee' : File vide.\n";
+        std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. ";
+        std::cout << "Dans la fonction 'suppDonnee'. ";
+        std::cout << "Impossible de supprimer un élément, file vide.\n";
         exit(EXIT_FAILURE);
     }
 }
-// Fin getters et setters
 
-// Methodes
+/**
+ * @brief Traite une trame lors de l'enoie de cette derniere dans le reseau.
+ *          Met l'adresse MAC de destination en adresse source.
+ *          Remplace l'adresse MAC de destination par la nouvelle destination.
+ * 
+ * @param trame a traiter.
+ * @param nouvelleDest de la machine voisine.
+ */
 void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     std::cout << m_Nom << " : Debut traitement\n";
     
-    // Recuperation du paquet.
+    // Recuperation du paquet et desencapsulation.
     Physique couchePhy;
     std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
     
@@ -153,15 +272,15 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     MAC ancienneDest = couchePhy.getMacDest();
 
     // Changement adresse MAC.
-    // La destination devient la source.
-    // Ajout nouvelle destination.
     couchePhy.setMacSrc(ancienneDest);
     couchePhy.setMacDest(nouvelleDest);
 
     // Encapsulation.
     trame = couchePhy.encapsuler(paquet);
+
     std::cout << m_Nom << " : fin traitement\n";
 }
+
 
 bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
     while (!donnees.empty()) {
@@ -187,7 +306,13 @@ bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
     return true;
 }
 
-// Overloading
+/**
+ * @brief Redefinition de l'operateur d'affichage.
+ * 
+ * @param flux a modifier avec les informations de la machine.
+ * @param m a afficher.
+ * @return std::ostream& l'affichage des informations de la machine.
+ */
 std::ostream& operator<<(std::ostream& flux, const Machine& m) {
     flux << "Numero : " << m.getIdMachine() << "/" << m.getNbMachine() << std::endl;
     flux << "Nom : " << m.getNom() << std::endl;
@@ -197,13 +322,13 @@ std::ostream& operator<<(std::ostream& flux, const Machine& m) {
 
     flux << "Liste des sous réseaux : \n";
     std::vector<IPv4> cpySousReseau = m.getSousReseaux();
-    for(IPv4 sousReseau : cpySousReseau) {
+    for (IPv4 sousReseau : cpySousReseau) {
         flux << "\t > " << sousReseau << std::endl;
     }
 
     flux << "Liste des voisins : \n";
     std::vector<Machine*> cpyVoisins = m.getVoisins();
-    for(Machine* voisine : cpyVoisins) {
+    for (Machine* voisine : cpyVoisins) {
         flux << "\t > " << voisine->getIp() << std::endl;
     }
 

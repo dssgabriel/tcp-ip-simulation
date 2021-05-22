@@ -13,7 +13,7 @@ class ReseauGraphe {
     private:
         // Attributs
         std::string m_Nom;
-        static std::vector<Machine> m_Machines;
+        static std::vector<Machine*> m_Machines;
         static std::vector<Liaison> m_Liaisons;
 
         // Methodes privees
@@ -37,14 +37,19 @@ class ReseauGraphe {
         void setNom(const std::string nom);
         const std::string& getNom() const;
 
-        static Routeur& getRouteur(const uint8_t idRouteur);
+        static Routeur* getRouteur(const uint8_t idRouteur);
         static uint8_t getIdRouteurDepuisIdMachine(const uint16_t idMachine);
 
-        Machine& getMachine(const IPv4& ip);
+        static Machine* getMachine(const IPv4& ip);
         Machine* getMachine(const uint16_t& id);
 
-        const std::vector<Machine>& getMachines() const;
+        static IPv4 getSousReseau(const IPv4& ipMachine);
+
+        const std::vector<Machine*>& getMachines() const;
+
         const std::vector<Liaison>& getLiaisons() const;
+
+        static const std::vector<uint8_t> getIdsRouteurs();
 
         // Overloading
         friend std::ostream& operator<<(
@@ -55,7 +60,7 @@ class ReseauGraphe {
         // Methodes
         bool estConnexe();
 
-        void ajouter(Machine m);
+        void ajouter(Machine* m);
         void ajouter(Liaison l);
 
         static std::vector<Liaison*> routageDynamique(const uint8_t depart, const uint8_t arrivee);

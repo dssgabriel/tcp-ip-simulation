@@ -13,8 +13,6 @@
 
 /**
   * @brief Constructeur de la classe Internet
-  * 
-  * Le constructeur est vide car nous utilisons les setters pour initialiser les differents paramètres.
   **/
 Internet::Internet() {
     m_IpSrc = ipMax;

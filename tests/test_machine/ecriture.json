@@ -3,7 +3,7 @@
         192,
         168,
         1,
-        2
+        128
     ],
     "IP source": [
         192,
@@ -12,7 +12,7 @@
         1
     ],
     "Nom du reseau": "ReseauSimple",
-    "Nombre de paquets": 500,
+    "Nombre de paquets": 1,
     "Type de fichier": 0,
     "ssthresh": 136
 }

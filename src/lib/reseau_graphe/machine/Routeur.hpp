@@ -1,13 +1,27 @@
+/**
+ * @file    Routeur.hpp
+ * @brief   Declaration de la classe Routeur.
+ * @author  Mickael Le Denmat
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
+ */
+
 #pragma once
 
-#include <bitset>
-#include <cstdint>
 #include <map>
 #include <memory>
 #include <queue>
 #include <vector>
+#include <string>
+#include <bitset>
+#include <cstdlib>
+#include <cstdint>
+#include <utility>
 
 #include "Machine.hpp"
+#include "Routeur.hpp"
+#include "Ordinateur.hpp"
+#include "Commutateur.hpp"
 #include "../ospf/PaquetOSPF.hpp"
 #include "../ospf/PaquetHello.hpp"
 #include "../ospf/PaquetDBD.hpp"
@@ -15,6 +29,7 @@
 #include "../ospf/PaquetLSU.hpp"
 #include "../ospf/PaquetLSAck.hpp"
 #include "../../../include/Liaison.hpp"
+
 
 class Routeur : public Machine {
     private:
@@ -43,15 +58,13 @@ class Routeur : public Machine {
         // Getters
         uint8_t getNbRouteur();
         uint8_t getIdRouteur();
-        //std::vector<Routeur> getRouteursVoisins();
-        //const std::vector<Liaison> getPlusCourtChemin(Routeur& dest);
 
         // Methodes
+        MAC trouverMacDest(const IPv4 ip);
         void envoyerOSPF(Routeur* dest, PaquetOSPF* ospf);
         void recevoirOSPF(PaquetOSPF* ospf);
         void traitementPaquetOSPF();
 
-        void envoyer(const uint32_t);
-        void recevoir();
-        void traitement(std::stack<std::bitset<16>> &donnee, MAC nouvelleDest);
+        virtual void envoyer(const uint32_t cwnd, const bool isAck);
+        virtual void recevoir(const uint32_t cwnd, const bool isAck);
 };
