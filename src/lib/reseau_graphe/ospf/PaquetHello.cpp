@@ -59,6 +59,6 @@ const uint8_t& PaquetHello::getIdRouteur() const {
  *
  * @return L'identifiant du routeur recepteur du paquet.
  */
-const uint8_t& PaquetHello::getIdVoisin() const {
+const uint8_t& PaquetHello::getIdDestinataire() const {
     return m_IdVoisin;
 }

@@ -1,19 +1,15 @@
 /**
-
- * @file        ReseauGraphe.cpp
- * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ReseauGraphe.
- * 
- * @author      Florian CAMBRESY
- * @author      Gabriel DOS SANTOS 
- * @date        2021
-
+ * @file    ReseauGraphe.cpp
+ * @brief   Vous trouverez ici toutes les fonctions implementees pour la classe ReseauGraphe.
+ * @author  Florian CAMBRESY
+ * @author  Gabriel Dos Santos
+ * @date    Mai 2021
  **/
 
 #include <algorithm>
 #include <cstdlib>
 
 #include "ReseauGraphe.hpp"
-#include "machine/Routeur.hpp"
 
 std::vector<Machine*> ReseauGraphe::m_Machines;
 std::vector<Liaison> ReseauGraphe::m_Liaisons;
@@ -47,8 +43,9 @@ uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
         }
     }
 
-    std::cout << "ERREUR : methode `getIdRouteurDepuisIdMachine` : `"
-        << idMachine << "` introuvable sur le reseau.\n";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
+        << "Dans la methode 'getIdRouteurDepuisIdMachine'. '"
+        << idMachine << "' introuvable sur le reseau.\n";
     return 0;
 }
 
@@ -73,17 +70,17 @@ Machine* ReseauGraphe::getMachine(const IPv4& ip) {
        }
    }
 
-    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
-    std::cout << "Dans la fonction 'getMachine(ip)'. ";
-    std::cout << "Adresse IP introuvable sur le reseau.\n";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
+        << "Dans la fonction 'getMachine(ip)'. "
+        << "Adresse IP introuvable sur le reseau.\n";
     exit(EXIT_FAILURE);
 }
 
 Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     if (id > m_Machines.size()) {
-        std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
-        std::cout << "Dans la fonction 'getMachine(id)'. ";
-        std::cout << "Indice en dehors du tableau.\n";
+        std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
+            << "Dans la fonction 'getMachine(id)'. "
+            << "Indice en dehors du tableau.\n";
         exit(EXIT_FAILURE);
     }
 
@@ -97,9 +94,9 @@ IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
         }
     }
 
-    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. ";
-    std::cout << "Dans la fonction 'getSousReseau'. ";
-    std::cout << "Aucune ipMachine trouvee.\n";
+    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
+        << "Dans la fonction 'getSousReseau'. "
+        << "Aucune ipMachine trouvee.\n";
     exit(EXIT_FAILURE);
 }
 
@@ -260,4 +257,23 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
     getPlusCourtChemin(depart, arrivee, peres, plusCourtChemin);
 
     return plusCourtChemin;
+}
+
+void ReseauGraphe::lancerOSPF() {
+    for (Machine* machine: m_Machines) {
+        Routeur* routeur = dynamic_cast<Routeur*>(machine);
+
+        if (routeur) {
+            std::vector<Machine*> voisins = routeur->getVoisins();
+            for (Machine* voisin: voisins) {
+                Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
+                
+                if (routeurVoisin) {
+                    PaquetHello* hello = new PaquetHello(routeurVoisin->getIdRouteur());
+                    hello->setEntete(Hello, routeur->getIdRouteur());
+                    routeur->envoyerOSPF(routeurVoisin, hello);
+                }
+            }
+        }
+    }
 }

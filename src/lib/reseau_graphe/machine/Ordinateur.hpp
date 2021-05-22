@@ -1,3 +1,12 @@
+/**
+ * @file Ordinateur.hpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici la declaration de la classe Ordinateur
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #pragma once
 
 #include <map>

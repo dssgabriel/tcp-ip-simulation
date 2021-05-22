@@ -13,6 +13,10 @@
 #include <map>
 #include "Machine.hpp"
 
+/**
+ * @brief Declaration de la classe Commutateur.
+ * 
+ */
 class Commutateur : public Machine {
     private:
         static uint8_t m_NbrCommutateur;

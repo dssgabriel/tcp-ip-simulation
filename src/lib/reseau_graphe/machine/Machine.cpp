@@ -208,9 +208,9 @@ Machine* Machine::getVoisin(MAC adresseVoisin) const {
         }
     }
 
-    std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. ";
-    std::cout << "Dans la fonction 'getVoisin'. ";
-    std::cout << "Aucune voisin trouve.\n";
+    std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. "
+        << "Dans la fonction 'getVoisin'. "
+        << "Aucune voisin trouve.\n";
     exit(EXIT_FAILURE);
 }
 
@@ -252,9 +252,9 @@ std::stack<std::bitset<16>> Machine::suppDonnee() {
         m_FileDonnees.pop();
         return donnee;
     } else {
-        std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. ";
-        std::cout << "Dans la fonction 'suppDonnee'. ";
-        std::cout << "Impossible de supprimer un élément, file vide.\n";
+        std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. "
+            << "Dans la fonction 'suppDonnee'. "
+            << "Impossible de supprimer un élément, file vide.\n";
         exit(EXIT_FAILURE);
     }
 }

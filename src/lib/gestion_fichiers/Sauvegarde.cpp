@@ -23,9 +23,9 @@ void sauvegarderConfig(const std::string& cheminFichier,
     // Ouverture du fichier.
     std::ofstream ecriture(cheminFichier);
     if(ecriture.fail()) {
-        std::cout << "ERREUR : Dans le fichiers 'Sauvegarde.cpp'. ";
-        std::cout << "Dans la fonction 'sauvegarderConfig'. ";
-        std::cout << "Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans le fichiers 'Sauvegarde.cpp'. "
+            << "Dans la fonction 'sauvegarderConfig'. "
+            << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 
