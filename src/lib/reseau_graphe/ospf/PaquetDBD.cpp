@@ -61,6 +61,6 @@ const uint8_t& PaquetDBD::getIdRouteur() const {
  *
  * @return La liste des LSAs envoyes dans le paquet.
  */
-std::vector<LSA>& PaquetDBD::getAnnoncesLSA() {
+std::vector<LSA>& PaquetDBD::getLSAs() {
     return m_LSAs;
 }

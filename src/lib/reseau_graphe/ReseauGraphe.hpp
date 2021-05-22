@@ -1,14 +1,12 @@
 /**
-
- * @file        ReseauGraphe.hpp
- * @brief       Déclaration de la classe ReseauGraphe.
- *
- * @author      Florian CAMBRESY
- * @author      Gabriel DOS SANTOS
- * @date        2021
-
+ * @file    ReseauGraphe.hpp
+ * @brief   Declaration de la classe ReseauGraphe.
+ * @author  Florian Cambresy
+ * @author  Gabriel Dos Santos
+ * @author  Mickael Le Denmat
+ * @date    Mai 2021
  **/
- 
+
 #pragma once
 
 #include <cstdint>

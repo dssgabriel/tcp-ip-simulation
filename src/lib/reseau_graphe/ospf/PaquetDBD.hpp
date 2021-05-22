@@ -29,5 +29,5 @@ class PaquetDBD: public PaquetOSPF {
         virtual const TypePaquet& getType() const override;
         virtual const uint8_t& getIdRouteur() const override;
 
-        std::vector<LSA>& getAnnoncesLSA();
+        std::vector<LSA>& getLSAs();
 };
