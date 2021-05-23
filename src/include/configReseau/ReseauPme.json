@@ -1,5 +1,8 @@
 {
-    "Nom du reseau": "reseau pme",
+    "_commentaire": "Vous trouverez ici le fichier de configuration pour le reseau PME",
+    "_auteur": "Mickael Le Denmat",
+    "_auteur2": "Jean-Christophe Chalaud",
+    "Nom du reseau": "ReseauPme",
     "Liste machines":[
         {
             "type" : "Ordinateur",

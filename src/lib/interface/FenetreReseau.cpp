@@ -3,8 +3,7 @@
 FenetreReseau::FenetreReseau() : QHBoxLayout()
 {
     // Creation du premier QHboxLayout
-    m_F1 = new ChoixReseau();
-    addLayout(m_F1);
+    addLayout(&ChoixReseau::GetInstance());
 
     // Creation du deuxieme QHboxLayout
     m_F2 = new DonneeReseau();

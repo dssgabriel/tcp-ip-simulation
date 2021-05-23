@@ -1,14 +1,31 @@
+/**
+ * @file Sauvegarde.cpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici les fonctions implementees pour le chargemen
+ * @date 2021-05-22
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "Sauvegarde.hpp"
 
+/**
+ * @brief Sauvegarde la configuration rentre par l'utilisateur.
+ *  
+ * @param cheminFichier l'emplacement de sauvegarde du fichier.
+ * @param nom  de la sauvegarde.
+ * @param param la configuration a auvegarder.
+ */
 void sauvegarderConfig(const std::string& cheminFichier,
     const std::string& nom, ParamInterface& param) 
 {
     // Ouverture du fichier.
     std::ofstream ecriture(cheminFichier);
     if(ecriture.fail()) {
-        std::cout << "ERREUR : Dans le fichiers 'Sauvegarde.cpp'. ";
-        std::cout << "Dans la fonction 'sauvegarderConfig'. ";
-        std::cout << "Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans le fichiers 'Sauvegarde.cpp'. "
+            << "Dans la fonction 'sauvegarderConfig'. "
+            << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 

@@ -1,15 +1,40 @@
-#include "Horloge.hpp"
+/**
 
+ * @file        Horloge.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe Horloge.
+ * 
+ * @author      Florian CAMBRESY
+ * @date        2021
+
+ **/
+ 
+ #include "Horloge.hpp"
+
+
+ /**
+  * @brief Constructeur de la classe Horloge.
+  * 
+  **/
 Horloge::Horloge() :
     m_Attente(false),
     m_Arret(true)
 {
 }
 
+ /**
+  * @brief Destructeur de la classe Horloge.
+  *
+  **/
 Horloge::~Horloge() {
 
 }
 
+
+ /**
+  * @brief Permet de lancer un chronomètre via l'horloge interne de l'ordinateur.
+  * 
+  * @return void.
+  **/
 void Horloge::lancer() {
     if (m_Arret && !m_Attente) {
         m_Debut = std::chrono::system_clock::now();
@@ -18,8 +43,22 @@ void Horloge::lancer() {
         std::cout << "Erreur lancer." << std::endl;
     }
 
+    if (!m_Arret && m_Attente) {
+        m_Reprendre = std::chrono::system_clock::now();
+        m_TempsPause.push_back(m_Reprendre - m_Pause);
+        m_Attente = false;
+    } else {
+        std::cout << "Erreur reprendre" << std::endl;
+    }
+
 }
 
+
+ /**
+  * @brief Permet de sauvegarder les moments de pauses.
+  * 
+  * @return void.
+  **/
 void Horloge::pause() {
     if (!m_Arret && !m_Attente) {
         m_Pause = std::chrono::system_clock::now();
@@ -28,17 +67,13 @@ void Horloge::pause() {
     } else {
         std::cout << "Erreur pause" << std::endl;
     }
-
-    if (!m_Arret && m_Attente) {
-        m_Reprendre = std::chrono::system_clock::now();
-        m_TempsPause.push_back(m_Reprendre - m_Pause);
-        m_Attente = false;
-    } else {
-        std::cout << "Erreur reprendre" << std::endl;
-  }
 }
 
-
+/**
+  * @brief Permet d'arreter l'horloge.
+  * 
+  * @return void.
+  **/
 void Horloge::arreter() {
     if (!m_Attente && !m_Arret) {
         m_Fin = std::chrono::system_clock::now();
@@ -55,6 +90,11 @@ void Horloge::arreter() {
     }
 }
 
+/**
+  * @brief Getter pour l'argument m_TempsSec.
+  * 
+  * @return std::chrone::duration<duration>.
+  **/
 std::chrono::duration<double> Horloge::getTempsSec() {
     if (!m_Attente) {
         return m_TempsSec;

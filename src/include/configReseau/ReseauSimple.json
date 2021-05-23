@@ -1,5 +1,8 @@
 {
-    "Nom du reseau": "reseau simple",
+    "_commentaire": "Vous trouverez ici le fichier de configuration pour le reseau simple",
+    "_auteur": "Mickael Le Denmat",
+    "_auteur2": "Jean-Christophe Chalaud",
+    "Nom du reseau": "ReseauSimple",
     "Liste machines": [
         {
             "type" : "Ordinateur", 

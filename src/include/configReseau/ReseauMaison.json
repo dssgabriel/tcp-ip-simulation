@@ -1,5 +1,8 @@
 {
-    "Nom du reseau": "reseau maison",
+    "_commentaire": "Vous trouverez ici le fichier de configuration pour le reseau maison",
+    "_auteur": "Mickael Le Denmat",
+    "_auteur2": "Jean-Christophe Chalaud",
+    "Nom du reseau": "ReseauMaison",
     "Liste machines":[
         {
             "type" : "Ordinateur",
