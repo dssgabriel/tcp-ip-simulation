@@ -12,7 +12,7 @@
 
 #include <map>
 #include <memory>
-#include <queue>
+#include <deque>
 #include <vector>
 #include <string>
 #include <bitset>
@@ -37,7 +37,7 @@ class Routeur : public Machine {
         static uint16_t m_NbRouteur;
         uint16_t m_IdRouteur;
         std::map<Routeur*, std::vector<Liaison*>> m_TableRoutage;
-        std::queue<PaquetOSPF*> m_FilePaquetsOSPF;
+        std::deque<PaquetOSPF*> m_FilePaquetsOSPF;
         std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSADemandes;
         std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSAEnvoyes;
 
