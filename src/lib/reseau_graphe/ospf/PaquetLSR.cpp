@@ -13,7 +13,7 @@
  * @param idEmetteur L'identifiant du routeur ayant emis les LSA demandes.
  * @param idLSADemandes La liste d'identifiants des LSA demandes.
  */
-PaquetLSR::PaquetLSR(const uint8_t& idEmetteur,
+PaquetLSR::PaquetLSR(const uint16_t& idEmetteur,
                      const std::vector<std::bitset<32>>& idLSADemandes)
     : m_IdEmetteur(idEmetteur)
 {
@@ -37,7 +37,7 @@ PaquetLSR::~PaquetLSR() {}
  * @param type Le type du paquet.
  * @param idRouteur L'identifiant du routeur emetteur du paquet.
  */
-void PaquetLSR::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
+void PaquetLSR::setEntete(const TypePaquet& type, const uint16_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
@@ -56,7 +56,7 @@ const TypePaquet& PaquetLSR::getType() const {
  *
  * @return L'identifiant du routeur emetteur du paquet.
  */
-const uint8_t& PaquetLSR::getIdRouteur() const {
+const uint16_t& PaquetLSR::getIdRouteur() const {
     return m_IdRouteur;
 }
 
@@ -65,7 +65,7 @@ const uint8_t& PaquetLSR::getIdRouteur() const {
  *
  * @return L'identifiant du routeur emetteur.
  */
-const uint8_t& PaquetLSR::getIdEmetteur() const {
+const uint16_t& PaquetLSR::getIdEmetteur() const {
     return m_IdEmetteur;
 }
 

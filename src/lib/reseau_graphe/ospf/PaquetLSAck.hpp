@@ -25,9 +25,9 @@ class PaquetLSAck: public PaquetOSPF {
         ~PaquetLSAck();
 
         // Getters et setter
-        void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
+        void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
         const TypePaquet& getType() const override;
-        const uint8_t& getIdRouteur() const override;
+        const uint16_t& getIdRouteur() const override;
 
         std::vector<std::bitset<32>>& getIdLSARecus();
 };

@@ -14,7 +14,7 @@
 class PaquetHello: public PaquetOSPF {
     private:
         // Attribut
-        uint8_t m_IdVoisin;
+        uint16_t m_IdVoisin;
 
     public:
         // Constructeur
@@ -24,9 +24,9 @@ class PaquetHello: public PaquetOSPF {
         ~PaquetHello();
 
         // Getters et setter
-        virtual void setEntete(const TypePaquet& type, const uint8_t& idRouteur) override;
+        virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
         virtual const TypePaquet& getType() const override;
-        virtual const uint8_t& getIdRouteur() const override;
+        virtual const uint16_t& getIdRouteur() const override;
 
-        const uint8_t& getIdDestinataire() const;
+        const uint16_t& getIdDestinataire() const;
 };
