@@ -1,5 +1,7 @@
-#include "../lib/interface/MyWindow.hpp"
 #include <QApplication>
+#include <QIcon>
+
+#include "../lib/interface/MyWindow.hpp"
 
 int main(int argc, char **argv)
 {

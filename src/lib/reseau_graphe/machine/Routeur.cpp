@@ -7,8 +7,9 @@
  * @date    2021-05-21
  */
 
-#include "../ReseauGraphe.hpp"
 #include <cstdlib>
+
+#include "../ReseauGraphe.hpp"
 
 uint8_t Routeur::m_NbRouteur = 0;
 
@@ -58,7 +59,7 @@ void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
 
 /**
  * @brief Accesseur pour la table de routage.
- * 
+ *
  * @return const std::map<Routeur*, std::vector<Liaison*>>& la table de routage.
  */
 const std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
@@ -219,18 +220,29 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
 }
 
 void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
+    /*
     auto recherche = m_TableRoutage.find(destination);
 
     if (recherche != m_TableRoutage.end()) {
         Liaison chemin = *recherche->second[0];
 
-        uint16_t idMachineProchain = chemin.m_NumMachine1 != m_IdRouteur ?
-            chemin.m_NumMachine1 : chemin.m_NumMachine2;
+        uint16_t idMachineProchain;
+        if (chemin.m_NumMachine1 != getIdMachine()) {
+            std::cout << "Log #0: `envoyerOSPF` ID Machine 1 = " << chemin.m_NumMachine1 << std::endl;
+            idMachineProchain = chemin.m_NumMachine1;
+        } else {
+            std::cout << "Log #0: `envoyerOSPF` ID Machine 2 = " << chemin.m_NumMachine2 << std::endl;
+            idMachineProchain = chemin.m_NumMachine2;
+        }
+        std::cout << "Log #1: `envoyerOSPF` ID Machine Prochain = " << idMachineProchain << std::endl;
         uint8_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
+        std::cout << "Log #2: `envoyerOSPF` ID Routeur Prochain = " << idRouteurProchain << std::endl;
         Routeur* prochain = ReseauGraphe::getRouteur(idRouteurProchain);
 
         prochain->recevoirOSPF(ospf);
     }
+    */
+    destination->recevoirOSPF(ospf);
 }
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
@@ -339,16 +351,21 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
 
     Routeur* destinataire = ReseauGraphe::getRouteur(dbd->getIdRouteur());
     // Le vecteur d'identifiant n'est pas vide, on doit envoyer un paquet LSR.
-    if (destinataire != nullptr && !idADemander.empty()) {
-        // Ajout des identifiants demandes a la table.
-        m_TableLSADemandes.emplace(std::make_pair(destinataire, &idADemander));
+    if (destinataire != nullptr) {
+        if (!idADemander.empty()) {
+            // Ajout des identifiants demandes a la table.
+            m_TableLSADemandes.emplace(destinataire, idADemander);
 
-        // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
-        PaquetLSR* reponse = new PaquetLSR(dbd->getIdRouteur(), idADemander);
-        reponse->setEntete(LSR, m_IdRouteur);
-        envoyerOSPF(destinataire, reponse);
+            // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
+            PaquetLSR* reponse = new PaquetLSR(dbd->getIdRouteur(), idADemander);
+            reponse->setEntete(LSR, m_IdRouteur);
+            envoyerOSPF(destinataire, reponse);
 
-        delete dbd;
+            delete dbd;
+        } else {
+            // Rien a demander
+            delete dbd;
+        }
     } else {
         std::cout << "ERREUR : fichier `Routeur.cpp`\n"
             << "\tmethode `traitementPaquetDBD` : "
@@ -394,7 +411,7 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     Routeur* destinataire = ReseauGraphe::getRouteur(lsr->getIdRouteur());
     if (destinataire) {
         // Ajout des identifiants des annonces a la table des LSA envoyes
-        m_TableLSAEnvoyes.emplace(std::make_pair(destinataire, &lsr->getIdLSADemandes()));
+        m_TableLSAEnvoyes.emplace(destinataire, lsr->getIdLSADemandes());
 
         // Envoie d'un paquet DBD au routeur envoyant le paquet Hello.
         PaquetLSU* reponse = new PaquetLSU(LSAsDemandes);
