@@ -132,8 +132,16 @@ void MenuEntete::charger() {
     if (launch == QMessageBox::Yes || launch == QMessageBox::No) {
         QFileDialog dialog;
         dialog.setFileMode(QFileDialog::ExistingFile);
-        QString file_name = dialog.getOpenFileName(qobject_cast<QWidget*>(this), tr("Choisissez le fichier a charger"), "../src/include/configReseau", "JSON File(*.json)");
-        QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+        QString file_name = "";
+        file_name = dialog.getOpenFileName(qobject_cast<QWidget*>(this), tr("Choisissez le fichier a charger"), "../src/include/configReseau", "JSON File(*.json)");
+        if (file_name != "") {
+            //chargement du reseau
+            std::unique_ptr<ReseauGraphe> res;
+            chargerConfig(file_name.toUtf8().constData(), res, Contexte::GetInstance().getConfig());
+            Contexte::GetInstance().setReseau(res);
+            Contexte::GetInstance().charger();
+            QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+        }
     }
 }
 
@@ -141,8 +149,13 @@ void MenuEntete::sauvegarder() {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("*.json"));
-    QString file_name = dialog.getSaveFileName(qobject_cast<QWidget*>(this), tr("Choisissez l'emplacement de sauvegarde"), "../src/include/configReseau", "JSON File(*.json)");
-    QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+    QString file_name = "";
+    file_name = dialog.getSaveFileName(qobject_cast<QWidget*>(this), tr("Choisissez l'emplacement de sauvegarde"), "../src/include/configReseau", "JSON File(*.json)");
+    if (file_name != "") {
+        //sauvegarde du réseau
+        sauvegarderConfig(file_name.toUtf8().constData(), Contexte::GetInstance().getReseau()->getNom(), Contexte::GetInstance().getConfig());
+        QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+    }
 }
 
 void MenuEntete::exporterGraphe() {
@@ -150,7 +163,11 @@ void MenuEntete::exporterGraphe() {
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("*.png"));
     QString file_name = dialog.getSaveFileName(qobject_cast<QWidget*>(this), tr("Choisissez l'emplacement de sauvegarde"), "../src/include/configReseau", "PNG File(*.png)");
-    QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+    if (file_name != "") {
+        //sauvegarde de l'image
+        Contexte::GetInstance().exporterGraphe(file_name);
+        QMessageBox::information(qobject_cast<QWidget*>(this), "Fichier selectionne", file_name);
+    }
 }
 
 void MenuEntete::quitter() {
@@ -184,11 +201,11 @@ void MenuEntete::rafraichir() {
 }
 
 void MenuEntete::stop() {
+    Contexte::GetInstance().stopSimulation();
     m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
     m_ModeActuel = Attente;
     m_Minuteur->stop();
     activeExporter(true);
-    Contexte::GetInstance().stopSimulation();
 }
 
 void MenuEntete::changerMode(){
@@ -196,6 +213,7 @@ void MenuEntete::changerMode(){
         if (m_ModeActuel == Attente) {
             m_Montre->setText("00:00:00");
             Contexte::GetInstance().getTemps() = 0;
+            Contexte::GetInstance().executerSimulation();
         }
         m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Pause.png"));
         m_ModeActuel = Lecture;

@@ -1,6 +1,8 @@
 #ifndef CHOIXRESEAU_H
 #define CHOIXRESEAU_H
 
+#include "Contexte.hpp"
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -10,13 +12,14 @@
 #include <QSpinBox>
 #include <QMessageBox>
 #include <QFrame>
-#include "Contexte.hpp"
 
 class ChoixReseau : public QVBoxLayout
 {
 Q_OBJECT
     private :
         // Attributs
+        ChoixReseau();
+
         QComboBox* m_Depart;
         QComboBox* m_Arrive;
 
@@ -34,8 +37,15 @@ Q_OBJECT
         QMessageBox* m_VerifReseau;
 
     public :
-        // Constructeur
-        ChoixReseau();
+        // Singleton
+        static ChoixReseau& GetInstance() {
+            static ChoixReseau singleton;
+            return singleton;
+        }
+
+        // Méthodes de copie
+        ChoixReseau(ChoixReseau&) = delete;
+        void operator=(ChoixReseau&) = delete;
 
         // Destructeur
         ~ChoixReseau();
