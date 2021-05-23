@@ -220,29 +220,29 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
 }
 
 void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
-    /*
     auto recherche = m_TableRoutage.find(destination);
 
     if (recherche != m_TableRoutage.end()) {
         Liaison chemin = *recherche->second[0];
 
         uint16_t idMachineProchain;
-        if (chemin.m_NumMachine1 != getIdMachine()) {
-            std::cout << "Log #0: `envoyerOSPF` ID Machine 1 = " << chemin.m_NumMachine1 << std::endl;
-            idMachineProchain = chemin.m_NumMachine1;
+        if (chemin.m_NumMachine1 + 1 != getIdMachine()) {
+            std::cout << "Log #0: `envoyerOSPF` ID Machine 1 = "
+                << chemin.m_NumMachine1 + 1 << std::endl;
+            idMachineProchain = chemin.m_NumMachine1 + 1;
         } else {
-            std::cout << "Log #0: `envoyerOSPF` ID Machine 2 = " << chemin.m_NumMachine2 << std::endl;
-            idMachineProchain = chemin.m_NumMachine2;
+            std::cout << "Log #0: `envoyerOSPF` ID Machine 2 = "
+                << chemin.m_NumMachine2 + 1 << std::endl;
+            idMachineProchain = chemin.m_NumMachine2 + 1;
         }
-        std::cout << "Log #1: `envoyerOSPF` ID Machine Prochain = " << idMachineProchain << std::endl;
-        uint8_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
-        std::cout << "Log #2: `envoyerOSPF` ID Routeur Prochain = " << idRouteurProchain << std::endl;
-        Routeur* prochain = ReseauGraphe::getRouteur(idRouteurProchain);
 
-        prochain->recevoirOSPF(ospf);
+        uint8_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
+        Routeur* prochain = ReseauGraphe::getRouteur(idRouteurProchain);
+        std::cout << "prochain\n";
+        std::cout << *prochain;
+
+        // prochain->recevoirOSPF(ospf);
     }
-    */
-    destination->recevoirOSPF(ospf);
 }
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
@@ -572,8 +572,8 @@ std::ostream& operator<<(std::ostream& flux, Routeur& r) {
     Machine& m = dynamic_cast<Machine&>(r);
     flux << m;
 
+    flux << "Table de routage :\n";
     for (auto it : r.getTableRoutage()) {
-        flux << *it.first << " : \n";
         for (Liaison* l : it.second) {
             flux << "\t" << *l << std::endl;
         }
