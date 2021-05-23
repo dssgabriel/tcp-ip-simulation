@@ -3,6 +3,8 @@
 // Constructeur //
 MyWindow::MyWindow() : QWidget()
 {
+    //Contexte
+    Contexte::GetInstance().getTemps() = 0;
 
     // Defintion de la fenetre de fond degrade noir vers gris, de taille initiale 500, 500, comportant un layout
     setStyleSheet("background-color: rgba(44, 47, 51, 255);");

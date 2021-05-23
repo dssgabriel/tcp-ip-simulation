@@ -20,7 +20,8 @@ Q_OBJECT
         QVBoxLayout* m_Vlayout;
 
     public:
-    // Constructeur
+
+    //Constructeur
     MyWindow();
 
     // Destructeur
