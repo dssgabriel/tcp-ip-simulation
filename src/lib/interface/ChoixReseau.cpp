@@ -1,4 +1,24 @@
+/**
+ * @file        ChoixReseau.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ChoixReseau.
+ * 
+ * @author      Jean-Christophe CHALAUD
+ * @date        2021
+ **/
+
 #include "ChoixReseau.hpp"
+
+ /**
+  * @brief Constructeur de la classe ChoixReseau.
+  * 
+  * Le constructeur contient :
+  * Un ensemble de parametre necesaire au fonctionnement de la simulation(machine de depart, machine d'arrivee,
+  * taille de la fenetre, nombre de paquet, type de paquet).
+  * Un bouton valide qui va recuperer toutes les information selectioner pour les envoiyer au different module qui 
+  * appele la fonction verifConfigMessage().
+  * Les boutons permetant de choisir le reseau voulu qui vont appele respectivement les fonctions selectConfigSimple(),
+  * sectConfigMaison(), selectConfigPme(), selectConfigEntreprise().
+  **/
 
 ChoixReseau::ChoixReseau() : QVBoxLayout()
 {
@@ -143,16 +163,36 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 
 }
 
+/**
+  * @brief Destructeur de la classe ChoixReseau.
+  * 
+  * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
+  * 
+  **/
+
 ChoixReseau::~ChoixReseau()
 {
 
 }
 
+/**
+  * @brief Permet d'envoiyer toutes les informations concernant le reseau.
+  * 
+  * Verfication de si un reseau a bien ete choisi avant la validation.
+  * Creation d'une QMessageBox pour demander de choisir un reseau.
+  * creation d'une deuxieme QMessageBox pour s'assurer que l'utilisateur est sur de ces choix.
+  * Utilisation de la fonction getConfig() de la classe contexte pour envoyer les information
+  * necessaire au bon fonctionnement de tcp/ip.
+  * Creation d'une troisieme QMessageBox pour informer l'utilissateur que les information 
+  * choisi on bien ete valider et envoyer.
+  * 
+  **/
+
 void ChoixReseau::verifConfigMessage(){
 
     if("contexte" == 0){
         QMessageBox m_Information;
-        m_Information.setText("Veuillez verifier vos parametres");
+        m_Information.setText("Veuillez choisir un reseau");
         m_Information.exec();
 
     }
@@ -175,6 +215,15 @@ void ChoixReseau::verifConfigMessage(){
     }
 }
 
+ /**
+  * @brief Permet de selectionner le reseau simple.
+  * 
+  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
+  * utiliser ce reseau. 
+  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
+  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  **/
+
 void ChoixReseau::selectConfigSimple(){
     QMessageBox m_Simple;
     m_Simple.setText("choix du reseau Simple");
@@ -191,6 +240,15 @@ void ChoixReseau::selectConfigSimple(){
     }
 }
 
+ /**
+  * @brief Permet de selectionner le reseau maison.
+  * 
+  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
+  * utiliser ce reseau. 
+  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
+  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  **/
+
 void ChoixReseau::selectConfigMaison(){
 
     QMessageBox m_Maison;
@@ -199,7 +257,7 @@ void ChoixReseau::selectConfigMaison(){
     m_Maison.addButton(QMessageBox::No);
     m_Maison.setDefaultButton(QMessageBox::No);
     if(m_Maison.exec() == QMessageBox::Yes){
-        Contexte::GetInstance().chargerConfig(1);
+        Contexte::GetInstance().chargerConfig(2);
     }
     else{
         QMessageBox m_Maison;
@@ -209,6 +267,15 @@ void ChoixReseau::selectConfigMaison(){
 
 }
 
+ /**
+  * @brief Permet de selectionner le reseau Pme.
+  * 
+  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
+  * utiliser ce reseau. 
+  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
+  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  **/
+
 void ChoixReseau::selectConfigPme(){
 
     QMessageBox m_Pme;
@@ -217,7 +284,7 @@ void ChoixReseau::selectConfigPme(){
     m_Pme.addButton(QMessageBox::No);
     m_Pme.setDefaultButton(QMessageBox::No);
     if(m_Pme.exec() == QMessageBox::Yes){
-        Contexte::GetInstance().chargerConfig(1);
+        Contexte::GetInstance().chargerConfig(3);
     }
     else{
         QMessageBox m_Pme;
@@ -227,6 +294,15 @@ void ChoixReseau::selectConfigPme(){
 
 }
 
+ /**
+  * @brief Permet de selectionner le reseau entreprise.
+  * 
+  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
+  * utiliser ce reseau. 
+  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
+  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  **/
+
 void ChoixReseau::selectConfigEntreprise(){
 
     QMessageBox m_Entreprise;
@@ -235,7 +311,7 @@ void ChoixReseau::selectConfigEntreprise(){
     m_Entreprise.addButton(QMessageBox::No);
     m_Entreprise.setDefaultButton(QMessageBox::No);
     if(m_Entreprise.exec() == QMessageBox::Yes){
-        Contexte::GetInstance().chargerConfig(1);
+        Contexte::GetInstance().chargerConfig(4);
     }
     else{
         QMessageBox m_Entreprise;
@@ -245,68 +321,24 @@ void ChoixReseau::selectConfigEntreprise(){
 
 }
 
-// void ChoixReseau::analyseConfig(){
+ /**
+  * @brief Permet d'afficher les differentes machine possible dans les QComboBox.
+  * 
+  * 
+  **/
 
-//     m_Depart->clear();
-//     m_Arrive->clear();
+void ChoixReseau::analyseConfig(){
+    m_Depart->clear();
+    m_Arrive->clear();
+        
+    auto vector = Contexte::GetInstance().getReseau()->getMachines();
+    m_Depart->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
 
-//     if(Contexte::GetInstance().getReseau()->nom == "simple"){
-        
-//         for(int i = 0; i<4; i++){
-//             m_Depart->addItem("ordinateur "+ QString::number(i));
-//             m_Arrive->addItem("ordinateur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<2; i++){
-//             m_Depart->addItem("routeur "+ QString::number(i));
-//             m_Arrive->addItem("routeur "+ QString::number(i));
-//         }
-//     }
-//     else if(Contexte::GetInstance().getReseau()->nom == "maison"){
-
-//         for(int i = 0; i<6; i++){
-//             m_Depart->addItem("ordinateur "+ QString::number(i));
-//             m_Arrive->addItem("ordinateur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<2; i++){
-//             m_Depart->addItem("routeur "+ QString::number(i));
-//             m_Arrive->addItem("routeur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<2; i++){
-//             m_Depart->addItem("commutateur "+ QString::number(i));
-//             m_Arrive->addItem("commutateur "+ QString::number(i));
-//         }
-//     }
-//     else if(Contexte::GetInstance().getReseau()->nom == "pme"){
-        
-//         for(int i = 0; i<10; i++){
-//             m_Depart->addItem("ordinateur "+ QString::number(i));
-//             m_Arrive->addItem("ordinateur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<5; i++){
-//             m_Depart->addItem("routeur "+ QString::number(i));
-//             m_Arrive->addItem("routeur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<3; i++){
-//             m_Depart->addItem("commutateur "+ QString::number(i));
-//             m_Arrive->addItem("commutateur "+ QString::number(i));
-//         }
-//     }
-//     else if(Contexte::GetInstance().getReseau()->nom == "entreprise"){
-        
-//         for(int i = 0; i<14; i++){
-//             m_Depart->addItem("ordinateur "+ QString::number(i));
-//             m_Arrive->addItem("ordinateur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<10; i++){
-//             m_Depart->addItem("routeur "+ QString::number(i));
-//             m_Arrive->addItem("routeur "+ QString::number(i));
-//         }
-//         for(int i = 0; i<5; i++){
-//             m_Depart->addItem("commutateur "+ QString::number(i));
-//             m_Arrive->addItem("commutateur "+ QString::number(i));
-//         }
-//     }
-    
-// }
+    for(std::size_t i =0; i < vector.size(); i++){
+        QString m_StringToQstring;
+        m_Depart->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
+        m_Arrive->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
+    }  
+}
 
 

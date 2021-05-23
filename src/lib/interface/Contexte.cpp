@@ -50,7 +50,7 @@ void Contexte::charger() {
     else if(m_Reseau->getNom() == "ReseauEntreprise") {
         AffichageReseau::GetInstance().configEntreprise();
     }
-    //ChoixReseau::GetInstance().analyseConfig();
+    // ChoixReseau::GetInstance().analyseConfig();
 }
 
 void Contexte::sauvegarder() {
