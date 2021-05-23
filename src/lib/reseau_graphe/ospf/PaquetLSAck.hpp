@@ -22,12 +22,12 @@ class PaquetLSAck: public PaquetOSPF {
         PaquetLSAck(const std::vector<std::bitset<32>>& m_IdLSARecus);
 
         // Destructeur
-        ~PaquetLSAck();
+        virtual ~PaquetLSAck();
 
         // Getters et setter
-        void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
-        const TypePaquet& getType() const override;
-        const uint16_t& getIdRouteur() const override;
+        virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
+        virtual const TypePaquet& getType() const override;
+        virtual const uint16_t& getIdRouteur() const override;
 
         std::vector<std::bitset<32>>& getIdLSARecus();
 };
