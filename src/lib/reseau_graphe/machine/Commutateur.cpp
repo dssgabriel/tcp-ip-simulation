@@ -213,8 +213,9 @@ std::ostream& operator<<(std::ostream& flux, Commutateur& c) {
     Machine& m = dynamic_cast<Machine&>(c);
     flux << m;
 
+    flux << "Table memoire :\n";
     for (auto it : c.getMemoire()) {
-        flux << *it.first << " -> " << *it.second << std::endl;
+        flux << "\t" << *it.first << " -> " << *it.second << std::endl;
     }
 
     return flux;

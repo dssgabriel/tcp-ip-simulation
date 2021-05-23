@@ -213,9 +213,15 @@ void test6() {
     // Machine* m2 = reseau->getMachine(p.m_Destination);
     // Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
 
+    // std::cout << *reseau;
+    // Machine* m3 = reseau->getMachine({192, 168, 1, 65});
+    // Routeur* r = dynamic_cast<Routeur*> (m3);
+    // std::cout << *r << std::endl;
+
     //
+    std::cout << "log #0 : Avant lancerOSPF\n";
     reseau->lancerOSPF();
-    std::cout << *reseau << std::endl;
+    std::cout << "log #0 : Après lancerOSPF\n";
 
     //
     // pc->remplirFileDonnees(p, pc2->getMac());
