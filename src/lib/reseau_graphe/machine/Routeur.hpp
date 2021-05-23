@@ -4,7 +4,7 @@
  * @author  Mickael Le Denmat
  * @author  Gabriel Dos Santos
  * @date 2021-05-22
- * 
+ *
  * @copyright Copyright (c) 2021
  */
 
@@ -34,8 +34,8 @@
 class Routeur : public Machine {
     private:
         // Attributs
-        static uint8_t m_NbRouteur;
-        uint8_t m_IdRouteur;
+        static uint16_t m_NbRouteur;
+        uint16_t m_IdRouteur;
         std::map<Routeur*, std::vector<Liaison*>> m_TableRoutage;
         std::queue<PaquetOSPF*> m_FilePaquetsOSPF;
         std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSADemandes;
@@ -56,9 +56,9 @@ class Routeur : public Machine {
         ~Routeur();
 
         // Getters
-        uint8_t getNbRouteur();
-        uint8_t getIdRouteur();
-        
+        uint16_t getNbRouteur();
+        uint16_t getIdRouteur();
+
         void setTableRoutage(Routeur* r, Liaison* l);
         const std::map<Routeur*, std::vector<Liaison*>>& getTableRoutage();
 
@@ -73,7 +73,7 @@ class Routeur : public Machine {
 
         // Overloading
         friend std::ostream& operator<<(
-            std::ostream& flux, 
+            std::ostream& flux,
             Routeur& r
         );
 };

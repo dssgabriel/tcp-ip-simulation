@@ -11,15 +11,15 @@
 
 #include "../ReseauGraphe.hpp"
 
-uint8_t Routeur::m_NbRouteur = 0;
+uint16_t Routeur::m_NbRouteur = 0;
 
 /**
  * @brief Constructeur de la classe Routeur.
  */
 Routeur::Routeur() : Machine() {
     m_NbRouteur++;
-    m_IdRouteur = m_NbRouteur;
 
+    m_IdRouteur = m_NbRouteur;
     m_Nom = "Routeur" + std::to_string(m_IdRouteur);
 
     m_TableRoutage.clear();
@@ -30,23 +30,25 @@ Routeur::Routeur() : Machine() {
 /**
  * @brief Destructeur de la classe Routeur.
  */
-Routeur::~Routeur() {}
+Routeur::~Routeur() {
+    m_NbRouteur--;
+}
 
 /**
  * @brief Accesseur du nombre de routeur.
  *
- * @return uint8_t le nombre de routeur.
+ * @return uint16_t le nombre de routeur.
  */
-uint8_t Routeur::getNbRouteur() {
+uint16_t Routeur::getNbRouteur() {
     return m_NbRouteur;
 }
 
 /**
  * @brief Accesseur de l'identifiant du routeur.
  *
- * @return uint8_t l'identifiant du routeur.
+ * @return uint16_t l'identifiant du routeur.
  */
-uint8_t Routeur::getIdRouteur() {
+uint16_t Routeur::getIdRouteur() {
     return m_IdRouteur;
 }
 
@@ -201,7 +203,7 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     for (auto iter : m_TableRoutage) {
         auto tabLiaison = iter.second;
         uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
-        Routeur* r = ReseauGraphe::getRouteur(uint8_t(routeurArrive));
+        Routeur* r = ReseauGraphe::getPtrRouteur(routeurArrive);
         std::cout << *r << std::endl;
 
         // Renvoie du routeur voisin.
@@ -225,23 +227,15 @@ void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
     if (recherche != m_TableRoutage.end()) {
         Liaison chemin = *recherche->second[0];
 
-        uint16_t idMachineProchain;
-        if (chemin.m_NumMachine1 + 1 != getIdMachine()) {
-            std::cout << "Log #0: `envoyerOSPF` ID Machine 1 = "
-                << chemin.m_NumMachine1 + 1 << std::endl;
-            idMachineProchain = chemin.m_NumMachine1 + 1;
-        } else {
-            std::cout << "Log #0: `envoyerOSPF` ID Machine 2 = "
-                << chemin.m_NumMachine2 + 1 << std::endl;
-            idMachineProchain = chemin.m_NumMachine2 + 1;
-        }
+        uint16_t idMachineProchain = chemin.m_NumMachine1 != getIdMachine() ?
+            chemin.m_NumMachine1 : chemin.m_NumMachine2;
 
-        uint8_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
-        Routeur* prochain = ReseauGraphe::getRouteur(idRouteurProchain);
-        std::cout << "prochain\n";
-        std::cout << *prochain;
+        uint16_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
 
-        // prochain->recevoirOSPF(ospf);
+        Routeur* prochain = ReseauGraphe::getPtrRouteur(idRouteurProchain);
+        std::cout << "Next Routeur: #" << *prochain << std::endl;
+
+        prochain->recevoirOSPF(ospf);
     }
 }
 
@@ -299,7 +293,7 @@ void Routeur::traitementPaquetHello(PaquetHello* hello) {
         exit(EXIT_FAILURE);
     }
 
-    Routeur* destinataire = ReseauGraphe::getRouteur(hello->getIdRouteur());
+    Routeur* destinataire = ReseauGraphe::getPtrRouteur(hello->getIdRouteur());
     if (destinataire) {
         std::vector<LSA> listeLSAs;
 
@@ -349,7 +343,7 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
         }
     }
 
-    Routeur* destinataire = ReseauGraphe::getRouteur(dbd->getIdRouteur());
+    Routeur* destinataire = ReseauGraphe::getPtrRouteur(dbd->getIdRouteur());
     // Le vecteur d'identifiant n'est pas vide, on doit envoyer un paquet LSR.
     if (destinataire != nullptr) {
         if (!idADemander.empty()) {
@@ -398,7 +392,7 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
             Routeur* routeur = iter.first;
 
             // L'identifiant du routeur correspond au LSA demande, on l'ajoute a la liste.
-            if (routeur->getIdRouteur() == (uint8_t)(id.to_ulong())) {
+            if (routeur->getIdRouteur() == (uint16_t)(id.to_ulong())) {
                 LSA lsa(routeur->getIdRouteur(),
                         routeur->getIdRouteur(),
                         routeur->getSousReseaux()
@@ -408,7 +402,7 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
         }
     }
 
-    Routeur* destinataire = ReseauGraphe::getRouteur(lsr->getIdRouteur());
+    Routeur* destinataire = ReseauGraphe::getPtrRouteur(lsr->getIdRouteur());
     if (destinataire) {
         // Ajout des identifiants des annonces a la table des LSA envoyes
         m_TableLSAEnvoyes.emplace(destinataire, lsr->getIdLSADemandes());
@@ -456,7 +450,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             );
             LSAMisAJour.emplace_back(misAJour);
 
-            Routeur* routeur = ReseauGraphe::getRouteur(lsa.getIdRouteur());
+            Routeur* routeur = ReseauGraphe::getPtrRouteur(lsa.getIdRouteur());
             std::vector<Liaison*> chemin;
             m_TableRoutage.emplace(routeur, chemin);
         }
@@ -483,7 +477,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
         }
     }
 
-    auto recherche = m_TableLSAEnvoyes.find(ReseauGraphe::getRouteur(lsu->getIdRouteur()));
+    auto recherche = m_TableLSAEnvoyes.find(ReseauGraphe::getPtrRouteur(lsu->getIdRouteur()));
     if (recherche != m_TableLSAEnvoyes.end()) {
         std::vector<std::bitset<32>> idLSAEnvoyes = recherche->second;
 
@@ -526,7 +520,7 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
         }
     }
 
-    Routeur* destinataire = ReseauGraphe::getRouteur(ack->getIdRouteur());
+    Routeur* destinataire = ReseauGraphe::getPtrRouteur(ack->getIdRouteur());
     auto recherche = m_TableLSAEnvoyes.find(destinataire);
 
     if (recherche != m_TableLSAEnvoyes.end()) {
@@ -536,7 +530,7 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
                 for (auto iter: m_TableRoutage) {
                     Routeur* routeur = iter.first;
 
-                    if (routeur->getIdRouteur() == (uint8_t)(idLSAManquant.to_ulong())) {
+                    if (routeur->getIdRouteur() == (uint16_t)(idLSAManquant.to_ulong())) {
                         LSA LSAManquant(routeur->getIdRouteur(),
                                         routeur->getIdRouteur(),
                                         routeur->getSousReseaux()
@@ -572,6 +566,7 @@ std::ostream& operator<<(std::ostream& flux, Routeur& r) {
     Machine& m = dynamic_cast<Machine&>(r);
     flux << m;
 
+    flux << "ID Routeur : " << r.getIdRouteur() << std::endl;
     flux << "Table de routage :\n";
     for (auto it : r.getTableRoutage()) {
         for (Liaison* l : it.second) {
