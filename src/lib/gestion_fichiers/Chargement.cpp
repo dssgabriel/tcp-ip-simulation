@@ -172,7 +172,9 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     for (auto liaisonJ : listeLiaisonsJ) {
         Liaison* l = new Liaison;
         l->m_NumMachine1 = liaisonJ["Depart"];
+        l->m_NumMachine1 += 1;
         l->m_NumMachine2 = liaisonJ["Arrivee"];
+        l->m_NumMachine2 += 1;
         l->m_Debit = liaisonJ["Debit"];
 
         // Ajout de la liaison dans le reseau.

@@ -59,8 +59,8 @@ class Ordinateur : public Machine {
         virtual void envoyer(const uint32_t cwnd, const bool isAck);
         virtual void recevoir(const uint32_t cwnd, const bool isAck);
 
-        void congestionAvoidance(std::bitset<16>& cwnd);
+        void congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh);
         void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);
-        void fastRetransmit(const std::bitset<32>& seq, std::bitset<16>& cwnd);
-        void fastRecovery(std::bitset<16>& cwnd);
+        void fastRetransmit(const std::bitset<32>& seq, std::bitset<16>& cwnd, uint16_t& ssthresh);
+        void fastRecovery(std::bitset<16>& cwnd, uint16_t& ssthresh);
 };

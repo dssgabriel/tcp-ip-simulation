@@ -33,7 +33,7 @@ PaquetLSAck::~PaquetLSAck() {}
  * @param type Le type du paquet.
  * @param idRouteur L'identifiant du routeur emetteur du paquet.
  */
-void PaquetLSAck::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
+void PaquetLSAck::setEntete(const TypePaquet& type, const uint16_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
@@ -52,7 +52,7 @@ const TypePaquet& PaquetLSAck::getType() const {
  *
  * @return L'identifiant du routeur emetteur du paquet.
  */
-const uint8_t& PaquetLSAck::getIdRouteur() const {
+const uint16_t& PaquetLSAck::getIdRouteur() const {
     return m_IdRouteur;
 }
 
