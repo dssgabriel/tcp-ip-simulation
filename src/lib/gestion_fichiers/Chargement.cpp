@@ -3,17 +3,17 @@
  * @author Mickael Le Denmat
  * @brief Vous trouverez ici les fonctions implementees pour le chargement
  * @date 2021-05-22
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #include "Chargement.hpp"
 
 /**
  * @brief Lit les informations du reseau dans les fichiers de configurations.
- *          
- * 
+ *
+ *
  * @param nomFichier pour lire les informations.
  * @return std::unique_ptr<ReseauGraphe> initialise avec les informations du fichier.
  */
@@ -39,7 +39,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
 
     // Remplissage du reseau.
     reseau->setNom(j["Nom du reseau"]);
-    
+
     // Initialisation variables.
     Machine* m = nullptr;
     IPv4 ip;
@@ -172,8 +172,6 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
             r->setTableRoutage(r2, l);
             r2->setTableRoutage(r, l);
         }
-
-        delete l;
     }
 
     // Convertion.
@@ -214,7 +212,7 @@ void chargerConfig(const std::string& cheminFichier,
         reseau = chargerReseau("../../src/include/configReseau/ReseauPme.json");
     } else if (choixReseau == "ReseauEntreprise") {
         reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
-    } else { 
+    } else {
         std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
         std::cout << "Dans la fonction 'chargerConfig'. ";
         std::cout << "Reseau choisi inconnu.\n";

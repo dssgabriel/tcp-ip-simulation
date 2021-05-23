@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <omp.h>
 
 #include "ReseauGraphe.hpp"
 
@@ -35,17 +36,16 @@ uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
         if (m->getIdMachine() == idMachine) {
             Routeur* r = dynamic_cast<Routeur*>(m);
 
-            if (r) {
+            if (r != nullptr) {
                 return r->getIdRouteur();
-            } else {
-                return 0;
             }
         }
     }
 
-    std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
-        << "Dans la methode 'getIdRouteurDepuisIdMachine'. '"
-        << idMachine << "' introuvable sur le reseau.\n";
+    std::cout << "ERREUR : fichier `ReseauGraphe.cpp`\n"
+        << "\tmethode `getIdRouteurDepuisIdMachine` : #"
+        << idMachine << " introuvable sur le reseau"
+        << std::endl;
     return 0;
 }
 
@@ -58,8 +58,9 @@ Routeur* ReseauGraphe::getRouteur(const uint8_t idRouteur) {
         }
     }
 
-    std::cout << "ERREUR : methode `getRouteur` : `"
-        << idRouteur << "` introuvable sur le reseau.\n";
+    std::cout << "ERREUR : fichier `ReseauGraphe.cpp`\n"
+        << "\tmethode `getRouteur` : #"
+        << idRouteur << " introuvable sur le reseau.\n";
     return nullptr;
 }
 
@@ -159,7 +160,7 @@ uint8_t getIdRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
                                std::vector<uint8_t>& nonVisites)
 {
     uint64_t metriqueMinimale = UINT64_MAX;
-    uint8_t idRouteurPlusProche;
+    uint8_t idRouteurPlusProche = 0;
 
     for (size_t i = 0; i < nonVisites.size(); ++i) {
         if (sommeMetrique[nonVisites[i]] < metriqueMinimale) {
@@ -178,8 +179,11 @@ std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint8_t& courant) {
     std::vector<Liaison> cheminsVoisins;
 
     for (Liaison chemin: m_Liaisons) {
+        std::cout << "Log #0: `getCheminVoisin`" << std::endl;
         uint8_t r1 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine1);
+        std::cout << "Log #1: `getCheminVoisin`" << std::endl;
         uint8_t r2 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine2);
+        std::cout << "Log #2: `getCheminVoisin`" << std::endl;
 
         if (r1 == courant || r2 == courant) {
             cheminsVoisins.emplace_back(chemin);
@@ -237,8 +241,11 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
         std::vector<Liaison> cheminsVoisins = getCheminsVoisins(courant);
 
         for (Liaison suivante: cheminsVoisins) {
+            std::cout << "Log #0: `routageDynamique`" << std::endl;
             uint8_t r1 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine1);
+            std::cout << "Log #1: `routageDynamique`" << std::endl;
             uint8_t r2 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine2);
+            std::cout << "Log #2: `routageDynamique`" << std::endl;
 
             if (r1 != 0 && r1 == courant) {
                 if (sommeMetrique[r2 - 1] > sommeMetrique[courant - 1] + suivante.m_Debit) {
@@ -265,9 +272,11 @@ void ReseauGraphe::lancerOSPF() {
 
         if (routeur) {
             std::vector<Machine*> voisins = routeur->getVoisins();
+
+            #pragma omp parallel for
             for (Machine* voisin: voisins) {
                 Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
-                
+
                 if (routeurVoisin) {
                     PaquetHello* hello = new PaquetHello(routeurVoisin->getIdRouteur());
                     hello->setEntete(Hello, routeur->getIdRouteur());
