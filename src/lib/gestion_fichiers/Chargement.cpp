@@ -10,6 +10,22 @@
 
 #include "Chargement.hpp"
 
+#define DEBUG 1
+// #define DEBUG 1
+
+
+#if DEBUG
+#define ReseauSimple "../../src/include/configReseau/ReseauSimple.json"
+#define ReseauMaison "../../src/include/configReseau/ReseauMaison.json"
+#define ReseauPME "../../src/include/configReseau/ReseauPME.json"
+#define ReseauEntreprise "../../src/include/configReseau/ReseauEntreprise.json"
+#else
+#define ReseauSimple "../src/include/configReseau/ReseauSimple.json"
+#define ReseauMaison "../src/include/configReseau/ReseauMaison.json"
+#define ReseauPME "../src/include/configReseau/ReseauPME.json"
+#define ReseauEntreprise "../src/include/configReseau/ReseauEntreprise.json"
+#endif
+
 /**
  * @brief Lit les informations du reseau dans les fichiers de configurations.
  *
@@ -18,18 +34,21 @@
  * @return std::unique_ptr<ReseauGraphe> initialise avec les informations du fichier.
  */
 std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
-
     // Initialisation du reseau.
     ReseauGraphe* reseau = new ReseauGraphe();
     if (!reseau) {
-        std::cout << "ERREUR : Dans la fonction 'chargerReseau' : pointeur nul.\n";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. "
+            << "Dans la fonction 'chargerReseau'. "
+            << "Pointeur nul.\n";
         return std::unique_ptr<ReseauGraphe>(nullptr);
     }
 
     // Lecture du fichier.
     std::ifstream lecture(nomFichier);
     if (lecture.fail()) {
-        std::cout << "ERREUR : Dans la fonction 'chargerReseau' : Fichier JSON introuvable.\n";
+        std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. "
+            << "Dans la fonction 'chargerReseau'. "
+            << "Fichier JSON introuvable.\n";
         exit(EXIT_FAILURE);
     }
 
@@ -165,6 +184,10 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         a->setVoisin(*b);
         b->setVoisin(*a);
 
+        // Initialisation exacte de la Liaison
+        l->m_NumMachine1 += 1;
+        l->m_NumMachine2 += 1;
+
         // Remplir table de routage.
         Routeur* r = dynamic_cast<Routeur*>(a);
         Routeur* r2 = dynamic_cast<Routeur*>(b);
@@ -205,13 +228,13 @@ void chargerConfig(const std::string& cheminFichier,
     // Chargement du reseau correspondant.
     std::string choixReseau = j["Nom du reseau"];
     if (choixReseau == "ReseauSimple") {
-        reseau = chargerReseau("../src/include/configReseau/ReseauSimple.json");
+        reseau = chargerReseau(ReseauSimple);
     } else if (choixReseau == "ReseauMaison") {
-        reseau = chargerReseau("../src/include/configReseau/ReseauMaison.json");
-    } else if (choixReseau == "ReseauPme") {
-        reseau = chargerReseau("../src/include/configReseau/ReseauPme.json");
+        reseau = chargerReseau(ReseauMaison);
+    } else if (choixReseau == "ReseauPME") {
+        reseau = chargerReseau(ReseauPME);
     } else if (choixReseau == "ReseauEntreprise") {
-        reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
+        reseau = chargerReseau(ReseauEntreprise);
     } else {
         std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
         std::cout << "Dans la fonction 'chargerConfig'. ";

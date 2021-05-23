@@ -26,12 +26,12 @@ class ReseauGraphe {
         static std::vector<Liaison> m_Liaisons;
 
         // Methodes privees
-        static uint8_t getRouteur(const uint16_t idMachine);
-        static std::vector<Liaison> getCheminsVoisins(const uint8_t& routeurCourant);
+        static uint16_t getRouteur(const uint16_t& idMachine);
+        static std::vector<Liaison> getCheminsVoisins(const uint16_t& routeurCourant);
         static void getPlusCourtChemin(
-            const uint8_t& depart,
-            const uint8_t& arrivee,
-            std::vector<int16_t> peres,
+            const uint16_t& depart,
+            const uint16_t& arrivee,
+            std::vector<int32_t> peres,
             std::vector<Liaison*> plusCourtChemin
         );
 
@@ -46,8 +46,8 @@ class ReseauGraphe {
         void setNom(const std::string nom);
         const std::string& getNom() const;
 
-        static Routeur* getRouteur(const uint8_t idRouteur);
-        static uint8_t getIdRouteurDepuisIdMachine(const uint16_t idMachine);
+        static Routeur* getPtrRouteur(const uint16_t& idRouteur);
+        static uint16_t getIdRouteurDepuisIdMachine(const uint16_t& idMachine);
 
         static Machine* getMachine(const IPv4& ip);
         Machine* getMachine(const uint16_t& id);
@@ -58,7 +58,7 @@ class ReseauGraphe {
 
         const std::vector<Liaison>& getLiaisons() const;
 
-        static const std::vector<uint8_t> getIdsRouteurs();
+        static const std::vector<uint16_t> getIdsRouteurs();
 
         // Overloading
         friend std::ostream& operator<<(
@@ -72,6 +72,6 @@ class ReseauGraphe {
         void ajouter(Machine* m);
         void ajouter(Liaison l);
 
-        static std::vector<Liaison*> routageDynamique(const uint8_t depart, const uint8_t arrivee);
+        static std::vector<Liaison*> routageDynamique(const uint16_t& depart, const uint16_t& arrivee);
         void lancerOSPF();
 };

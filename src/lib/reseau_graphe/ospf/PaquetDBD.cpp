@@ -33,7 +33,7 @@ PaquetDBD::~PaquetDBD() {}
  * @param type Le type du paquet.
  * @param idRouteur L'identifiant du routeur emetteur du paquet.
  */
-void PaquetDBD::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
+void PaquetDBD::setEntete(const TypePaquet& type, const uint16_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
@@ -52,7 +52,7 @@ const TypePaquet& PaquetDBD::getType() const {
  *
  * @return L'identifiant du routeur emetteur du paquet.
  */
-const uint8_t& PaquetDBD::getIdRouteur() const {
+const uint16_t& PaquetDBD::getIdRouteur() const {
     return m_IdRouteur;
 }
 

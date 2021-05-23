@@ -65,19 +65,27 @@ void test3() {
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    p.m_NbPaquet = 4;
-    p.m_Ssthresh = 8;
+    p.m_NbPaquet = 320;
+    p.m_Ssthresh = 4;
     p.m_TypeFichier = FTP;
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
-    
+
     //
-    // std::bitset<16> cwnd = 1;
-    // pc.slowStart(cwnd, p.m_Ssthresh);
+    std::bitset<16> cwnd = 1;
+    pc.lancerHorloge();
+    pc.slowStart(cwnd, p.m_Ssthresh);
+    pc.arreterHorloge();
+    for (auto element : pc.getControleCongestion()){
+        std::cout << "temps : " << element.m_Temps 
+            << ", valeur cwnd " << element.m_ValeurCwnd
+            << " mode : " << element.m_Mode << std::endl; 
+    }
+    
     // pc.envoyer(2);
     // pc.envoyer(3);
-    pc.envoyer(4, false);
+    // pc.envoyer(4, false);
 }
 
 void test4() {
@@ -149,7 +157,7 @@ void test5() {
     r.setMac({229, 73, 221, 65, 26, 32});
     r2.setIp({192, 168, 1, 6});
     r2.setMac({56, 51, 113, 150, 102, 83});
-    
+
     //
     ParamInterface p;
     p.m_Source = pc.getIp();
@@ -162,10 +170,10 @@ void test5() {
     //
     pc.setVoisin(c);
     c.setVoisin(pc);
-    
+
     c.setVoisin(r);
     r.setVoisin(c);
-    
+
     r.setVoisin(r2);
     r2.setVoisin(r);
 
@@ -208,14 +216,18 @@ void test6() {
     //
     // Machine* m = reseau->getMachine(p.m_Source);
     // Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
-    
+
     //
     // Machine* m2 = reseau->getMachine(p.m_Destination);
     // Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
 
+    // std::cout << *reseau;
+    // Machine* m3 = reseau->getMachine({192, 168, 1, 65});
+    // Routeur* r = dynamic_cast<Routeur*> (m3);
+    // std::cout << *r << std::endl;
+
     //
     reseau->lancerOSPF();
-    std::cout << *reseau << std::endl;
 
     //
     // pc->remplirFileDonnees(p, pc2->getMac());
@@ -242,7 +254,7 @@ void test7() {
     //
     Machine* m = reseau->getMachine(p.m_Source);
     Ordinateur* pc = dynamic_cast<Ordinateur*>(m);
-    
+
     //
     Machine* m2 = reseau->getMachine(p.m_Destination);
     Ordinateur* pc2 = dynamic_cast<Ordinateur*>(m2);
@@ -263,10 +275,10 @@ int main(void) {
     srand(time(NULL));
     // test1();
     // test2();
-    // test3();
+    test3();
     // test4();
     // test5();
-    test6();
+    // test6();
     // test7();
 
     return 0;

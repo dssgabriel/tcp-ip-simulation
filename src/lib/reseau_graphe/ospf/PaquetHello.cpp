@@ -31,7 +31,7 @@ PaquetHello::~PaquetHello() {}
  * @param type Le type du paquet.
  * @param idRouteur L'identifiant du routeur emetteur du paquet.
  */
-void PaquetHello::setEntete(const TypePaquet& type, const uint8_t& idRouteur) {
+void PaquetHello::setEntete(const TypePaquet& type, const uint16_t& idRouteur) {
     m_Type = type;
     m_IdRouteur = idRouteur;
 }
@@ -50,7 +50,7 @@ const TypePaquet& PaquetHello::getType() const {
  *
  * @return L'identifiant du routeur emetteur du paquet.
  */
-const uint8_t& PaquetHello::getIdRouteur() const {
+const uint16_t& PaquetHello::getIdRouteur() const {
     return m_IdRouteur;
 }
 
@@ -59,6 +59,6 @@ const uint8_t& PaquetHello::getIdRouteur() const {
  *
  * @return L'identifiant du routeur recepteur du paquet.
  */
-const uint8_t& PaquetHello::getIdDestinataire() const {
+const uint16_t& PaquetHello::getIdDestinataire() const {
     return m_IdVoisin;
 }

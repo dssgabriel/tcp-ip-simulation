@@ -1,4 +1,21 @@
+/**
+ * @file        ConfigReseau.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ConfigReseau.
+ * 
+ * @author      Jean-Christophe CHALAUD
+ * @date        2021
+ **/
+
 #include "ConfigReseau.hpp"
+
+ /**
+  * @brief Constructeur de la classe ConfigReseau.
+  * 
+  * Le constructeur contient :
+  * Une QTextEdit qui vas contenir des exemples de ce qui sera afficher par la suite.
+  * Dans lequel les differentes lignes ont des couleurs deifferentes.
+  * 
+  **/
 
 ConfigReseau::ConfigReseau() : QHBoxLayout()
 {
@@ -20,14 +37,35 @@ ConfigReseau::ConfigReseau() : QHBoxLayout()
     m_FenetreDonnee->setPalette(palette);
 }
 
-// Destructeur //
+/**
+  * @brief Destructeur de la classe ConfigReseau.
+  * 
+  * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
+  * 
+  **/
+
 ConfigReseau::~ConfigReseau(){
 
 }
 
+ /**
+  * @brief Permet d'initialiser la QTextEdit.
+  * 
+  * Mise a null de toute la QTextEdit. 
+  **/
+
 void ConfigReseau::initialiserTexte(){
     m_FenetreDonnee->clear();
 }
+
+ /**
+  * @brief Permet de rafrechir et de rajouter les informations voulu dans la QTextEdit.
+  * 
+  * Création d'une variable QString.
+  * Convertion d'un std::string qui est retourner par la fonction informationsReseau() de la classe contexte
+  * en un QString.
+  * Ajout de ce QString au QTextEdit. 
+  **/
 
 void ConfigReseau::rafraichirTexte(){
     QString m_StringToQstring;

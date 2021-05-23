@@ -8,7 +8,7 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <omp.h>
+// #include <omp.h>
 
 #include "ReseauGraphe.hpp"
 
@@ -27,11 +27,11 @@ void ReseauGraphe::setNom(const std::string nom) {
     m_Nom = nom;
 }
 
-const std::string& ReseauGraphe::getNom() const{
+const std::string& ReseauGraphe::getNom() const {
     return m_Nom;
 }
 
-uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
+uint16_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t& idMachine) {
     for (Machine* m: m_Machines) {
         if (m->getIdMachine() == idMachine) {
             Routeur* r = dynamic_cast<Routeur*>(m);
@@ -49,7 +49,7 @@ uint8_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t idMachine) {
     return 0;
 }
 
-Routeur* ReseauGraphe::getRouteur(const uint8_t idRouteur) {
+Routeur* ReseauGraphe::getPtrRouteur(const uint16_t& idRouteur) {
     for (Machine* m: m_Machines) {
         Routeur* r= dynamic_cast<Routeur*>(m);
 
@@ -109,8 +109,8 @@ const std::vector<Liaison>& ReseauGraphe::getLiaisons() const {
     return m_Liaisons;
 }
 
-const std::vector<uint8_t> ReseauGraphe::getIdsRouteurs() {
-    std::vector<uint8_t> idsRouteurs;
+const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
+    std::vector<uint16_t> idsRouteurs;
 
     for (Machine* iter: m_Machines) {
         Routeur* r = dynamic_cast<Routeur*>(iter);
@@ -121,25 +121,6 @@ const std::vector<uint8_t> ReseauGraphe::getIdsRouteurs() {
     }
 
     return idsRouteurs;
-}
-
-// Overloading
-std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
-    flux << "Nom du réseau : " << reseau.getNom() << "\n";
-
-    // Affichage de la liste des machines.
-    std::vector<Machine*> cpyMachines = reseau.getMachines();
-    for (Machine* m : cpyMachines) {
-        flux << *m << "\n";
-    }
-
-    // Affichage de la liste des liaisons.
-    std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
-    for (Liaison l : cpyLiaisons) {
-        flux << l << "\n";
-    }
-
-    return flux;
 }
 
 // Methodes
@@ -156,14 +137,14 @@ void ReseauGraphe::ajouter(Liaison l) {
 }
 
 uint8_t getIdRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
-                               std::vector<uint8_t>& visites,
-                               std::vector<uint8_t>& nonVisites)
+                               std::vector<uint16_t>& visites,
+                               std::vector<uint16_t>& nonVisites)
 {
-    uint64_t metriqueMinimale = UINT64_MAX;
-    uint8_t idRouteurPlusProche = 0;
+    uint64_t metriqueMinimale = 0;
+    uint16_t idRouteurPlusProche = 0;
 
     for (size_t i = 0; i < nonVisites.size(); ++i) {
-        if (sommeMetrique[nonVisites[i]] < metriqueMinimale) {
+        if (sommeMetrique[nonVisites[i]] > metriqueMinimale) {
             metriqueMinimale = sommeMetrique[nonVisites[i]];
             idRouteurPlusProche = nonVisites[i];
         }
@@ -175,15 +156,12 @@ uint8_t getIdRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
     return idRouteurPlusProche;
 }
 
-std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint8_t& courant) {
+std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint16_t& courant) {
     std::vector<Liaison> cheminsVoisins;
 
     for (Liaison chemin: m_Liaisons) {
-        std::cout << "Log #0: `getCheminVoisin`" << std::endl;
-        uint8_t r1 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine1);
-        std::cout << "Log #1: `getCheminVoisin`" << std::endl;
-        uint8_t r2 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine2);
-        std::cout << "Log #2: `getCheminVoisin`" << std::endl;
+        uint16_t r1 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine1);
+        uint16_t r2 = getIdRouteurDepuisIdMachine(chemin.m_NumMachine2);
 
         if (r1 == courant || r2 == courant) {
             cheminsVoisins.emplace_back(chemin);
@@ -193,18 +171,18 @@ std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint8_t& courant) {
     return cheminsVoisins;
 }
 
-void ReseauGraphe::getPlusCourtChemin(const uint8_t& depart,
-                                      const uint8_t& arrivee,
-                                      std::vector<int16_t> peres,
+void ReseauGraphe::getPlusCourtChemin(const uint16_t& depart,
+                                      const uint16_t& arrivee,
+                                      std::vector<int32_t> peres,
                                       std::vector<Liaison*> plusCourtChemin)
 {
-    uint8_t courant = arrivee;
+    uint16_t courant = arrivee;
 
     while (courant != depart) {
-        uint8_t suivant = peres[courant - 1];
+        uint16_t suivant = peres[courant - 1];
 
-        Routeur* routeur1 = getRouteur(courant);
-        Routeur* routeur2 = getRouteur(suivant);
+        Routeur* routeur1 = getPtrRouteur(courant);
+        Routeur* routeur2 = getPtrRouteur(suivant);
         uint16_t idMachine1 = routeur1->getIdMachine();
         uint16_t idMachine2 = routeur2->getIdMachine();
 
@@ -222,12 +200,12 @@ void ReseauGraphe::getPlusCourtChemin(const uint8_t& depart,
     std::reverse(plusCourtChemin.begin(), plusCourtChemin.end());
 }
 
-std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
-                                                     const uint8_t arrivee)
+std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
+                                                     const uint16_t& arrivee)
 {
-    std::vector<uint8_t> visites, nonVisites = getIdsRouteurs();
+    std::vector<uint16_t> visites, nonVisites = getIdsRouteurs();
     std::vector<uint64_t> sommeMetrique(nonVisites.size(), UINT64_MAX);
-    std::vector<int16_t> peres(nonVisites.size(), -1);
+    std::vector<int32_t> peres(nonVisites.size(), -1);
     std::vector<Liaison*> plusCourtChemin;
 
     sommeMetrique[depart - 1] = 0;
@@ -237,23 +215,20 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
     }
 
     while (visites.size() < nonVisites.size()) {
-        uint8_t courant = getIdRouteurPlusProche(sommeMetrique, visites, nonVisites);
+        uint16_t courant = getIdRouteurPlusProche(sommeMetrique, visites, nonVisites);
         std::vector<Liaison> cheminsVoisins = getCheminsVoisins(courant);
 
         for (Liaison suivante: cheminsVoisins) {
-            std::cout << "Log #0: `routageDynamique`" << std::endl;
-            uint8_t r1 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine1);
-            std::cout << "Log #1: `routageDynamique`" << std::endl;
-            uint8_t r2 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine2);
-            std::cout << "Log #2: `routageDynamique`" << std::endl;
+            uint16_t r1 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine1);
+            uint16_t r2 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine2);
 
             if (r1 != 0 && r1 == courant) {
-                if (sommeMetrique[r2 - 1] > sommeMetrique[courant - 1] + suivante.m_Debit) {
+                if (sommeMetrique[r2 - 1] < sommeMetrique[courant - 1] + suivante.m_Debit) {
                     sommeMetrique[r2 - 1] = sommeMetrique[courant - 1] + suivante.m_Debit;
                     peres[r2 - 1] = courant;
                 }
             } else if (r2 != 0 && r2 == courant) {
-                if (sommeMetrique[r1 - 1] > sommeMetrique[courant - 1] + suivante.m_Debit) {
+                if (sommeMetrique[r1 - 1] < sommeMetrique[courant - 1] + suivante.m_Debit) {
                     sommeMetrique[r1 - 1] = sommeMetrique[courant - 1] + suivante.m_Debit;
                     peres[r1 - 1] = courant;
                 }
@@ -267,22 +242,45 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
 }
 
 void ReseauGraphe::lancerOSPF() {
+    size_t c1 = 0, c2 = 0;
     for (Machine* machine: m_Machines) {
         Routeur* routeur = dynamic_cast<Routeur*>(machine);
 
         if (routeur) {
             std::vector<Machine*> voisins = routeur->getVoisins();
+            c1++; std::cout << "Router #" << c1 << std::endl;
 
-            #pragma omp parallel for
+            // #pragma omp parallel for
             for (Machine* voisin: voisins) {
                 Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
 
                 if (routeurVoisin) {
-                    PaquetHello* hello = new PaquetHello(routeurVoisin->getIdRouteur());
+                    c2++; std::cout << "Neighboor Router #" << c2 << std::endl;
+                    PaquetOSPF* hello = new PaquetHello(routeurVoisin->getIdRouteur());
                     hello->setEntete(Hello, routeur->getIdRouteur());
                     routeur->envoyerOSPF(routeurVoisin, hello);
                 }
             }
         }
     }
+}
+
+// Overloading
+std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
+    flux << "Nom du réseau : " << reseau.getNom() << "\n";
+
+    // Affichage de la liste des machines.
+    for (Machine* m : reseau.getMachines()) {
+        if (Routeur* r = dynamic_cast<Routeur*> (m)) {
+            flux << *r << "\n";
+        } else if (Commutateur* c = dynamic_cast<Commutateur*> (m)) {
+            flux << *c << "\n";
+        } else if (Ordinateur* o = dynamic_cast<Ordinateur*> (m)) {
+            flux << *o << "\n";
+        } else {
+            flux << *m << "\n";
+        }
+    }
+
+    return flux;
 }
