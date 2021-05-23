@@ -63,4 +63,5 @@ class Ordinateur : public Machine {
         void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);
         void fastRetransmit(const std::bitset<32>& seq, std::bitset<16>& cwnd, uint16_t& ssthresh);
         void fastRecovery(std::bitset<16>& cwnd, uint16_t& ssthresh);
+        
 };

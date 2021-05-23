@@ -65,7 +65,7 @@ void test3() {
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    p.m_NbPaquet = 32;
+    p.m_NbPaquet = 320;
     p.m_Ssthresh = 4;
     p.m_TypeFichier = FTP;
 
@@ -74,7 +74,15 @@ void test3() {
 
     //
     std::bitset<16> cwnd = 1;
+    pc.lancerHorloge();
     pc.slowStart(cwnd, p.m_Ssthresh);
+    pc.arreterHorloge();
+    for (auto element : pc.getControleCongestion()){
+        std::cout << "temps : " << element.m_Temps 
+            << ", valeur cwnd " << element.m_ValeurCwnd
+            << " mode : " << element.m_Mode << std::endl; 
+    }
+    
     // pc.envoyer(2);
     // pc.envoyer(3);
     // pc.envoyer(4, false);
@@ -267,10 +275,10 @@ int main(void) {
     srand(time(NULL));
     // test1();
     // test2();
-    // test3();
+    test3();
     // test4();
     // test5();
-    test6();
+    // test6();
     // test7();
 
     return 0;
