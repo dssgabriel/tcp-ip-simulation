@@ -67,14 +67,14 @@ Machine::Machine() {
     m_Voisins.clear();
     
     while(!m_FileDonnees.empty()) {
-        m_FileDonnees.pop();
+        m_FileDonnees.pop_back();
     }
 }
 
 Machine::~Machine() {
-    for (Machine *m : m_Voisins) {
+    /*for (Machine *m : m_Voisins) {
         delete m;
-    }
+    }*/
 }
 
 /**
@@ -229,7 +229,7 @@ std::vector<Machine*> Machine::getVoisins() const {
  * @param trame a mettre dans la file d'attente.
  */
 void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
-    m_FileDonnees.emplace(trame);
+    m_FileDonnees.emplace_back(trame);
 }
 
 /**
@@ -237,7 +237,7 @@ void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
  * 
  * @return std::queue<std::stack<std::bitset<16>>>& la liste d'attente.
  */
-std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
+std::deque<std::stack<std::bitset<16>>>& Machine::getDonnees() {
     return m_FileDonnees;
 }
 
@@ -249,7 +249,7 @@ std::queue<std::stack<std::bitset<16>>>& Machine::getDonnees() {
 std::stack<std::bitset<16>> Machine::suppDonnee() {
     if (!m_FileDonnees.empty()) {
         std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
-        m_FileDonnees.pop();
+        m_FileDonnees.pop_front();
         return donnee;
     } else {
         std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. "
@@ -287,30 +287,6 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     std::cout << m_Nom << " : fin traitement\n";
 }
 
-
-bool estVide(std::queue<std::stack<std::bitset<16>>> donnees) {
-    while (!donnees.empty()) {
-        //
-        std::stack<std::bitset<16>> donnee = donnees.front();
-        donnees.pop();
-
-        //
-        Physique couchePhy;
-        Internet coucheInt;
-        Transport coucheTrans;
-
-        // On desencapsule.
-        std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donnee);
-        std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
-        coucheTrans.desencapsuler(segment);
-        
-        if (coucheTrans.getAck2().to_ulong() == 0) {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 /**
  * @brief Redefinition de l'operateur d'affichage.

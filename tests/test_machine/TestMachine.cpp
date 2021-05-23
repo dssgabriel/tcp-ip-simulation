@@ -65,19 +65,19 @@ void test3() {
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    p.m_NbPaquet = 4;
-    p.m_Ssthresh = 8;
+    p.m_NbPaquet = 32;
+    p.m_Ssthresh = 4;
     p.m_TypeFichier = FTP;
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
 
     //
-    // std::bitset<16> cwnd = 1;
-    // pc.slowStart(cwnd, p.m_Ssthresh);
+    std::bitset<16> cwnd = 1;
+    pc.slowStart(cwnd, p.m_Ssthresh);
     // pc.envoyer(2);
     // pc.envoyer(3);
-    pc.envoyer(4, false);
+    // pc.envoyer(4, false);
 }
 
 void test4() {
