@@ -123,25 +123,6 @@ const std::vector<uint8_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
-// Overloading
-std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
-    flux << "Nom du réseau : " << reseau.getNom() << "\n";
-
-    // Affichage de la liste des machines.
-    std::vector<Machine*> cpyMachines = reseau.getMachines();
-    for (Machine* m : cpyMachines) {
-        flux << *m << "\n";
-    }
-
-    // Affichage de la liste des liaisons.
-    std::vector<Liaison> cpyLiaisons = reseau.getLiaisons();
-    for (Liaison l : cpyLiaisons) {
-        flux << l << "\n";
-    }
-
-    return flux;
-}
-
 // Methodes
 bool ReseauGraphe::estConnexe() {
     return false;
@@ -268,21 +249,55 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint8_t depart,
 
 void ReseauGraphe::lancerOSPF() {
     for (Machine* machine: m_Machines) {
+        std::cout << "log #0 : avant for machine\n";
         Routeur* routeur = dynamic_cast<Routeur*>(machine);
 
         if (routeur) {
+            std::cout << "\tlog #1 : avant if routeur\n";
             std::vector<Machine*> voisins = routeur->getVoisins();
 
             #pragma omp parallel for
             for (Machine* voisin: voisins) {
+                std::cout << "\t\tlog #2 : avant for voisine\n";
                 Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
 
                 if (routeurVoisin) {
+                    std::cout << "\t\t\tlog #3 : avant if voisin\n";
                     PaquetHello* hello = new PaquetHello(routeurVoisin->getIdRouteur());
                     hello->setEntete(Hello, routeur->getIdRouteur());
+                    std::cout << "\t\t\tlog #3.5 : avant envoyerOSPF\n"
+                        << "envoyerOSPF(" << routeurVoisin->getIp()
+                        << ", hello)\n"
+                        << "############################################\n";
                     routeur->envoyerOSPF(routeurVoisin, hello);
+                    std::cout << "\t\t\tlog #3.5 : apres envoyerOSPF\n"
+                        << "############################################\n";
+                    std::cout << "\t\t\tlog #3 : apres if voisin\n";
                 }
+                std::cout << "\t\tlog #2 : apres for voisine\n";
             }
+            std::cout << "\tlog #1 : apres if routeur\n";
+        }
+        std::cout << "log #0 : apres for machine\n";
+    }
+}
+
+// Overloading
+std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
+    flux << "Nom du réseau : " << reseau.getNom() << "\n";
+
+    // Affichage de la liste des machines.
+    for (Machine* m : reseau.getMachines()) {
+        if (Routeur* r = dynamic_cast<Routeur*> (m)) {
+            flux << *r << "\n";
+        } else if (Commutateur* c = dynamic_cast<Commutateur*> (m)) {
+            flux << *c << "\n";
+        } else if (Ordinateur* o = dynamic_cast<Ordinateur*> (m)) {
+            flux << *o << "\n";
+        } else {
+            flux << *m << "\n";
         }
     }
+
+    return flux;
 }

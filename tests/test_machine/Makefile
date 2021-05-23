@@ -11,6 +11,7 @@ FILES = $(TEST) $(COMMUN) $(FICHIER) $(PROTOCOLE) $(RESEAU)
 
 all:
 	$(CC) $(CFLAGS) $(FILES) -o test
+	./test
 
 clean:
 	@rm -Rf test
