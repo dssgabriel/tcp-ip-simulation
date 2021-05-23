@@ -46,7 +46,7 @@ class Machine {
 
         // Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
-        std::queue<std::stack<std::bitset<16>>> m_FileDonnees;
+        std::deque<std::stack<std::bitset<16>>> m_FileDonnees;
     
     public:
         // Constructeur
@@ -81,7 +81,7 @@ class Machine {
         void setDonnee(const std::stack<std::bitset<16>>& trame);
         std::stack<std::bitset<16>> suppDonnee();
 
-        std::queue<std::stack<std::bitset<16>>>& getDonnees();
+        std::deque<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
         // NE PAS NOMMER LES VARIABLES.
@@ -95,6 +95,3 @@ class Machine {
             const Machine& machine
         );
 };
-
-//
-bool estVide(std::queue<std::stack<std::bitset<16>>> donnees);
