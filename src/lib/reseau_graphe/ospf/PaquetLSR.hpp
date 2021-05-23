@@ -24,12 +24,12 @@ class PaquetLSR: public PaquetOSPF {
                   const std::vector<std::bitset<32>>& idLSADemandes);
 
         // Destructeur
-        ~PaquetLSR();
+        virtual ~PaquetLSR();
 
         // Getters et setter
-        void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
-        const TypePaquet& getType() const override;
-        const uint16_t& getIdRouteur() const override;
+        virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
+        virtual const TypePaquet& getType() const override;
+        virtual const uint16_t& getIdRouteur() const override;
 
         const uint16_t& getIdEmetteur() const;
         std::vector<std::bitset<32>>& getIdLSADemandes();

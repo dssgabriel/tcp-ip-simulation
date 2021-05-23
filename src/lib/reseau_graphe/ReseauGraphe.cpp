@@ -140,11 +140,11 @@ uint8_t getIdRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
                                std::vector<uint16_t>& visites,
                                std::vector<uint16_t>& nonVisites)
 {
-    uint64_t metriqueMinimale = UINT64_MAX;
+    uint64_t metriqueMinimale = 0;
     uint16_t idRouteurPlusProche = 0;
 
     for (size_t i = 0; i < nonVisites.size(); ++i) {
-        if (sommeMetrique[nonVisites[i]] < metriqueMinimale) {
+        if (sommeMetrique[nonVisites[i]] > metriqueMinimale) {
             metriqueMinimale = sommeMetrique[nonVisites[i]];
             idRouteurPlusProche = nonVisites[i];
         }
@@ -223,12 +223,12 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
             uint16_t r2 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine2);
 
             if (r1 != 0 && r1 == courant) {
-                if (sommeMetrique[r2 - 1] > sommeMetrique[courant - 1] + suivante.m_Debit) {
+                if (sommeMetrique[r2 - 1] < sommeMetrique[courant - 1] + suivante.m_Debit) {
                     sommeMetrique[r2 - 1] = sommeMetrique[courant - 1] + suivante.m_Debit;
                     peres[r2 - 1] = courant;
                 }
             } else if (r2 != 0 && r2 == courant) {
-                if (sommeMetrique[r1 - 1] > sommeMetrique[courant - 1] + suivante.m_Debit) {
+                if (sommeMetrique[r1 - 1] < sommeMetrique[courant - 1] + suivante.m_Debit) {
                     sommeMetrique[r1 - 1] = sommeMetrique[courant - 1] + suivante.m_Debit;
                     peres[r1 - 1] = courant;
                 }
@@ -242,20 +242,21 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
 }
 
 void ReseauGraphe::lancerOSPF() {
+    size_t c1 = 0, c2 = 0;
     for (Machine* machine: m_Machines) {
         Routeur* routeur = dynamic_cast<Routeur*>(machine);
 
         if (routeur) {
             std::vector<Machine*> voisins = routeur->getVoisins();
+            c1++; std::cout << "Router #" << c1 << std::endl;
 
             // #pragma omp parallel for
             for (Machine* voisin: voisins) {
                 Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
 
                 if (routeurVoisin) {
-                    std::cout << "Emetteur :\n" << *routeur << std::endl;
-                    std::cout << "Destinataire :\n" << *routeurVoisin << std::endl;
-                    PaquetHello* hello = new PaquetHello(routeurVoisin->getIdRouteur());
+                    c2++; std::cout << "Neighboor Router #" << c2 << std::endl;
+                    PaquetOSPF* hello = new PaquetHello(routeurVoisin->getIdRouteur());
                     hello->setEntete(Hello, routeur->getIdRouteur());
                     routeur->envoyerOSPF(routeurVoisin, hello);
                 }

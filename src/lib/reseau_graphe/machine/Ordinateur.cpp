@@ -536,42 +536,45 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
 
 void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
     std::cout << "Debut slowStart\n";
+
     //
     uint64_t cwndConvert = cwnd.to_ulong();
     std::cout << "log #0 : " << m_Chrono.getTempsSec().count() << std::endl;
     m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec().count(), cwndConvert, SlowStart});
     if (cwndConvert < ssthresh1) {
-		std::cout << calculerNombreEnvoye(m_FileDonnees) << std::endl;
-        for (int i = 0; i < calculerNombreEnvoye(m_FileDonnees); ++i) {
+		    std::cout << calculerNombreEnvoye(m_FileDonnees) << std::endl;
+    
+            for (int i = 0; i < calculerNombreEnvoye(m_FileDonnees); ++i) {
+                if (cwndConvert >= ssthresh1) {
+				            std::cout << "On entre dans congestionAvoidance1" << std::endl;
+				            cwndConvert /= 2;
+                    // m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec2().count(), cwndConvert, SlowStart});
+                  
+				            cwnd = std::bitset<16>(cwndConvert);
+				            congestionAvoidance(cwnd, ssthresh1);
+				            return;
+			          } else {
+				            std::cout << "On envoie\n";
+            				envoyer(cwndConvert, false);
+				            cwndConvert *= 2;
 
-			if (cwndConvert >= ssthresh1) {
-				std::cout << "On entre dans congestionAvoidance1" << std::endl;
-				cwndConvert /= 2;
-                // m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec2().count(), cwndConvert, SlowStart});
-				cwnd = std::bitset<16>(cwndConvert);
-				congestionAvoidance(cwnd, ssthresh1);
-				return;
-			} else {
-				
-				std::cout << "On envoie\n";
-				envoyer(cwndConvert, false);
-				cwndConvert *= 2;
-                if (cwndConvert < ssthresh1) {
-                    m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec().count(), cwndConvert, SlowStart});
-                }
-				cwnd = std::bitset<16> (cwndConvert);
-			}
-        }
-		if (calculerNombreEnvoye(m_FileDonnees) != 0) {
-			envoyer(calculerNombreEnvoye(m_FileDonnees), false);
-		}
+                    if (cwndConvert < ssthresh1) {
+                        m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec().count(), cwndConvert, SlowStart});
+                    }
+				            cwnd = std::bitset<16> (cwndConvert);
+			          }
+            }
+		
+            if (calculerNombreEnvoye(m_FileDonnees) != 0) {
+			          envoyer(calculerNombreEnvoye(m_FileDonnees), false);
+		        }
     } else {
-        std::cout << "On entre dans congestionAvoidance2\n";
-        congestionAvoidance(cwnd, ssthresh1);
-        return;
+            std::cout << "On entre dans congestionAvoidance2\n";
+            congestionAvoidance(cwnd, ssthresh1);
+            return;
+        }
+        std::cout << "Fin slowStart\n";
     }
-    std::cout << "Fin slowStart\n";
-}
 
 void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) {
     std::cout << "On entre dans congestionAvoidance\n";
@@ -585,6 +588,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
         ssthresh = cwndConvert / 2;
         cwndConvert /= 2;
         // m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec2().count(), cwndConvert, CongestionAvoidance});
+
         //fastRetransmit(std::bitset<32> (ackTripleConvert - 1), cwnd, ssthresh);
         fastRecovery(cwnd, ssthresh);
 		return;
@@ -595,6 +599,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
 		std::cout << calculerNombreEnvoye(m_FileDonnees) << std::endl;
 	    cwndConvert += 1;
         m_ControleCongestion.push_back(ElementControleCongestion{m_Chrono.getTempsSec().count(), cwndConvert, CongestionAvoidance});
+
         cwnd = std::bitset<16> (cwndConvert);
 
         //
@@ -607,6 +612,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
             cwnd = std::bitset<16> (cwndConvert);
             slowStart(cwnd, ssthresh);
         } else {
+
 			//std::cout << "cwnd : " << cwndConvert << " ssthresh : " << ssthresh << std::endl;
             envoyer(cwndConvert, false);
         }

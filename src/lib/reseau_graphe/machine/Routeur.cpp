@@ -233,14 +233,21 @@ void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
         uint16_t idRouteurProchain = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineProchain);
 
         Routeur* prochain = ReseauGraphe::getPtrRouteur(idRouteurProchain);
-        std::cout << "Next Routeur: #" << *prochain << std::endl;
 
-        prochain->recevoirOSPF(ospf);
+        if (prochain != nullptr) {
+            prochain->recevoirOSPF(ospf);
+        } else {
+            std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+                << "\tmethode `envoyerOSPF` : "
+                << "Pointeur invalide sur le routeur #" << idRouteurProchain
+                << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
-    m_FilePaquetsOSPF.emplace(ospf);
+    m_FilePaquetsOSPF.push_back(ospf);
     traitementPaquetOSPF();
 }
 
@@ -248,34 +255,42 @@ void Routeur::traitementPaquetOSPF() {
     // Recuperation du paquet en debut de file.
     PaquetOSPF* paquet = m_FilePaquetsOSPF.front();
 
-    // Appel a la methode adequate en fonction du type de paquet.
-    switch (paquet->getType()) {
-        case 1:
-            traitementPaquetHello(dynamic_cast<PaquetHello*>(paquet));
-            break;
+    if (paquet != nullptr) {
+        // Appel a la methode adequate en fonction du type de paquet.
+        switch (paquet->getType()) {
+            case 1:
+                traitementPaquetHello(dynamic_cast<PaquetHello*>(paquet));
+                break;
 
-        case 2:
-            traitementPaquetDBD(dynamic_cast<PaquetDBD*>(paquet));
-            break;
+            case 2:
+                traitementPaquetDBD(dynamic_cast<PaquetDBD*>(paquet));
+                break;
 
-        case 3:
-            traitementPaquetLSR(dynamic_cast<PaquetLSR*>(paquet));
-            break;
+            case 3:
+                traitementPaquetLSR(dynamic_cast<PaquetLSR*>(paquet));
+                break;
 
-        case 4:
-            traitementPaquetLSU(dynamic_cast<PaquetLSU*>(paquet));
-            break;
+            case 4:
+                traitementPaquetLSU(dynamic_cast<PaquetLSU*>(paquet));
+                break;
 
-        case 5:
-            traitementPaquetLSAck(dynamic_cast<PaquetLSAck*>(paquet));
-            break;
+            case 5:
+                traitementPaquetLSAck(dynamic_cast<PaquetLSAck*>(paquet));
+                break;
 
-        default:
-            std::cout << "ERREUR : fichier `Routeur.cpp`\n"
-                << "\tmethode `traitementPaquetOSPF`: "
-                << "Type de PaquetOSPF inconnu"
-                << std::endl;
-            exit(EXIT_FAILURE);
+            default:
+                std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+                    << "\tmethode `traitementPaquetOSPF`: "
+                    << "Type de PaquetOSPF inconnu"
+                    << std::endl;
+                exit(EXIT_FAILURE);
+        }
+    } else {
+        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
+            << "\tmethode `traitementPaquetOSPF`: "
+            << "Pointeur sur PaquetOSPF invalide"
+            << std::endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -308,11 +323,11 @@ void Routeur::traitementPaquetHello(PaquetHello* hello) {
         }
 
         // Envoie d'un paquet DBD au routeur emetteur du paquet Hello.
-        PaquetDBD* reponse = new PaquetDBD(listeLSAs);
+        PaquetOSPF* reponse = new PaquetDBD(listeLSAs);
         reponse->setEntete(DBD, m_IdRouteur);
-        envoyerOSPF(destinataire, reponse);
 
         delete hello;
+        envoyerOSPF(destinataire, reponse);
     } else {
         std::cout << "ERREUR : fichier `Routeur.cpp`\n"
             << "\tmethode `traitementPaquetHello` : "
@@ -351,11 +366,11 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
             m_TableLSADemandes.emplace(destinataire, idADemander);
 
             // Envoie d'un paquet LSR au routeur nous envoyant le paquet DBD.
-            PaquetLSR* reponse = new PaquetLSR(dbd->getIdRouteur(), idADemander);
+            PaquetOSPF* reponse = new PaquetLSR(destinataire->getIdRouteur(), idADemander);
             reponse->setEntete(LSR, m_IdRouteur);
-            envoyerOSPF(destinataire, reponse);
 
             delete dbd;
+            envoyerOSPF(destinataire, reponse);
         } else {
             // Rien a demander
             delete dbd;
@@ -408,11 +423,11 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
         m_TableLSAEnvoyes.emplace(destinataire, lsr->getIdLSADemandes());
 
         // Envoie d'un paquet DBD au routeur envoyant le paquet Hello.
-        PaquetLSU* reponse = new PaquetLSU(LSAsDemandes);
+        PaquetOSPF* reponse = new PaquetLSU(LSAsDemandes);
         reponse->setEntete(LSU, m_IdRouteur);
-        envoyerOSPF(destinataire, reponse);
 
         delete lsr;
+        envoyerOSPF(destinataire, reponse);
     } else {
         std::cout << "ERREUR : fichier `Routeur.cpp`\n"
             << "\tmethode `traitementPaquetLSR` : "
@@ -470,7 +485,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             Routeur* routeur = dynamic_cast<Routeur*>(machine);
 
             if (routeur) {
-                PaquetLSU* miseAJour = new PaquetLSU(LSAMisAJour);
+                PaquetOSPF* miseAJour = new PaquetLSU(LSAMisAJour);
                 miseAJour->setEntete(LSU, m_IdRouteur);
                 envoyerOSPF(routeur, miseAJour);
             }
@@ -492,7 +507,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
         if (!idLSAEnvoyes.empty()) {
             Routeur* destinataire = recherche->first;
 
-            PaquetLSAck* reponse = new PaquetLSAck(idLSARecus);
+            PaquetOSPF* reponse = new PaquetLSAck(idLSARecus);
             reponse->setEntete(LSAck, m_IdRouteur);
             envoyerOSPF(destinataire, reponse);
         }
@@ -544,9 +559,9 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             // dans le cas ou il des LSA n'ont pas ete recus.
             PaquetLSU* reponse = new PaquetLSU(LSAManquants);
             reponse->setEntete(LSU, m_IdRouteur);
-            envoyerOSPF(destinataire, reponse);
 
             delete ack;
+            envoyerOSPF(destinataire, reponse);
         } else {
             // Aucun LSA manquants, rien a renvoyer
             delete ack;

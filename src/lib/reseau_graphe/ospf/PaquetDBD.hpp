@@ -22,7 +22,7 @@ class PaquetDBD: public PaquetOSPF {
         PaquetDBD(const std::vector<LSA>& LSAs);
 
         // Destructeur
-        ~PaquetDBD();
+        virtual ~PaquetDBD();
 
         // Getters et setter
         virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;

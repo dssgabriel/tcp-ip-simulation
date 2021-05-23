@@ -22,7 +22,7 @@ class PaquetLSU: public PaquetOSPF {
         PaquetLSU(const std::vector<LSA>& LSADemandes);
 
         // Destructeur
-        ~PaquetLSU();
+        virtual ~PaquetLSU();
 
         // Getters et setter
         virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;

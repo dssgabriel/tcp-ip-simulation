@@ -172,9 +172,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     for (auto liaisonJ : listeLiaisonsJ) {
         Liaison* l = new Liaison;
         l->m_NumMachine1 = liaisonJ["Depart"];
-        l->m_NumMachine1 += 1;
         l->m_NumMachine2 = liaisonJ["Arrivee"];
-        l->m_NumMachine2 += 1;
         l->m_Debit = liaisonJ["Debit"];
 
         // Ajout de la liaison dans le reseau.
@@ -185,6 +183,10 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         Machine* b = reseau->getMachine(l->m_NumMachine2);
         a->setVoisin(*b);
         b->setVoisin(*a);
+
+        // Initialisation exacte de la Liaison
+        l->m_NumMachine1 += 1;
+        l->m_NumMachine2 += 1;
 
         // Remplir table de routage.
         Routeur* r = dynamic_cast<Routeur*>(a);

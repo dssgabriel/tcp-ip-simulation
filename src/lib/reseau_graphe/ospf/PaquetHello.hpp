@@ -21,7 +21,7 @@ class PaquetHello: public PaquetOSPF {
         PaquetHello(const uint8_t& idRouteurVoisin);
 
         // Destructeur
-        ~PaquetHello();
+        virtual ~PaquetHello();
 
         // Getters et setter
         virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) override;
