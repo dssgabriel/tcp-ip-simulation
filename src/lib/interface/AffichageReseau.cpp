@@ -29,6 +29,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
                "QPushButton:hover {background-color: rgba(74, 78, 85, 255);}"
                "QPushButton:pressed {background-color: rgba(54, 58, 65, 255);}");
 
+    // Création du bouton principale affichant le réseau //
     m_Image = new QPushButton("");
     m_Image ->setStyleSheet(s);
     QPixmap pixmap("../src/lib/interface/ressources/Reseau1_Rectangle.png");
@@ -38,18 +39,20 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Image->setIconSize(QSize(347, 550));
     addWidget(m_Image);
 
+    // Connexion bouton & fonction informationReseau() //
     connect(m_Image,SIGNAL(clicked()),this,SLOT(informationsReseau()));
 
+    // Déclaration du Graphique //
     m_Vue = new QChartView();
     m_Vue->setRenderHint(QPainter::Antialiasing);
     m_Vue->setStyleSheet("background-color: rgba(64, 68, 75, 255); border-radius: 5px; font: bold;");
-
     m_Graphique = m_Vue->chart();
     m_Graphique->setTitle("Controle de Congestion TCP/IP");
     m_Graphique->setTheme(QChart::ChartThemeDark);
     m_Graphique->titleFont().setBold(true);
 
     // Déclaration des différents modes du contrôle de congestion //
+    // a) Slow Start //
     QLineSeries* slow_start = new QLineSeries();
     slow_start->setName("Slow Start");
     m_Lignes.push_back(slow_start);
@@ -61,6 +64,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
     m_Lignes[0]->setColor(QColor(255,105,180,255));
 
+    // b) Congestion Avoidance //
     QLineSeries* cong_avoid = new QLineSeries();
     cong_avoid->setName("Congestion Avoidance");
     m_Lignes.push_back(cong_avoid);
@@ -72,6 +76,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
     m_Lignes[1]->setColor(QColor(Qt::cyan));
 
+    // c) Fast Retransmit //
     QLineSeries* fast_retransmit = new QLineSeries();
     fast_retransmit->setName("Fast Retransmit");
     m_Lignes.push_back(fast_retransmit);
@@ -83,6 +88,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
     m_Lignes[2]->setColor(QColor(138,43,226,255));
 
+    // d) Fast Recovery //
     QLineSeries* fast_recovery = new QLineSeries();
     fast_recovery->setName("Fast Recovery");
     m_Lignes.push_back(fast_recovery);
@@ -264,6 +270,8 @@ void AffichageReseau::rafraichirGraphe()
  /**
   * @brief Permet de sauvegarder le graphique du contrôle de congestion.
   * 
+  * @param const QString& nomFichier souhaitée.
+  * 
   * Création d'une variable QImage pour transporter le résultat du graphique. 
   * Puis on sauvegarde l'image au format PNG de nom "Graphique_congestion". 
   **/
@@ -290,15 +298,41 @@ void AffichageReseau::informationsReseau()
     QGridLayout* lyt = new QGridLayout();
     wdg->setLayout(lyt);
     QLabel* lbl = new QLabel();
-    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/simple.png"));
-    lyt->addWidget(lbl,0,0);
 
-    // QTextEdit + AddWidget //
+    // Affichage RéseauSimple composé du : //
+    // 1) Débit //
+    // 2) Informations réseau (Id machine | Ip | MAC | Masque)
+    if(Contexte::GetInstance().getReseau()->getNom() == "ReseauSimple");
+    {
+        lbl->setPixmap(QPixmap("../src/lib/interface/ressources/simple.png"));
+        lyt->addWidget(lbl,0,0);
+    }
+
+    if(Contexte::GetInstance().getReseau()->getNom() == "ReseauMaison")
+    {
+        lbl->setPixmap(QPixmap("../src/lib/interface/ressources/maison.png"));
+        lyt->addWidget(lbl,0,0);
+    }
+
+    if(Contexte::GetInstance().getReseau()->getNom() == "ReseauPme");
+    {
+        lbl->setPixmap(QPixmap("../src/lib/interface/ressources/pme.png"));
+        lyt->addWidget(lbl,0,0);
+    }
+
+    if(Contexte::GetInstance().getReseau()->getNom() == "ReseauEntreprise");
+    {
+        lbl->setPixmap(QPixmap("../src/lib/interface/ressources/entreprise.png"));
+        lyt->addWidget(lbl,0,0);
+    }
+    
+    // QTextEdit pour exposer la fenêtre du texte //
     QTextEdit * m_InfoReseau = new QTextEdit();
     m_InfoReseau->setStyleSheet("background-color: rgba(64, 68, 75, 255); font: bold; border-radius: 5px;");
     m_InfoReseau->setTextColor(QColor(88, 101, 242, 255));
     m_InfoReseau->append("Reseau Simple\n");
     m_InfoReseau->setTextColor(Qt::white);
+    //m_InfoReseau->append(Contexte::GetInstance().informationReseau());
     m_InfoReseau->append
     (
         "ORDINATEUR 1:\n"
