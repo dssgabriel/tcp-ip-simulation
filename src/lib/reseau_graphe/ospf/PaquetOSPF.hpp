@@ -10,21 +10,25 @@
 #include <cstdint>
 
 enum TypePaquet: uint8_t {
-    Hello = 1, DBD, LSR, LSU, LSAck
+    Hello = 1,
+    DBD = 2,
+    LSR = 3,
+    LSU = 4,
+    LSAck = 5
 };
 
 class PaquetOSPF {
     protected:
         // Attributs
         TypePaquet m_Type;
-        uint8_t m_IdRouteur;
+        uint16_t m_IdRouteur;
 
     public:
         // Destructeur virtuel
         virtual ~PaquetOSPF() {}
 
         // Getters et setter
-        virtual void setEntete(const TypePaquet& type, const uint8_t& idRouteur) = 0;
+        virtual void setEntete(const TypePaquet& type, const uint16_t& idRouteur) = 0;
         virtual const TypePaquet& getType() const = 0;
-        virtual const uint8_t& getIdRouteur() const = 0;
+        virtual const uint16_t& getIdRouteur() const = 0;
 };

@@ -17,13 +17,13 @@ class LSA {
     private:
         // Attributs
         std::bitset<32> m_IdLSA;
-        uint8_t m_IdRouteur;
+        uint16_t m_IdRouteur;
         std::vector<IPv4> m_AdrSousReseaux;
 
     public:
         // Constructeur
         LSA(const std::bitset<32>& idLSA,
-            const uint8_t& idRouteur,
+            const uint16_t& idRouteur,
             const std::vector<IPv4>& AdrSousReseaux
         );
 
@@ -32,6 +32,6 @@ class LSA {
 
         // Getters
         const std::bitset<32>& getIdLSA() const;
-        const uint8_t& getIdRouteur() const;
+        const uint16_t& getIdRouteur() const;
         const std::vector<IPv4>& getAdrSousReseaux() const;
 };

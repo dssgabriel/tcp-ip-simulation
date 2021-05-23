@@ -184,6 +184,10 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         a->setVoisin(*b);
         b->setVoisin(*a);
 
+        // Initialisation exacte de la Liaison
+        l->m_NumMachine1 += 1;
+        l->m_NumMachine2 += 1;
+
         // Remplir table de routage.
         Routeur* r = dynamic_cast<Routeur*>(a);
         Routeur* r2 = dynamic_cast<Routeur*>(b);

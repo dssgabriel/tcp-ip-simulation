@@ -9,11 +9,11 @@ Contexte::Contexte() {
     m_Config.m_NbPaquet = 500;
     m_Config.m_Ssthresh = 153;
     m_Config.m_TypeFichier = FTP;
-    chargerConfig(1);
+    chargerConfig(3);
     m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
     // Test
-    std::cout << m_Reseau->getNom() << "\n";
+    std::cout << informationsReseau();
 }
 
 ReseauGraphe* Contexte::getReseau() {
@@ -50,7 +50,7 @@ void Contexte::charger() {
     else if(m_Reseau->getNom() == "ReseauEntreprise") {
         AffichageReseau::GetInstance().configEntreprise();
     }
-    //ChoixReseau::GetInstance().analyseConfig();
+    // ChoixReseau::GetInstance().analyseConfig();
 }
 
 void Contexte::sauvegarder() {
@@ -62,7 +62,22 @@ void Contexte::exporterGraphe(const QString& nomFichier) {
 }
 
 std::string Contexte::informationsReseau() {
-    return "test";
+    std::string s = m_Reseau->getNom() + "\n\n";
+    auto v = m_Reseau->getMachines();
+    for(std::size_t i = 0; i < v.size(); ++i) {
+        s += v[i]->getNom() + "\n";
+
+        s += "ip: " + std::to_string(v[i]->getIp().a.to_ulong()) + "." + std::to_string(v[i]->getIp().b.to_ulong()) + "." +
+                std::to_string(v[i]->getIp().c.to_ulong()) + "." + std::to_string(v[i]->getIp().d.to_ulong()) + "\n";
+
+        s += "mac: " + std::to_string(v[i]->getMac().a.to_ulong()) + ":" + std::to_string(v[i]->getMac().b.to_ulong()) + ":" +
+                std::to_string(v[i]->getMac().c.to_ulong()) + ":" + std::to_string(v[i]->getMac().d.to_ulong()) + ":" +
+                std::to_string(v[i]->getMac().e.to_ulong()) + ":" + std::to_string(v[i]->getMac().f.to_ulong()) + "\n";
+
+        s += "masque: " + std::to_string(v[i]->getMasque().a.to_ulong()) + "." + std::to_string(v[i]->getMasque().b.to_ulong()) + "." +
+                std::to_string(v[i]->getMasque().c.to_ulong()) + "." + std::to_string(v[i]->getMasque().d.to_ulong()) + "\n\n";
+    }
+    return s;
 }
 
 void Contexte::chargerConfig(int numConfig) {
@@ -90,7 +105,8 @@ void Contexte::executerSimulation() {
 }
 
 void Contexte::rafraichir() {
-
+    ConfigReseau::GetInstance().rafraichirTexte();
+    AffichageReseau::GetInstance().rafraichirGraphe();
 }
 
 void Contexte::stopSimulation() {

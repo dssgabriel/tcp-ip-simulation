@@ -37,6 +37,7 @@ file(GLOB SRCS
     src/lib/protocole_tcp_ip/internet/*.cpp
     src/lib/protocole_tcp_ip/physique/*.cpp
     src/lib/protocole_tcp_ip/transport/*.cpp
+    src/include/*.cpp
     src/bin/main.cpp
 )
 

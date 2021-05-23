@@ -15,7 +15,7 @@
  * @param adrSousReseaux Les adresses de sous reseaux du routeur.
  */
 LSA::LSA(const std::bitset<32>& idLSA,
-         const uint8_t& idRouteur,
+         const uint16_t& idRouteur,
          const std::vector<IPv4>& adrSousReseaux)
     : m_IdLSA(idLSA), m_IdRouteur(idRouteur)
 {
@@ -46,7 +46,7 @@ const std::bitset<32>& LSA::getIdLSA() const {
  *
  * @return L'identifiant du routeur dont on partage les informations.
  */
-const uint8_t& LSA::getIdRouteur() const {
+const uint16_t& LSA::getIdRouteur() const {
     return m_IdRouteur;
 }
 

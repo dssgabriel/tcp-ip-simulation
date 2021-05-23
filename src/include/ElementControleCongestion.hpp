@@ -9,6 +9,6 @@ enum ModeCongestion {
 
 struct ElementControleCongestion {
     double m_Temps;
-    uint16_t m_ValeurCwnd;
+    uint64_t m_ValeurCwnd;
     ModeCongestion m_Mode;
 };

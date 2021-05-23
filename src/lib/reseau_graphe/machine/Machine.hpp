@@ -44,9 +44,9 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
 
-        // Horloge m_Chrono;
+        Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
-        std::queue<std::stack<std::bitset<16>>> m_FileDonnees;
+        std::deque<std::stack<std::bitset<16>>> m_FileDonnees;
     
     public:
         // Constructeur
@@ -81,7 +81,7 @@ class Machine {
         void setDonnee(const std::stack<std::bitset<16>>& trame);
         std::stack<std::bitset<16>> suppDonnee();
 
-        std::queue<std::stack<std::bitset<16>>>& getDonnees();
+        std::deque<std::stack<std::bitset<16>>>& getDonnees();
 
         // Methodes
         // NE PAS NOMMER LES VARIABLES.
@@ -89,12 +89,12 @@ class Machine {
         void traitement(std::stack<std::bitset<16>>&, MAC);
         virtual void recevoir(const uint32_t, bool) {}
 
+        void lancerHorloge();
+        void arreterHorloge();
+
         // Overloading
         friend std::ostream& operator<<(
             std::ostream& flux, 
             const Machine& machine
         );
 };
-
-//
-bool estVide(std::queue<std::stack<std::bitset<16>>> donnees);
