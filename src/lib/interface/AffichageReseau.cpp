@@ -169,12 +169,53 @@ void AffichageReseau::configEntreprise()
   **/
 void AffichageReseau::initialiserGraphe()
 {
+    m_Lignes.clear();
     m_Graphique->removeAllSeries();
+
+    // Déclaration des différents modes du contrôle de congestion //
+    QLineSeries* slow_start = new QLineSeries();
+    slow_start->setName("Slow Start");
+    m_Lignes.push_back(slow_start);
+    m_Graphique->addSeries(slow_start);
     m_Graphique->createDefaultAxes();
     m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[0]->setColor(QColor(255,105,180,255));
+
+    QLineSeries* cong_avoid = new QLineSeries();
+    cong_avoid->setName("Congestion Avoidance");
+    m_Lignes.push_back(cong_avoid);
+    m_Graphique->addSeries(cong_avoid);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[1]->setColor(QColor(Qt::cyan));
+
+    QLineSeries* fast_retransmit = new QLineSeries();
+    fast_retransmit->setName("Fast Retransmit");
+    m_Lignes.push_back(fast_retransmit);
+    m_Graphique->addSeries(fast_retransmit);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[2]->setColor(QColor(138,43,226,255));
+
+    QLineSeries* fast_recovery = new QLineSeries();
+    fast_recovery->setName("Fast Recovery");
+    m_Lignes.push_back(fast_recovery);
+    m_Graphique->addSeries(fast_recovery);
+    m_Graphique->createDefaultAxes();
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
+    m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 200);
+    m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
+    m_Lignes[3]->setColor(QColor(Qt::green));
 }
 
  /**
@@ -226,11 +267,11 @@ void AffichageReseau::rafraichirGraphe()
   * Création d'une variable QImage pour transporter le résultat du graphique. 
   * Puis on sauvegarde l'image au format PNG de nom "Graphique_congestion". 
   **/
-void AffichageReseau::sauvegarderGraphe()
+void AffichageReseau::sauvegarderGraphe(const QString& nomFichier)
 {
   QPixmap png_graphe = m_Vue->grab();
   QImage image = png_graphe.toImage();
-  image.save("Graphique_congestion.png","PNG");
+  image.save(nomFichier,"PNG");
 }
 
  /**

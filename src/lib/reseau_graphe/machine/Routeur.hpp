@@ -21,7 +21,6 @@
 #include <utility>
 
 #include "Machine.hpp"
-#include "Routeur.hpp"
 #include "Ordinateur.hpp"
 #include "Commutateur.hpp"
 #include "../ospf/PaquetOSPF.hpp"
@@ -32,7 +31,6 @@
 #include "../ospf/PaquetLSAck.hpp"
 #include "../../../include/Liaison.hpp"
 
-
 class Routeur : public Machine {
     private:
         // Attributs
@@ -40,8 +38,8 @@ class Routeur : public Machine {
         uint8_t m_IdRouteur;
         std::map<Routeur*, std::vector<Liaison*>> m_TableRoutage;
         std::queue<PaquetOSPF*> m_FilePaquetsOSPF;
-        std::map<Routeur*, std::vector<std::bitset<32>>*> m_TableLSADemandes;
-        std::map<Routeur*, std::vector<std::bitset<32>>*> m_TableLSAEnvoyes;
+        std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSADemandes;
+        std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSAEnvoyes;
 
         // Methodes
         void traitementPaquetHello(PaquetHello* hello);
