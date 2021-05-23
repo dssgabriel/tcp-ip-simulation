@@ -205,13 +205,13 @@ void chargerConfig(const std::string& cheminFichier,
     // Chargement du reseau correspondant.
     std::string choixReseau = j["Nom du reseau"];
     if (choixReseau == "ReseauSimple") {
-        reseau = chargerReseau("../../src/include/configReseau/ReseauSimple.json");
+        reseau = chargerReseau("../src/include/configReseau/ReseauSimple.json");
     } else if (choixReseau == "ReseauMaison") {
-        reseau = chargerReseau("../../src/include/configReseau/ReseauMaison.json");
+        reseau = chargerReseau("../src/include/configReseau/ReseauMaison.json");
     } else if (choixReseau == "ReseauPme") {
-        reseau = chargerReseau("../../src/include/configReseau/ReseauPme.json");
+        reseau = chargerReseau("../src/include/configReseau/ReseauPme.json");
     } else if (choixReseau == "ReseauEntreprise") {
-        reseau = chargerReseau("../../src/include/configReseau/ReseauEntreprise.json");
+        reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
     } else {
         std::cout << "ERREUR : Dans le fichier 'Chargement.cpp'. ";
         std::cout << "Dans la fonction 'chargerConfig'. ";

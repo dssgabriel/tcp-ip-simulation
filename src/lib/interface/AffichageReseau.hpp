@@ -9,6 +9,8 @@
 #ifndef AFFICHAGERESEAU_H
 #define AFFICHAGERESEAU_H
 
+#include "Contexte.hpp"
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -22,6 +24,8 @@ class AffichageReseau : public QHBoxLayout
 Q_OBJECT
     private:
         // Attributs
+        AffichageReseau();
+
         QPushButton* m_Image;
 
         QChartView* m_Vue;
@@ -31,8 +35,15 @@ Q_OBJECT
         QHBoxLayout* m_Layout;
 
     public:
-        // Constructeur
-        AffichageReseau();
+        // Singleton
+        static AffichageReseau& GetInstance() {
+            static AffichageReseau singleton;
+            return singleton;
+        }
+
+        // Méthodes de copie
+        AffichageReseau(AffichageReseau&) = delete;
+        void operator=(AffichageReseau&) = delete;
 
         // Destructeur
         ~AffichageReseau();
@@ -45,7 +56,7 @@ Q_OBJECT
 
         void initialiserGraphe();
         void rafraichirGraphe();
-        void sauvegarderGraphe();
+        void sauvegarderGraphe(const QString& nomFichier);
 
     private slots :
         // Méthode Slots
