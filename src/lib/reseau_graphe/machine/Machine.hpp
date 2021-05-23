@@ -44,7 +44,7 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
 
-        // Horloge m_Chrono;
+        Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::deque<std::stack<std::bitset<16>>> m_FileDonnees;
     
@@ -88,6 +88,9 @@ class Machine {
         virtual void envoyer(const uint32_t, bool) {}
         void traitement(std::stack<std::bitset<16>>&, MAC);
         virtual void recevoir(const uint32_t, bool) {}
+
+        void lancerHorloge();
+        void arreterHorloge();
 
         // Overloading
         friend std::ostream& operator<<(

@@ -272,7 +272,15 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     
     // Recuperation du paquet et desencapsulation.
     Physique couchePhy;
+    Internet coucheInt;
+    Transport coucheTrans;
+
+    //
     std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(trame);
+    std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
+    std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
+
+    coucheInt.setTTL(std::bitset<8>(coucheInt.getTTL().to_ulong() - 1));
     
     // Recuperation adresse MAC destination.
     MAC ancienneDest = couchePhy.getMacDest();
@@ -282,11 +290,20 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     couchePhy.setMacDest(nouvelleDest);
 
     // Encapsulation.
+    segment = coucheTrans.encapsuler(donnee);
+    paquet = coucheInt.encapsuler(segment);
     trame = couchePhy.encapsuler(paquet);
 
     std::cout << m_Nom << " : fin traitement\n";
 }
 
+void Machine::lancerHorloge() {
+    m_Chrono.lancer();
+}
+
+void Machine::arreterHorloge() {
+    m_Chrono.arreter();
+}
 
 /**
  * @brief Redefinition de l'operateur d'affichage.
