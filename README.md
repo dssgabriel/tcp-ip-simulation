@@ -4,7 +4,9 @@
 
 > "There are some people who imagine that older adults don't know how to use the internet. My immediate reaction is, "I've got news for you, we invented it."
 
-Vinton Gray Cerf, co-créateur du protocole TCP/IP.
+<p align="right">
+  Vinton Gray Cerf, co-créateur du protocole TCP/IP.
+</p>
 
 --------
 ## Introduction
