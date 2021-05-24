@@ -1,12 +1,12 @@
 # IN608 - Projet : Simulation du protocole TCP/IP
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-qt.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/not-a-bug-a-feature.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](http://forthebadge.com)  [![forthebadge](https://forthebadge.com/images/badges/uses-brains.svg)](http://forthebadge.com)
-
---------
+[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-qt.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/not-a-bug-a-feature.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](http://forthebadge.com)
 
 > "There are some people who imagine that older adults don't know how to use the internet. My immediate reaction is, "I've got news for you, we invented it."
 
-Vinton Gray Cerf co-créateur du protocole TCP/IP.
+<p align="right">
+  Vinton Gray Cerf, co-créateur du protocole TCP/IP.
+</p>
 
 --------
 ## Introduction
@@ -17,8 +17,6 @@ Pour cela, l’application présentera toutes les étapes que subit une donnée 
 
 Le rendu final sera supporté par tous les systèmes d’exploitation basé sur le noyau Linux et offrira un moyen de compilation simple (`cmake`).
 
--------
-
 ## Installation
 Pour installer cette application sur votre ordinateur, il vous suffit de cloner ce dépot GitHub sur votre machine.
 
@@ -26,7 +24,7 @@ Depuis un terminal, exécuter la commande suivante :
 ```sh
 git clone https://github.com/dssgabriel/in608-tcp_ip_simulation
 ```
---------
+
 ## Compilation
 
 Afin de compiler l'application, vous devrez vous assurez que les logiciels suivants sont installes sur votre machine :

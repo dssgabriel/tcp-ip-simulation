@@ -10,6 +10,7 @@
 #include <cstdlib>
 
 #include "../ReseauGraphe.hpp"
+#include "Commutateur.hpp"
 
 uint16_t Routeur::m_NbRouteur = 0;
 
@@ -53,10 +54,8 @@ uint16_t Routeur::getIdRouteur() {
 }
 
 void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
-    std::vector<Liaison*> tab;
-    tab.emplace_back(l);
-    std::pair<Routeur*, std::vector<Liaison*>> p(r, tab);
-    m_TableRoutage.insert(p);
+    std::vector<Liaison*> chemin(1, l);
+    m_TableRoutage.emplace(r, chemin);
 }
 
 /**
@@ -185,7 +184,7 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @param ip de la machine qui nous interesse.
  * @return MAC correspondante.
  */
-MAC Routeur::trouverMacDest(const IPv4 ip) {    
+MAC Routeur::trouverMacDest(const IPv4 ip) {
     //
     Machine* m = ReseauGraphe::getMachine(ip);
 
@@ -193,17 +192,39 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     for (IPv4 sousReseauRouteur : m_SousReseau) {
         for (IPv4 sousReseauDest : m->getSousReseaux()) {
             if (sousReseauRouteur == sousReseauDest) {
-                return m->getMac();
+                for (Machine* v: m_Voisins) {
+                    if (v->getMac() == m->getMac()) {
+                        return v->getMac();
+                    } else {
+                        Commutateur* c = dynamic_cast<Commutateur*>(v);
+
+                        if (c) {
+                            for (IPv4 sousReseauCommutateur : c->getSousReseaux()) {
+                                if (sousReseauCommutateur == sousReseauDest) {
+                                    return c->getMac();
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     // Trouver le chemin pour aller au routeur dans le meme sous reseau que l'ip dest.
     for (auto iter : m_TableRoutage) {
-        auto tabLiaison = iter.second;
-        uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
+        std::vector<Liaison*> tabLiaison = iter.second;
+
+        for (Liaison* l: tabLiaison) {
+            std::cout << *l << std::endl;
+        }
+
+        size_t derniereLiaison = tabLiaison.size() - 1;
+        uint16_t machineArrive = tabLiaison[derniereLiaison]->m_NumMachine1 != getIdMachine() ?
+            tabLiaison[derniereLiaison]->m_NumMachine1 : tabLiaison[derniereLiaison]->m_NumMachine2;
+        uint16_t routeurArrive = ReseauGraphe::getIdRouteurDepuisIdMachine(machineArrive);
+
         Routeur* r = ReseauGraphe::getPtrRouteur(routeurArrive);
-        std::cout << *r << std::endl;
 
         // Renvoie du routeur voisin.
         for (IPv4 sousRes : r->getSousReseaux()) {
@@ -253,6 +274,7 @@ void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
 void Routeur::traitementPaquetOSPF() {
     // Recuperation du paquet en debut de file.
     PaquetOSPF* paquet = m_FilePaquetsOSPF.front();
+    m_FilePaquetsOSPF.pop_front();
 
     if (paquet != nullptr) {
         // Appel a la methode adequate en fonction du type de paquet.
@@ -289,6 +311,7 @@ void Routeur::traitementPaquetOSPF() {
             << "\tmethode `traitementPaquetOSPF`: "
             << "Pointeur sur PaquetOSPF invalide"
             << std::endl;
+    m_FilePaquetsOSPF.clear();
         exit(EXIT_FAILURE);
     }
 }
@@ -345,8 +368,14 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
     for (LSA lsa: LSAs) {
         bool trouve = false;
 
+        if (lsa.getIdRouteur() == m_IdRouteur) {
+            trouve = true;
+            continue;
+        }
+
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
+
             if (lsa.getIdRouteur() == routeur->getIdRouteur()) {
                 trouve = true;
             }
@@ -446,6 +475,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
 
     for (LSA lsa: LSAs) {
         bool estConnu = false;
+
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
 
@@ -465,19 +495,35 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             LSAMisAJour.emplace_back(misAJour);
 
             Routeur* routeur = ReseauGraphe::getPtrRouteur(lsa.getIdRouteur());
-            std::vector<Liaison*> chemin;
+            std::vector<Liaison*> chemin = ReseauGraphe::routageDynamique(
+                    m_IdRouteur,
+                    lsa.getIdRouteur()
+            );
+            std::cout << "BEFORE ADD: Routing Table of R" << m_IdRouteur << std::endl;
+            for (auto it: m_TableRoutage) {
+                std::vector<Liaison*> vec = it.second;
+                for (Liaison* l: vec) {
+                    std::cout << *l << std::endl;
+                }
+            }
             m_TableRoutage.emplace(routeur, chemin);
+            std::cout << "AFTER ADD: Routing Table of R" << m_IdRouteur << std::endl;
+            for (auto it: m_TableRoutage) {
+                std::vector<Liaison*> vec = it.second;
+                for (Liaison* l: vec) {
+                    std::cout << *l << std::endl;
+                }
+            }
         }
     }
 
     if (estMisAJour) {
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
-            std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
+            iter.second = ReseauGraphe::routageDynamique(
                 m_IdRouteur,
                 routeur->getIdRouteur()
             );
-            iter.second = plusCourtChemin;
         }
 
         for (Machine* machine: m_Voisins) {
@@ -565,14 +611,6 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             // Aucun LSA manquants, rien a renvoyer
             delete ack;
         }
-    } else {
-        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
-            << "\tmethode `traitementPaquetLSAck` : "
-            << "Le routeur destinataire (#" << ack->getIdRouteur() << ") n'existe pas"
-            << std::endl;
-
-        delete ack;
-        exit(EXIT_FAILURE);
     }
 }
 

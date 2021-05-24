@@ -95,7 +95,7 @@
                 {
                     "ip" : [192, 168, 1, 64],
                     "ip2" : [192, 168, 1, 128],
-                    "ip³" : [192, 168, 1, 192]
+                    "ip3" : [192, 168, 1, 192]
                 }
             ]
         },
@@ -127,7 +127,7 @@
                 },
                 {
                     "ip": [192, 168, 1, 195],
-                    "mac": [26, 10, 230, 166, 134, 277]
+                    "mac": [28, 10, 230, 166, 134, 227]
                 },
                 {
                     "ip": [192, 168, 1, 129],
@@ -168,52 +168,52 @@
                     "ip" : [192, 168, 1, 192]
                 }
             ]
-        }        
+        }
     ],
     "Liste liaisons": [
         {
             "Depart": 0,
             "Arrivee": 3,
             "Debit": 1000
-        }, 
+        },
         {
             "Depart": 1,
-            "Arrivee": 3, 
+            "Arrivee": 3,
             "Debit": 100000
         },
         {
             "Depart": 2,
-            "Arrivee": 3, 
+            "Arrivee": 3,
             "Debit": 100
         },
         {
             "Depart": 3,
-            "Arrivee": 4, 
+            "Arrivee": 4,
             "Debit": 1000
         },
         {
             "Depart": 4,
-            "Arrivee": 5, 
+            "Arrivee": 5,
             "Debit": 25000
         },
         {
             "Depart": 5,
-            "Arrivee": 6, 
+            "Arrivee": 6,
             "Debit": 10000
         },
         {
             "Depart": 5,
-            "Arrivee": 7, 
+            "Arrivee": 7,
             "Debit": 100000
         },
         {
             "Depart": 7,
-            "Arrivee": 8, 
+            "Arrivee": 8,
             "Debit": 1000
         },
         {
             "Depart": 7,
-            "Arrivee": 9, 
+            "Arrivee": 9,
             "Debit": 1000
         }
     ]

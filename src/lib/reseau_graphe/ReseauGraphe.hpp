@@ -31,8 +31,8 @@ class ReseauGraphe {
         static void getPlusCourtChemin(
             const uint16_t& depart,
             const uint16_t& arrivee,
-            std::vector<int32_t> peres,
-            std::vector<Liaison*> plusCourtChemin
+            std::vector<int32_t>& peres,
+            std::vector<Liaison*>& plusCourtChemin
         );
 
     public:
@@ -69,6 +69,7 @@ class ReseauGraphe {
         );
 
         // Methodes
+        static bool estRouteur(const uint16_t& idMachine);
         bool estConnexe();
 
         void ajouter(Machine* m);
