@@ -42,18 +42,18 @@ Pour compiler et exécuter l'application, il vous suffit de taper la commande su
 
 ## Contributeurs
 
-**CAMBRESY Florian** _alias_ [EXsky51](https://github.com/EXsky51)
+**Florian Cambresy** _alias_ [EXsky51](https://github.com/EXsky51)
 
-**CHALAUD Jean-Christophe** _alias_ [Jean-Christophe04](https://github.com/Jean-Christophe04)
+**Jean-Christophe Chalaud** _alias_ [Jean-Christophe04](https://github.com/Jean-Christophe04)
 
-**DOS SANTOS Gabriel** _alias_ [dssgabriel](https://github.com/dssgabriel)
+**Gabriel Dos Santos** _alias_ [dssgabriel](https://github.com/dssgabriel)
 
-**GRUCHET Quentin** _alias_ [QGruchet](https://github.com/QGruchet)
+**Quentin Gruchet** _alias_ [QGruchet](https://github.com/QGruchet)
 
-**LE DENMAT Mickaël** _alias_ [m27bay](https://github.com/m27bay) 
+**Mickaël Le Denmat** _alias_ [m27bay](https://github.com/m27bay) 
 
-**LIN Raphaël** _alias_ [uvsq21802498](https://github.com/uvsq21802498)
+**Raphaël Lin** _alias_ [uvsq21802498](https://github.com/uvsq21802498)
 
-**MECHRI Fadi** _alias_ [Mfadi](https://github.com/uvsq21603504)
+**Fadi Mechri** _alias_ [Mfadi](https://github.com/uvsq21603504)
 
-**RAMANANDRAITSIORY Johann** _alias_ [uvsq21805057](https://github.com/uvsq21805057)
+**Johann Ramanandraitsiory** _alias_ [uvsq21805057](https://github.com/uvsq21805057)
