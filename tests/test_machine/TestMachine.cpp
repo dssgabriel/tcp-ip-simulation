@@ -317,7 +317,7 @@ void test8() {
     //
     ParamInterface p;
     p.m_Source = { 192, 168, 1, 1 };
-    p.m_Destination = { 192, 168, 1, 128 };
+    p.m_Destination = { 192, 168, 1, 161 };
     p.m_NbPaquet = nbrPaquet;
     p.m_Ssthresh = 5;
     p.m_TypeFichier = FTP;
@@ -325,7 +325,7 @@ void test8() {
         << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
 
     //
-    sauvegarderConfig("ecriture.json", "ReseauSimple", p);
+    sauvegarderConfig("ecriture.json", "ReseauPME", p);
 
     std::unique_ptr<ReseauGraphe> reseau;
     chargerConfig("ecriture.json", reseau, p);

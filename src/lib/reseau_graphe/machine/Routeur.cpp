@@ -10,6 +10,7 @@
 #include <cstdlib>
 
 #include "../ReseauGraphe.hpp"
+#include "Commutateur.hpp"
 
 uint16_t Routeur::m_NbRouteur = 0;
 
@@ -183,7 +184,7 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @param ip de la machine qui nous interesse.
  * @return MAC correspondante.
  */
-MAC Routeur::trouverMacDest(const IPv4 ip) {    
+MAC Routeur::trouverMacDest(const IPv4 ip) {
     //
     Machine* m = ReseauGraphe::getMachine(ip);
 
@@ -191,17 +192,39 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     for (IPv4 sousReseauRouteur : m_SousReseau) {
         for (IPv4 sousReseauDest : m->getSousReseaux()) {
             if (sousReseauRouteur == sousReseauDest) {
-                return m->getMac();
+                for (Machine* v: m_Voisins) {
+                    if (v->getMac() == m->getMac()) {
+                        return v->getMac();
+                    } else {
+                        Commutateur* c = dynamic_cast<Commutateur*>(v);
+
+                        if (c) {
+                            for (IPv4 sousReseauCommutateur : c->getSousReseaux()) {
+                                if (sousReseauCommutateur == sousReseauDest) {
+                                    return c->getMac();
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     // Trouver le chemin pour aller au routeur dans le meme sous reseau que l'ip dest.
     for (auto iter : m_TableRoutage) {
-        auto tabLiaison = iter.second;
-        uint16_t routeurArrive = tabLiaison[tabLiaison.size() - 1]->m_NumMachine2;
+        std::vector<Liaison*> tabLiaison = iter.second;
+
+        for (Liaison* l: tabLiaison) {
+            std::cout << *l << std::endl;
+        }
+
+        size_t derniereLiaison = tabLiaison.size() - 1;
+        uint16_t machineArrive = tabLiaison[derniereLiaison]->m_NumMachine1 != getIdMachine() ?
+            tabLiaison[derniereLiaison]->m_NumMachine1 : tabLiaison[derniereLiaison]->m_NumMachine2;
+        uint16_t routeurArrive = ReseauGraphe::getIdRouteurDepuisIdMachine(machineArrive);
+
         Routeur* r = ReseauGraphe::getPtrRouteur(routeurArrive);
-        std::cout << *r << std::endl;
 
         // Renvoie du routeur voisin.
         for (IPv4 sousRes : r->getSousReseaux()) {
@@ -472,8 +495,25 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             LSAMisAJour.emplace_back(misAJour);
 
             Routeur* routeur = ReseauGraphe::getPtrRouteur(lsa.getIdRouteur());
-            std::vector<Liaison*> chemin;
+            std::vector<Liaison*> chemin = ReseauGraphe::routageDynamique(
+                    m_IdRouteur,
+                    lsa.getIdRouteur()
+            );
+            std::cout << "BEFORE ADD: Routing Table of R" << m_IdRouteur << std::endl;
+            for (auto it: m_TableRoutage) {
+                std::vector<Liaison*> vec = it.second;
+                for (Liaison* l: vec) {
+                    std::cout << *l << std::endl;
+                }
+            }
             m_TableRoutage.emplace(routeur, chemin);
+            std::cout << "AFTER ADD: Routing Table of R" << m_IdRouteur << std::endl;
+            for (auto it: m_TableRoutage) {
+                std::vector<Liaison*> vec = it.second;
+                for (Liaison* l: vec) {
+                    std::cout << *l << std::endl;
+                }
+            }
         }
     }
 

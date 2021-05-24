@@ -3,7 +3,7 @@
         192,
         168,
         1,
-        194
+        161
     ],
     "IP source": [
         192,
@@ -12,7 +12,7 @@
         1
     ],
     "Nom du reseau": "ReseauPME",
-    "Nombre de paquets": 1,
+    "Nombre de paquets": 15,
     "Type de fichier": 0,
-    "ssthresh": 136
+    "ssthresh": 5
 }

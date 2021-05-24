@@ -72,7 +72,7 @@ Routeur* ReseauGraphe::getPtrRouteur(const uint16_t& idRouteur) {
     }
 
     std::cout << "ERREUR : fichier `ReseauGraphe.cpp`\n"
-        << "\tmethode `getRouteur` : #"
+        << "\tmethode `getPtrRouteur` : #"
         << idRouteur << " introuvable sur le reseau.\n";
     return nullptr;
 }
