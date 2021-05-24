@@ -83,6 +83,7 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
 
         // L'accuse de reception est la derniere valeur ajoute.
         std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
+        m_FileDonnees.pop_back();
 
         // Creation des couches pour desencapsulation.
         Physique couchePhy;
@@ -184,11 +185,9 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @param ip de la machine qui nous interesse.
  * @return MAC correspondante.
  */
-MAC Routeur::trouverMacDest(const IPv4 ip) {
-    // std::cout << ip << std::endl;
+MAC Routeur::trouverMacDest(const IPv4 ip) {    
     //
     Machine* m = ReseauGraphe::getMachine(ip);
-    // std::cout << *m << std::endl;
 
     // Le routeur est il dans le meme sous reseau que l'ip ?
     for (IPv4 sousReseauRouteur : m_SousReseau) {

@@ -152,6 +152,29 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
+
+const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
+    //
+    std::map<uint32_t, double> tempsPaquet;
+
+    //
+    for (Machine* m : m_Machines) {
+        auto tempsTraitementCopie = m->getTempsTraitementPaquets();
+        for (auto elt : tempsTraitementCopie) {
+            auto trouve = tempsPaquet.find(elt.first);
+            if (trouve != tempsPaquet.end()) {
+                tempsPaquet[elt.first] += elt.second;
+            } else {
+                tempsPaquet[elt.first] = elt.second;
+            }
+        }
+    }
+
+    //
+    return tempsPaquet;
+}
+
+// Methodes
 /**
  * @brief Indique si un graphe est connexe ou non.
  *
@@ -287,24 +310,37 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
 void ReseauGraphe::lancerOSPF() {
     size_t c1 = 0, c2 = 0;
     for (Machine* machine: m_Machines) {
+        std::cout << "log #0 : avant for machine\n";
         Routeur* routeur = dynamic_cast<Routeur*>(machine);
 
         if (routeur) {
+            std::cout << "\tlog #1 : avant if routeur\n";
             std::vector<Machine*> voisins = routeur->getVoisins();
             c1++; std::cout << "Router #" << c1 << std::endl;
 
             // #pragma omp parallel for
             for (Machine* voisin: voisins) {
+                std::cout << "\t\tlog #2 : avant for voisine\n";
                 Routeur* routeurVoisin = dynamic_cast<Routeur*>(voisin);
 
                 if (routeurVoisin) {
                     c2++; std::cout << "Neighboor Router #" << c2 << std::endl;
                     PaquetOSPF* hello = new PaquetHello(routeurVoisin->getIdRouteur());
                     hello->setEntete(Hello, routeur->getIdRouteur());
+                    std::cout << "\t\t\tlog #3.5 : avant envoyerOSPF\n"
+                        << "envoyerOSPF(" << routeurVoisin->getIp()
+                        << ", hello)\n"
+                        << "############################################\n";
                     routeur->envoyerOSPF(routeurVoisin, hello);
+                    std::cout << "\t\t\tlog #3.5 : apres envoyerOSPF\n"
+                        << "############################################\n";
+                    std::cout << "\t\t\tlog #3 : apres if voisin\n";
                 }
+                std::cout << "\t\tlog #2 : apres for voisine\n";
             }
+            std::cout << "\tlog #1 : apres if routeur\n";
         }
+        std::cout << "log #0 : apres for machine\n";
     }
 }
 
