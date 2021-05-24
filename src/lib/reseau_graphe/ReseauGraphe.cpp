@@ -123,6 +123,23 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
+const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
+    //
+    std::map<uint32_t, double> tempsPaquet;
+    for (Machine* m : m_Machines) {
+        auto mapMachine = m->getTempsTraitementPaquets();
+        for (auto elt : mapMachine) {
+            auto trouve = tempsPaquet.find(elt.first);
+            if (trouve != tempsPaquet.end()) {
+                trouve->second += elt.second;
+            } else {
+                tempsPaquet.emplace(elt);
+            }        
+        }
+    }
+    return tempsPaquet;
+}
+
 // Methodes
 bool ReseauGraphe::estConnexe() {
     return false;

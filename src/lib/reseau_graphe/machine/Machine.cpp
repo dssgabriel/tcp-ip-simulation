@@ -71,11 +71,7 @@ Machine::Machine() {
     }
 }
 
-Machine::~Machine() {
-    /*for (Machine *m : m_Voisins) {
-        delete m;
-    }*/
-}
+Machine::~Machine() {}
 
 /**
  * @brief Accesseur du nombre de machine.
@@ -260,6 +256,33 @@ std::stack<std::bitset<16>> Machine::suppDonnee() {
 }
 
 /**
+ * @brief Accesseur d'un element dans le tableau de temps de traitement.
+ * 
+ * @param numPaquet le numero du paquet.
+ * @return double le temps de traitement du paquet.
+ */
+const double& Machine::getTempsTraitementPaquet(const uint32_t& numPaquet) const {
+    auto trouve = m_TempsTraitementPaquet.find(numPaquet);
+    if (trouve != m_TempsTraitementPaquet.end()) {
+        return trouve->second;
+    }
+
+    std::cout << "ERREUR : Dans le fichier 'Ordinateur.cpp'. "
+        << "Dans la fonction 'getTempsTraitementPaquet'. "
+        << "Aucun paquet ne correspond au numero demande.\n";
+    exit(EXIT_FAILURE);
+}
+
+/**
+ * @brief Accesseur du tableau de temps de traitement des paquets.
+ * 
+ * @return const std::map<uint16_t, double> le tableau de temps de traitement.
+ */
+const std::map<uint32_t, double>& Machine::getTempsTraitementPaquets() const {
+    return m_TempsTraitementPaquet;
+}
+
+/**
  * @brief Traite une trame lors de l'enoie de cette derniere dans le reseau.
  *          Met l'adresse MAC de destination en adresse source.
  *          Remplace l'adresse MAC de destination par la nouvelle destination.
@@ -268,7 +291,10 @@ std::stack<std::bitset<16>> Machine::suppDonnee() {
  * @param nouvelleDest de la machine voisine.
  */
 void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
-    std::cout << m_Nom << " : Debut traitement\n";
+    //
+    std::cout << m_Nom << BLUE << " : Debut traitement\n" << RESET;
+    Horloge o;
+    o.lancer();
     
     // Recuperation du paquet et desencapsulation.
     Physique couchePhy;
@@ -294,7 +320,10 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     paquet = coucheInt.encapsuler(segment);
     trame = couchePhy.encapsuler(paquet);
 
-    std::cout << m_Nom << " : fin traitement\n";
+    //
+    o.arreter();
+    m_TempsTraitementPaquet.emplace(coucheTrans.getSeq().to_ulong(), o.getTempsSec().count());
+    std::cout << m_Nom << BLUE << " : fin traitement\n" << RESET;
 }
 
 void Machine::lancerHorloge() {
