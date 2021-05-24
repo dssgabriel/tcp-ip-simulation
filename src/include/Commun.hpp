@@ -20,16 +20,18 @@
 
 #define RESET    "\e[0m"
 
+#define DEBUG 0
+
 // NE PAS METTRE DANS UN CPP
 
 /**
- * @brief Permet de separer un bitset en deux bitset de taille egale. 
- * 
+ * @brief Permet de separer un bitset en deux bitset de taille egale.
+ *
  * @param orginal Le bitset que l'on veut diviser en deux.
  * @param gauche Il s'agit du bitset qui va contenir la partie gauche de original.
  * @param droite Il s'agit du bitset qui va contenir la partie droite de original.
  * @return void.
- **/ 
+ **/
 template <size_t N>
 void diviser(const std::bitset <N>& original,
     std::bitset <N/2>& gauche, std::bitset <N/2>& droite)
@@ -39,14 +41,14 @@ void diviser(const std::bitset <N>& original,
 }
 
 /**
- * @brief Permet de separer un bitset en trois bitset de taille egale. 
- * 
+ * @brief Permet de separer un bitset en trois bitset de taille egale.
+ *
  * @param orginal Le bitset que l'on veut diviser en trois.
  * @param gauche Il s'agit du bitset qui va contenir la partie gauche de original.
  * @param droite Il s'agit du bitset qui va contenir la partie droite de original.
  * @param milieur Il d'agit du bitset qui va contenir la partie central de original.
  * @return void.
- **/ 
+ **/
 template <size_t N>
 void diviser(std::bitset <N> original, std::bitset <N/3>& gauche,
     std::bitset <N/3>& milieu, std::bitset <N/3>& droite)
@@ -57,13 +59,13 @@ void diviser(std::bitset <N> original, std::bitset <N/3>& gauche,
 }
 
 /**
- * @brief Permet de concatener deux bitsets. 
- * 
+ * @brief Permet de concatener deux bitsets.
+ *
  * @param orginal Le bitset que l'on veut diviser en deux.
  * @param gauche Le premier bitset que l'on veut concatener.
  * @param droite Le second bitset que l'on veut concatener.
  * @return Un std::bitset de tailles egales a la somme des details de deux bitset a concatener.
- **/ 
+ **/
 template <size_t N1, size_t N2>
 std::bitset<N1 + N2> concat(const std::bitset <N1> gauche,
     const std::bitset <N2> droite)
