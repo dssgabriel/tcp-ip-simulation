@@ -83,9 +83,10 @@ void test3() {
             << " mode : " << element.m_Mode << std::endl; 
     }
     
-    // pc.envoyer(2);
-    // pc.envoyer(3);
-    // pc.envoyer(4, false);
+    // std::map<uint32_t, double> tempsPaquet = reseau->getTempsPaquet();
+    // for (auto elt : tempsPaquet) {
+    //     std::cout << "numpaquet : " << elt.first << ", temps : " << elt.second;
+    // }
 }
 
 void test4() {
@@ -116,21 +117,39 @@ void test4() {
     c.setMemoire(&pc2.getIp(), &c2.getMac());
     c2.setMemoire(&pc.getIp(), &c.getMac());
     c2.setMemoire(&pc2.getIp(), &pc2.getMac());
-
+    
+    //
+    // int nbrPaquet = rand()%1000;
+    int nbrPaquet = 15;
+    
     //
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    int nbrPaquet = 2;
     p.m_NbPaquet = nbrPaquet;
-    p.m_Ssthresh = 8;
+    // p.m_Ssthresh = rand()%1000;
+    p.m_Ssthresh = 5;
     p.m_TypeFichier = FTP;
+    std::cout << "p.m_NbPaquet : " << p.m_NbPaquet
+        << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
 
     //
-    pc.envoyer(nbrPaquet, false);
+    // pc.envoyer(nbrPaquet, false);
+
+    //
+    std::bitset<16> cwnd = 1;
+    pc.lancerHorloge();
+    pc.slowStart(cwnd, p.m_Ssthresh);
+    pc.arreterHorloge();
+    std::cout << "\n\nAffichage tableau controle congestion : \n";
+    for (auto element : pc.getControleCongestion()){
+        std::cout << "temps : " << element.m_Temps 
+            << ", valeur cwnd " << element.m_ValeurCwnd
+            << " mode : " << element.m_Mode << std::endl; 
+    }
 }
 
 void test5() {
@@ -276,8 +295,8 @@ int main(void) {
     srand(time(NULL));
     // test1();
     // test2();
-    test3();
-    // test4();
+    // test3();
+    test4();
     // test5();
     // test6();
     // test7();

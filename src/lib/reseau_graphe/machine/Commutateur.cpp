@@ -27,12 +27,7 @@ Commutateur::Commutateur() : Machine() {
  * @brief Destructeur de la classe Commutateur.
  * 
  */
-Commutateur::~Commutateur() {
-    for (auto it : m_CacheMem) {
-        delete it.first;
-        delete it.second;
-    }
-}
+Commutateur::~Commutateur() {}
 
 /**
  * @brief Accesseur du nombre de commutateur.
@@ -86,6 +81,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
 
         // L'accuse de reception est la derniere valeur ajoute.
         std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
+        m_FileDonnees.pop_back();
 
         // Creation des couches pour desencapsulation.
         Physique couchePhy;

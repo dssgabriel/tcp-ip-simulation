@@ -11,8 +11,8 @@
 #pragma once
 
 #include <map>
-#include <memory>
 #include <deque>
+#include <memory>
 #include <vector>
 #include <string>
 #include <bitset>
@@ -23,11 +23,11 @@
 #include "Machine.hpp"
 #include "Ordinateur.hpp"
 #include "Commutateur.hpp"
-#include "../ospf/PaquetOSPF.hpp"
-#include "../ospf/PaquetHello.hpp"
 #include "../ospf/PaquetDBD.hpp"
 #include "../ospf/PaquetLSR.hpp"
 #include "../ospf/PaquetLSU.hpp"
+#include "../ospf/PaquetOSPF.hpp"
+#include "../ospf/PaquetHello.hpp"
 #include "../ospf/PaquetLSAck.hpp"
 #include "../../../include/Liaison.hpp"
 
