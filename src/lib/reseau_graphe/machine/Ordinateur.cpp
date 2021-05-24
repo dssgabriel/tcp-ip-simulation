@@ -4,9 +4,9 @@
  * @brief Vous trouverez ici toutes les fonctions implementees
  *          pour la classe Ordinateur.
  * @date 2021-05-22
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 #include "Ordinateur.hpp"
 
@@ -14,7 +14,7 @@ uint8_t Ordinateur::m_NbrOrdinateur = 0;
 
 /**
  * @brief Constructeur de la classe Ordinateur.
- * 
+ *
  */
 Ordinateur::Ordinateur() : Machine() {
     m_NbrOrdinateur++;
@@ -28,13 +28,13 @@ Ordinateur::Ordinateur() : Machine() {
 
 /**
  * @brief Destructeur de la classe Ordinateur.
- * 
+ *
  */
 Ordinateur::~Ordinateur() {}
 
 /**
  * @brief Accesseur du nombre d'ordinateur.
- * 
+ *
  * @return const uint8_t& le nombre d'ordinateur.
  */
 const uint8_t& Ordinateur::getNbrOrdinateur() const {
@@ -43,7 +43,7 @@ const uint8_t& Ordinateur::getNbrOrdinateur() const {
 
 /**
  * @brief Acceseur de l'identifiant de l'ordinateur.
- * 
+ *
  * @return const uint8_t& l'identifiant.
  */
 const uint8_t& Ordinateur::getIdOrdinateur() const {
@@ -52,7 +52,7 @@ const uint8_t& Ordinateur::getIdOrdinateur() const {
 
 /**
  * @brief Accesseur du tableau de controle de congestion.
- * 
+ *
  * @return const std::vector<ElementControleCongestion>& le tableau de controle
  *          de congestion.
  */
@@ -62,9 +62,9 @@ const std::vector<ElementControleCongestion>& Ordinateur::getControleCongestion(
 
 /**
  * @brief Accesseur d'un element dans le tableau de controle de congestion.
- * 
+ *
  * @param position dans le tableau.
- * @return const ElementControleCongestion& 
+ * @return const ElementControleCongestion&
  */
 const ElementControleCongestion& Ordinateur::getControleCongestion(const int& position) const {
     if (position < 0 || position > (int)m_ControleCongestion.size()) {
@@ -79,7 +79,7 @@ const ElementControleCongestion& Ordinateur::getControleCongestion(const int& po
 
 /**
  * @brief Genere un message aleatoire pour les trames.
- * 
+ *
  * @return std::bitset<16> le message.
  */
 std::bitset<16> genererMessage() {
@@ -89,7 +89,7 @@ std::bitset<16> genererMessage() {
 
 /**
  * @brief Convertir une file en double file.
- * 
+ *
  * @param queue a convertir.
  * @return std::deque<std::stack<std::bitset<16>>> la double file.
  */
@@ -102,7 +102,7 @@ std::deque<std::stack<std::bitset<16>>> convertirQueueDeque(
         queue.pop();
     }
 
-    return dequeu;   
+    return dequeu;
 }
 
 bool tripleACK(std::deque<std::stack<std::bitset<16>>> &donnees)
@@ -148,7 +148,7 @@ bool tripleACK(std::deque<std::stack<std::bitset<16>>> &donnees)
 				}
 			}
 		}
-		
+
 	}
 	return false;
 }
@@ -161,7 +161,7 @@ int calculerNombreEnvoye(std::deque<std::stack<std::bitset<16>>> &donnees) {
 
     // On parcours les ack.
     for (int i = 0; i < int(donnees.size()); ++i) {
-		
+
         // On desencapsule.
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(donnees[i]);
         std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
@@ -213,7 +213,7 @@ bool estDuplique(
         if (i == pos) {
             continue;
         }
-        
+
         // Initialisation des couches.
         Physique couchePhy;
         Internet coucheInt;
@@ -227,7 +227,7 @@ bool estDuplique(
         // On re encapusle.
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
-        donnees[i] = couchePhy.encapsuler(paquet);  
+        donnees[i] = couchePhy.encapsuler(paquet);
 
         if (coucheTrans.getAck2() == ack) {
             return true;
@@ -268,17 +268,17 @@ std::stack<std::bitset<16>> trouverDonnee(
     std::cout << "ERREUR : Dans le fichier 'Ordinateur.cpp'. "
         << "Dans la fonction 'trouverDonnee'. "
         << "Aucune donnée\n";
-    exit(EXIT_FAILURE); 
+    exit(EXIT_FAILURE);
 }
 
 /**
  * @brief Rempli la file de donnee avec la configuration donnee par l'utilisateur.
- * 
+ *
  * @param config donnee par l'utilisateur.
  * @param destination l'adresse MAC de destination.
  */
 void Ordinateur::remplirFileDonnees(
-    const ParamInterface& config, const MAC& destination) 
+    const ParamInterface& config, const MAC& destination)
 {
     // Preparation des donnees
     for (size_t i = 0; i < config.m_NbPaquet; ++i) {
@@ -329,19 +329,25 @@ void Ordinateur::finDeSession() {
 
 /**
  * @brief Envoie une trame.
- * 
+ *
  * @param cwnd le nombre de trame a envoyer.
  * @param estAck indique si la trame est un accuse de reception.
  */
 void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
-	std::cout << m_Nom << " : Debut envoie\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Debut envoie\n";
+    }
 
 	if (estAck) {
-		std::cout << m_Nom << " : Retour\n";
+        if (DEBUG) {
+            std::cout << m_Nom << " : Retour\n";
+        }
 		return;
 	}
-	std::cout << m_Nom << " : Aller\n";
-	
+    if (DEBUG) {
+        std::cout << m_Nom << " : Aller\n";
+    }
+
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
     Machine* voisine = m_Voisins.front();
@@ -351,8 +357,10 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
         //
 
         if (calculerNombreEnvoye(m_FileDonnees) == 0) {
-            std::cout << VERT << m_Nom
-                << " : Plus de paquets a envoyer, fin de la session\n" << RESET;
+            if (DEBUG) {
+                std::cout << VERT << m_Nom
+                    << " : Plus de paquets a envoyer, fin de la session\n" << RESET;
+            }
             return;
         }
 
@@ -373,10 +381,10 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
         segment = coucheTrans.encapsuler(donnee);
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
-        
+
         //
         coucheTrans.setCwnd(cwnd);
-        
+
         // Traitement de la donnee.
         traitement(donneeRecu, voisine->getMac());
 
@@ -386,19 +394,23 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
 
     //
     voisine->recevoir(cwnd, estAck);
-    std::cout << m_Nom << " : Fin envoie\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Fin envoie\n";
+    }
 }
 
 /**
  * @brief Recois la trame.
- * 
+ *
  * @param cwnd Le nombre de trame recu.
  * @param estAck La trame recu est un accuse de reception ou non.
  */
 void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     [[maybe_unused]] const bool estAck)
 {
-    std::cout << m_Nom << " : Debut recevoir\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Debut recevoir\n";
+    }
     if (estAck) {
         return;
     }
@@ -424,8 +436,10 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
         m_FileDonnees[0] = couchePhy.encapsuler(paquet);
 
         //
-        std::cout << VERT << m_Nom << " : Paquet ok\n" << RESET
-            << m_Nom << " : Fin recevoir\n";
+        if (DEBUG) {
+            std::cout << VERT << m_Nom << " : Paquet ok\n" << RESET
+                << m_Nom << " : Fin recevoir\n";
+        }
 
         // Trouver la machine voisine.
         // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
@@ -456,14 +470,18 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
         std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
         //
-        std::cout << "coucheTrans.getSeq().to_ulong() : " << coucheTrans.getSeq().to_ulong()
-            << ", coucheTrans2.getSeq().to_ulong() : " << coucheTrans2.getSeq().to_ulong();
+        if (DEBUG) {
+            std::cout << "coucheTrans.getSeq().to_ulong() : " << coucheTrans.getSeq().to_ulong()
+                << ", coucheTrans2.getSeq().to_ulong() : " << coucheTrans2.getSeq().to_ulong();
+        }
 
         //
         if (int(coucheTrans.getSeq().to_ulong()) + 1 != int(coucheTrans2.getSeq().to_ulong())) {
             //
-            std::cout << ROUGE << " ECHEC\n" << RESET;
-            std::cout << ROUGE << m_Nom << " : Manque un paquet : " << coucheTrans2.getSeq().to_ulong() << RESET << std::endl;
+            if (DEBUG) {
+                std::cout << ROUGE << " ECHEC\n" << RESET;
+                std::cout << ROUGE << m_Nom << " : Manque un paquet : " << coucheTrans2.getSeq().to_ulong() << RESET << std::endl;
+            }
             std::bitset<32> ack = std::bitset<32>(coucheTrans.getSeq().to_ulong() + 1);
             coucheTrans.setAck2(ack);
 
@@ -473,18 +491,22 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
             m_FileDonnees[i-1] = couchePhy.encapsuler(paquet);
 
             //
-            std::cout << m_Nom << " : Fin recevoir\n";
+            if (DEBUG) {
+                std::cout << m_Nom << " : Fin recevoir\n";
+            }
 
             // Trouver la machine voisine.
             // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
             Machine* voisine = m_Voisins.front();
 
             voisine->setDonnee(m_FileDonnees[i-1]);
-			m_FileDonnees.clear();
-			voisine->envoyer(1, true);
+            m_FileDonnees.clear();
+            voisine->envoyer(1, true);
             return;
         }
-        std::cout << VERT << " OK\n" << RESET;
+        if (DEBUG) {
+            std::cout << VERT << " OK\n" << RESET;
+        }
 
         std::bitset<32> ack = std::bitset<32>(coucheTrans2.getSeq().to_ulong() + 1);
         coucheTrans2.setAck2(ack);
@@ -496,8 +518,10 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
     }
 
     //
-    std::cout << VERT << m_Nom << " : Tous les paquets sont ok" << RESET << std::endl;
-    std::cout << m_Nom << " : Fin recevoir\n";
+    if (DEBUG) {
+        std::cout << VERT << m_Nom << " : Tous les paquets sont ok" << RESET << std::endl;
+        std::cout << m_Nom << " : Fin recevoir\n";
+    }
 
     // Trouver la machine voisine.
     // Une seule machine voisine pour un ordinateur (routeur ou commutateur).
@@ -516,7 +540,7 @@ void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
 
     //
     uint64_t cwndConvert = cwnd.to_ulong();
-    
+
     //
     ElementControleCongestion ecc;
     ecc.m_Temps = m_Chrono.getTempsSec().count();
@@ -525,14 +549,14 @@ void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
     m_ControleCongestion.push_back(ecc);
 
     //
-    if (cwndConvert < ssthresh1) {    
+    if (cwndConvert < ssthresh1) {
         for (int i = 0; i < calculerNombreEnvoye(m_FileDonnees); ++i) {
             if (cwndConvert >= ssthresh1) {
                 std::cout
                     << "\t#############################\n"
                     << "\tif (cwndConvert >= ssthresh1)\n"
                     << "\t#############################\n";
-                cwndConvert /= 2;                        
+                cwndConvert /= 2;
                 cwnd = std::bitset<16>(cwndConvert);
                 congestionAvoidance(cwnd, ssthresh1);
                 return;
@@ -551,7 +575,7 @@ void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
                 m_ControleCongestion.push_back(ecc);
             }
         }
-    
+
         if (calculerNombreEnvoye(m_FileDonnees) != 0) {
                 envoyer(calculerNombreEnvoye(m_FileDonnees), false);
         }
@@ -577,12 +601,12 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
         << "\t#########################\n";
 
     Physique couchePhy;
-    uint64_t cwndConvert = cwnd.to_ulong();    
+    uint64_t cwndConvert = cwnd.to_ulong();
 
     //
     if (tripleACK(m_FileDonnees)) {
         ssthresh = cwndConvert / 2;
-        cwndConvert /= 2;        
+        cwndConvert /= 2;
         //fastRetransmit(std::bitset<32> (ackTripleConvert - 1), cwnd, ssthresh);
         fastRecovery(cwnd, ssthresh);
         std::cout
@@ -591,11 +615,11 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
             << "\t#######################\n";
 		return;
     }
-    
+
     //
     for (int i = 0; i < calculerNombreEnvoye(m_FileDonnees); ++i) {
 	    cwndConvert += 1;
-    
+
         //
         ElementControleCongestion ecc;
         ecc.m_Temps = m_Chrono.getTempsSec().count();
@@ -609,7 +633,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
         //
         std::stack<std::bitset<16>> paquet = couchePhy.desencapsuler(m_FileDonnees[i]);
         m_FileDonnees[i] = couchePhy.encapsuler(paquet);
-        
+
         //
         if (timeout(paquet)) {
             ssthresh = cwndConvert / 2;
@@ -628,7 +652,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
 	if (calculerNombreEnvoye(m_FileDonnees) != 0) {
 		envoyer(calculerNombreEnvoye(m_FileDonnees), false);
 	}
-	
+
     //
     std::cout
         << "\t#######################\n"
@@ -682,11 +706,11 @@ void Ordinateur::fastRecovery([[maybe_unused]] std::bitset<16>& cwnd,[[maybe_unu
     //     } else {
     //         cwndConvert = ssthresh;
     //         cwnd = std::bitset<16>(cwndConvert);
-            
+
     //         // On re encapusle.
     //         segment = coucheTrans.encapsuler(donnee);
     //         paquet = coucheInt.encapsuler(segment);
-    //         m_FileDonnees[i] = couchePhy.encapsuler(paquet); 
+    //         m_FileDonnees[i] = couchePhy.encapsuler(paquet);
     //         std::cout << "\tFin fastRecovery\n";
     //         congestionAvoidance(cwnd, ssthresh);
     //         return;
