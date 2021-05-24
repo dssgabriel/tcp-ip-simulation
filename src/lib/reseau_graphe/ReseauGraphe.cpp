@@ -3,6 +3,7 @@
  * @brief   Vous trouverez ici toutes les fonctions implementees pour la classe ReseauGraphe.
  * @author  Florian CAMBRESY
  * @author  Gabriel Dos Santos
+ * @author  Mickael Le Denmat
  * @date    Mai 2021
  **/
 
@@ -15,18 +16,35 @@
 std::vector<Machine*> ReseauGraphe::m_Machines;
 std::vector<Liaison> ReseauGraphe::m_Liaisons;
 
+/**
+ * @brief Constructeur de la classe ReseauGraphe.
+ *
+ **/
 ReseauGraphe::ReseauGraphe() {
     m_Machines.clear();
     m_Liaisons.clear();
 }
 
+/**
+ * @brief Destructeur de la classe ReseauGraphe.
+ *
+ **/
 ReseauGraphe::~ReseauGraphe() {}
 
-// Getters & setters
+/**
+ * @brief Setter pour l'argument nom.
+ *
+ * @return void.
+ **/
 void ReseauGraphe::setNom(const std::string nom) {
     m_Nom = nom;
 }
 
+/**
+ * @brief Getter pour l'argument m_nom.
+ *
+ * @return std::string.
+ **/
 const std::string& ReseauGraphe::getNom() const {
     return m_Nom;
 }
@@ -72,6 +90,7 @@ Machine* ReseauGraphe::getMachine(const IPv4& ip) {
     exit(EXIT_FAILURE);
 }
 
+
 Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     if (id > m_Machines.size()) {
         std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
@@ -96,10 +115,20 @@ IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
     exit(EXIT_FAILURE);
 }
 
+/**
+ * @brief Getter pour l'argument m_Machines.
+ *
+ * @return std::vector<Machine*>.
+ **/
 const std::vector<Machine*>& ReseauGraphe::getMachines() const {
     return m_Machines;
 }
 
+/**
+ * @brief Getter pour l'argument m_Liaisons.
+ *
+ * @return std::vector<Liaison>.
+ **/
 const std::vector<Liaison>& ReseauGraphe::getLiaisons() const {
     return m_Liaisons;
 }
@@ -118,19 +147,56 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
+
+const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
+    //
+    std::map<uint32_t, double> tempsPaquet;
+
+    //
+    for (Machine* m : m_Machines) {
+        auto tempsTraitementCopie = m->getTempsTraitementPaquets();
+        for (auto elt : tempsTraitementCopie) {
+            auto trouve = tempsPaquet.find(elt.first);
+            if (trouve != tempsPaquet.end()) {
+                tempsPaquet[elt.first] += elt.second;
+            } else {
+                tempsPaquet[elt.first] = elt.second;
+            }
+        }
+    }
+
+    //
+    return tempsPaquet;
+}
+
 // Methodes
 bool ReseauGraphe::estRouteur(const uint16_t& idMachine) {
     return (dynamic_cast<Routeur*>(m_Machines[idMachine - 1])) ? true : false;
 }
 
+/**
+ * @brief Indique si un graphe est connexe ou non.
+ *
+ * @return bool.
+ **/
 bool ReseauGraphe::estConnexe() {
-    return false;
+    return true;
 }
 
+/**
+ * @brief Ajoute une machine dans le tableau de machines.
+ *
+ * @return void.
+ **/
 void ReseauGraphe::ajouter(Machine* m) {
     m_Machines.emplace_back(m);
 }
 
+/**
+ * @brief Ajoute une liaison dans le tableau de liaisons.
+ *
+ * @return void.
+ **/
 void ReseauGraphe::ajouter(Liaison l) {
     m_Liaisons.emplace_back(l);
 }

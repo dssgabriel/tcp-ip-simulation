@@ -1,6 +1,7 @@
 CC = g++
 CFLAGS = -std=c++17 -Wall -Wextra -g3 -O1 #-fopenmp
 
+TEST = TestMachine.cpp
 COMMUN = ../../src/include/Commun.cpp
 FICHIER = ../../src/lib/gestion_fichiers/*.cpp
 HORLOGE = ../../src/lib/horloge/Horloge.cpp
