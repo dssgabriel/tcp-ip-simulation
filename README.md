@@ -1,5 +1,7 @@
 # IN608 - Projet : Simulation du protocole TCP/IP
 
+[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-qt.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/not-a-bug-a-feature.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](http://forthebadge.com)  [![forthebadge](https://forthebadge.com/images/badges/uses-brains.svg)](http://forthebadge.com)
+
 ## Introduction
 Ce projet est réalisé pour le module IN608 de L3 Informatique, au sein de l’Université de Versailles - Saint-Quentin-en-Yvelines, et encadré par Mme Leila KLOUL.
 
@@ -27,3 +29,14 @@ Pour compiler et exécuter l'application, il vous suffit de taper la commande su
 ```sh
 ./build.sh
 ```
+
+# Auteurs
+
+CAMBRESY Florian
+CHALAUD Jean-Christophe
+DOS SANTOS Gabriel
+GRUCHET Quentin
+LE DENMAT Mickaël
+LIN Raphaël
+MECHRI Fadi
+RAMANANDRAITSIORY Johann
