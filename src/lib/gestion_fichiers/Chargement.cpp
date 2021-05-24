@@ -175,9 +175,6 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         l->m_NumMachine2 = liaisonJ["Arrivee"];
         l->m_Debit = liaisonJ["Debit"];
 
-        // Ajout de la liaison dans le reseau.
-        reseau->ajouter(*l);
-
         // Configuration des voisins.
         Machine* a = reseau->getMachine(l->m_NumMachine1);
         Machine* b = reseau->getMachine(l->m_NumMachine2);
@@ -185,15 +182,20 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         b->setVoisin(*a);
 
         // Initialisation exacte de la Liaison
-        l->m_NumMachine1 += 1;
-        l->m_NumMachine2 += 1;
+        Liaison* l2 = new Liaison;
+        l2->m_NumMachine1 = l->m_NumMachine1 + 1;
+        l2->m_NumMachine2 = l->m_NumMachine2 + 1;
+        l2->m_Debit = l->m_Debit;
+
+        // Ajout de la liaison dans le reseau.
+        reseau->ajouter(*l2);
 
         // Remplir table de routage.
         Routeur* r = dynamic_cast<Routeur*>(a);
         Routeur* r2 = dynamic_cast<Routeur*>(b);
         if (r && r2) {
-            r->setTableRoutage(r2, l);
-            r2->setTableRoutage(r, l);
+            r->setTableRoutage(r2, l2);
+            r2->setTableRoutage(r, l2);
         }
     }
 

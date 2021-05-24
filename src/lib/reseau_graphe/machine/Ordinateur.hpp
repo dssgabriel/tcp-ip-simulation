@@ -9,7 +9,6 @@
  */
 #pragma once
 
-#include <map>
 #include <deque>
 #include <cassert>
 
@@ -23,7 +22,6 @@ class Ordinateur : public Machine {
         static uint8_t m_NbrOrdinateur;
         uint8_t m_IdOrdinateur;
         std::vector<ElementControleCongestion> m_ControleCongestion;
-        std::map<uint16_t, double> m_TempsTraitementPaquet;
         
     public:
        // Constructeurs
@@ -42,11 +40,7 @@ class Ordinateur : public Machine {
         const ElementControleCongestion& getControleCongestion(
             const int& position
         ) const;
-        
-        const std::map<uint16_t, double> getTempsTraitementPaquet() const;
-
-        double getTempsTraitementPaquet(const uint16_t& cle) const;
-        
+                
         // Methodes
         void remplirFileDonnees(
             const ParamInterface& config,

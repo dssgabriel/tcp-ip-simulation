@@ -78,14 +78,10 @@ void test3() {
     pc.slowStart(cwnd, p.m_Ssthresh);
     pc.arreterHorloge();
     for (auto element : pc.getControleCongestion()){
-        std::cout << "temps : " << element.m_Temps 
+        std::cout << "temps : " << element.m_Temps
             << ", valeur cwnd " << element.m_ValeurCwnd
-            << " mode : " << element.m_Mode << std::endl; 
+            << " mode : " << element.m_Mode << std::endl;
     }
-    
-    // pc.envoyer(2);
-    // pc.envoyer(3);
-    // pc.envoyer(4, false);
 }
 
 void test4() {
@@ -118,19 +114,56 @@ void test4() {
     c2.setMemoire(&pc2.getIp(), &pc2.getMac());
 
     //
+    ReseauGraphe r;
+    r.ajouter(&pc);
+    r.ajouter(&pc2);
+    r.ajouter(&c);
+    r.ajouter(&c2);
+
+    r.ajouter(Liaison{0, 0, 1});
+    r.ajouter(Liaison{0, 1, 2});
+    r.ajouter(Liaison{0, 2, 3});
+
+    //
+    // int nbrPaquet = rand()%1000;
+    int nbrPaquet = 15;
+
+    //
     ParamInterface p;
     p.m_Destination = pc2.getIp();
     p.m_Source = pc.getIp();
-    int nbrPaquet = 2;
     p.m_NbPaquet = nbrPaquet;
-    p.m_Ssthresh = 8;
+    // p.m_Ssthresh = rand()%1000;
+    p.m_Ssthresh = 5;
     p.m_TypeFichier = FTP;
+    std::cout << "p.m_NbPaquet : " << p.m_NbPaquet
+        << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
 
     //
     pc.remplirFileDonnees(p, pc2.getMac());
 
     //
-    pc.envoyer(nbrPaquet, false);
+    // pc.envoyer(nbrPaquet, false);
+
+    //
+    std::bitset<16> cwnd = 1;
+    pc.lancerHorloge();
+    pc.slowStart(cwnd, p.m_Ssthresh);
+    pc.arreterHorloge();
+    std::cout << "\n\nAffichage tableau controle congestion : \n";
+    for (auto element : pc.getControleCongestion()){
+        std::cout << "temps : " << element.m_Temps
+            << ", valeur cwnd " << element.m_ValeurCwnd
+            << " mode : " << element.m_Mode << std::endl;
+    }
+
+    //
+    std::cout << "\n\nAffichage tableau temps traitement : \n";
+    auto tempsPaquet = r.getTempsPaquet();
+    for (auto elt : tempsPaquet) {
+        std::cout << "numpaquet : " << elt.first
+            << ", temps : " << elt.second << " s\n";
+    }
 }
 
 void test5() {
@@ -165,7 +198,7 @@ void test5() {
     p.m_NbPaquet = nbrPaquet;
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
-    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
+    sauvegarderConfig("ecriture.json", "ReseauPME", p);
 
     //
     pc.setVoisin(c);
@@ -207,13 +240,12 @@ void test6() {
     p.m_NbPaquet = nbrPaquet;
     p.m_Ssthresh = 136;
     p.m_TypeFichier = FTP;
-    sauvegarderConfig("ecriture.json", "ReseauMaison", p);
+    sauvegarderConfig("ecriture.json", "ReseauPME", p);
 
     //
     std::unique_ptr<ReseauGraphe> reseau;
     chargerConfig("ecriture.json", reseau, p);
 
-    //
     // Machine* m = reseau->getMachine(p.m_Source);
     // Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
 
@@ -227,7 +259,15 @@ void test6() {
     // std::cout << *r << std::endl;
 
     //
+    std::cout << "log #0 : Avant lancerOSPF\n";
     reseau->lancerOSPF();
+
+    for (Machine* m: reseau->getMachines()) {
+        Routeur* r = dynamic_cast<Routeur*>(m);
+        if (r) {
+            std::cout << *r << std::endl;
+        }
+    }
 
     //
     // pc->remplirFileDonnees(p, pc2->getMac());
@@ -271,15 +311,69 @@ void test7() {
     pc->envoyer(nbrPaquet, false);
 }
 
+void test8() {
+    int nbrPaquet = 15;
+
+    //
+    ParamInterface p;
+    p.m_Source = { 192, 168, 1, 1 };
+    p.m_Destination = { 192, 168, 1, 161 };
+    p.m_NbPaquet = nbrPaquet;
+    p.m_Ssthresh = 5;
+    p.m_TypeFichier = FTP;
+    std::cout << "p.m_NbPaquet : " << p.m_NbPaquet
+        << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
+
+    //
+    sauvegarderConfig("ecriture.json", "ReseauPME", p);
+
+    std::unique_ptr<ReseauGraphe> reseau;
+    chargerConfig("ecriture.json", reseau, p);
+
+    Machine* m = reseau->getMachine(p.m_Source);
+    Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
+
+    //
+    Machine* m2 = reseau->getMachine(p.m_Destination);
+    Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
+
+    //
+    pc->remplirFileDonnees(p, pc2->getMac());
+    //
+    //
+    reseau->lancerOSPF();
+
+    //
+    std::bitset<16> cwnd = 1;
+    pc->lancerHorloge();
+    pc->slowStart(cwnd, p.m_Ssthresh);
+    pc->arreterHorloge();
+    std::cout << "\n\nAffichage tableau controle congestion : \n";
+    for (auto element : pc->getControleCongestion()){
+        std::cout << "temps : " << element.m_Temps
+            << ", valeur cwnd " << element.m_ValeurCwnd
+            << " mode : " << element.m_Mode << std::endl;
+    }
+
+    //
+    std::cout << "\n\nAffichage tableau temps traitement : \n";
+    auto tempsPaquet = reseau->getTempsPaquet();
+    for (auto elt : tempsPaquet) {
+        std::cout << "numpaquet : " << elt.first
+            << ", temps : " << elt.second << " s\n";
+    }
+}
+
 int main(void) {
     srand(time(NULL));
     // test1();
     // test2();
-    test3();
+    // test3();
     // test4();
     // test5();
     // test6();
     // test7();
+    test8();
 
     return 0;
 }

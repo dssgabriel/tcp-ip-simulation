@@ -30,7 +30,7 @@ Internet::Internet() {
 Internet::~Internet() {}
 
  /**
-  * @brief Setter pour l'argument de classe m_IpSrc.
+  * @brief Setter pour l'attribut de classe m_IpSrc.
   * 
   * @param src IP de départ souhaité.
   * @return void.
@@ -40,7 +40,7 @@ void Internet::setIpSrc(IPv4 src) {
 }
 
  /**
-  * @brief Getter pour l'argument de classe m_IpSrc.
+  * @brief Getter pour l'attribut de classe m_IpSrc.
   * 
   * @return Référence vers l'attribut de classe m_IpSrc.
   **/
@@ -49,7 +49,7 @@ const IPv4& Internet::getIpSrc() const {
 }
 
  /**
-  * @brief Setter pour l'argument de classe m_IpSrc.
+  * @brief Setter pour l'attribut de classe m_IpSrc.
   * 
   * @param dest IP de destination souhaité.
   * @return void.
@@ -58,7 +58,7 @@ void Internet::setIpDest(IPv4 dest) {
     m_IpDest = dest;
 }
  /**
-  * @brief Getter pour l'argument de classe m_IpDest.
+  * @brief Getter pour l'attribut de classe m_IpDest.
   * 
   * @return Référence vers l'argument de classe m_IpDest.
   **/
@@ -67,7 +67,7 @@ const IPv4& Internet::getIpDest() const {
 }
 
  /**
-  * @brief Setter pour l'argument de classe m_TTL.
+  * @brief Setter pour l'attribut de classe m_TTL.
   * 
   * @param ttl La valeur souhaité du TTL.
   * @return void.
@@ -77,7 +77,7 @@ void Internet::setTTL(const std::bitset<8>& ttl) {
 }
 
  /**
-  * @brief Getter pour l'argument de classe m_TTL.
+  * @brief Getter pour l'attribut de classe m_TTL.
   * 
   * @return La valeur du TTL.
   **/
@@ -86,7 +86,7 @@ const std::bitset<8>& Internet::getTTL() const {
 }
 
  /**
-  * @brief Setter pour l'argument de classe m_ProtocoleId.
+  * @brief Setter pour l'attribut de classe m_ProtocoleId.
   * 
   * Ici, aucun argument est nécessaire. Nous utilisons toujours le protocole TCP donc son ID est toujours 6. 
   * 
@@ -97,7 +97,7 @@ void Internet::setProtocoleId() {
 }
 
  /**
-  * @brief Getter pour l'argument de classe m_ProtocoleId.
+  * @brief Getter pour l'attribut de classe m_ProtocoleId.
   * 
   * @return La valeur de l'identifiant du protocole. 
   **/

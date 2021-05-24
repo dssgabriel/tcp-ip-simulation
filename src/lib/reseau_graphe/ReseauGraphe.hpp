@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <cstdint>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #include "machine/Machine.hpp"
 #include "machine/Routeur.hpp"
@@ -31,8 +31,8 @@ class ReseauGraphe {
         static void getPlusCourtChemin(
             const uint16_t& depart,
             const uint16_t& arrivee,
-            std::vector<int32_t> peres,
-            std::vector<Liaison*> plusCourtChemin
+            std::vector<int32_t>& peres,
+            std::vector<Liaison*>& plusCourtChemin
         );
 
     public:
@@ -60,6 +60,8 @@ class ReseauGraphe {
 
         static const std::vector<uint16_t> getIdsRouteurs();
 
+        const std::map<uint32_t, double> getTempsPaquet() const;
+
         // Overloading
         friend std::ostream& operator<<(
             std::ostream& flux,
@@ -67,11 +69,14 @@ class ReseauGraphe {
         );
 
         // Methodes
+        static bool estRouteur(const uint16_t& idMachine);
         bool estConnexe();
 
         void ajouter(Machine* m);
         void ajouter(Liaison l);
 
-        static std::vector<Liaison*> routageDynamique(const uint16_t& depart, const uint16_t& arrivee);
         void lancerOSPF();
+        static std::vector<Liaison*> routageDynamique(
+            const uint16_t& depart, const uint16_t& arrivee
+        );
 };

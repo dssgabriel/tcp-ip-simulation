@@ -11,6 +11,7 @@
 #pragma once
 
 // Import des librairies deja definies.
+#include <map>
 #include <stack>
 #include <queue>
 #include <vector>
@@ -47,6 +48,7 @@ class Machine {
         Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::deque<std::stack<std::bitset<16>>> m_FileDonnees;
+        std::map<uint32_t, double> m_TempsTraitementPaquet;
     
     public:
         // Constructeur
@@ -82,6 +84,9 @@ class Machine {
         std::stack<std::bitset<16>> suppDonnee();
 
         std::deque<std::stack<std::bitset<16>>>& getDonnees();
+
+        const double& getTempsTraitementPaquet(const uint32_t& numPaquet) const;
+        const std::map<uint32_t, double>& getTempsTraitementPaquets() const;
 
         // Methodes
         // NE PAS NOMMER LES VARIABLES.
