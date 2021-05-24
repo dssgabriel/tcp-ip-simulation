@@ -147,6 +147,10 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 24edc3087e198bbecd1868979c42234546c97eeb
 const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
     //
     std::map<uint32_t, double> tempsPaquet;
