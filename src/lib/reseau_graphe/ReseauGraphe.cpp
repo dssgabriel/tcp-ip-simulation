@@ -126,17 +126,21 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
 const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
     //
     std::map<uint32_t, double> tempsPaquet;
+
+    //
     for (Machine* m : m_Machines) {
-        auto mapMachine = m->getTempsTraitementPaquets();
-        for (auto elt : mapMachine) {
+        auto tempsTraitementCopie = m->getTempsTraitementPaquets();
+        for (auto elt : tempsTraitementCopie) {
             auto trouve = tempsPaquet.find(elt.first);
             if (trouve != tempsPaquet.end()) {
-                trouve->second += elt.second;
+                tempsPaquet[elt.first] += elt.second;
             } else {
-                tempsPaquet.emplace(elt);
-            }        
+                tempsPaquet[elt.first] = elt.second;
+            }
         }
     }
+
+    //
     return tempsPaquet;
 }
 

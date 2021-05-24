@@ -82,11 +82,6 @@ void test3() {
             << ", valeur cwnd " << element.m_ValeurCwnd
             << " mode : " << element.m_Mode << std::endl; 
     }
-    
-    // std::map<uint32_t, double> tempsPaquet = reseau->getTempsPaquet();
-    // for (auto elt : tempsPaquet) {
-    //     std::cout << "numpaquet : " << elt.first << ", temps : " << elt.second;
-    // }
 }
 
 void test4() {
@@ -117,6 +112,17 @@ void test4() {
     c.setMemoire(&pc2.getIp(), &c2.getMac());
     c2.setMemoire(&pc.getIp(), &c.getMac());
     c2.setMemoire(&pc2.getIp(), &pc2.getMac());
+
+    //
+    ReseauGraphe r;
+    r.ajouter(&pc);
+    r.ajouter(&pc2);
+    r.ajouter(&c);
+    r.ajouter(&c2);
+
+    r.ajouter(Liaison{0, 0, 1});
+    r.ajouter(Liaison{0, 1, 2});
+    r.ajouter(Liaison{0, 2, 3});
     
     //
     // int nbrPaquet = rand()%1000;
@@ -149,6 +155,14 @@ void test4() {
         std::cout << "temps : " << element.m_Temps 
             << ", valeur cwnd " << element.m_ValeurCwnd
             << " mode : " << element.m_Mode << std::endl; 
+    }
+
+    //
+    std::cout << "\n\nAffichage tableau temps traitement : \n";
+    auto tempsPaquet = r.getTempsPaquet();
+    for (auto elt : tempsPaquet) {
+        std::cout << "numpaquet : " << elt.first
+            << ", temps : " << elt.second << " s\n";
     }
 }
 
