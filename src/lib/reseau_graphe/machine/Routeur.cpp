@@ -53,10 +53,8 @@ uint16_t Routeur::getIdRouteur() {
 }
 
 void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
-    std::vector<Liaison*> tab;
-    tab.emplace_back(l);
-    std::pair<Routeur*, std::vector<Liaison*>> p(r, tab);
-    m_TableRoutage.insert(p);
+    std::vector<Liaison*> chemin(1, l);
+    m_TableRoutage.emplace(r, chemin);
 }
 
 /**
@@ -254,6 +252,7 @@ void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
 void Routeur::traitementPaquetOSPF() {
     // Recuperation du paquet en debut de file.
     PaquetOSPF* paquet = m_FilePaquetsOSPF.front();
+    m_FilePaquetsOSPF.pop_front();
 
     if (paquet != nullptr) {
         // Appel a la methode adequate en fonction du type de paquet.
@@ -290,6 +289,7 @@ void Routeur::traitementPaquetOSPF() {
             << "\tmethode `traitementPaquetOSPF`: "
             << "Pointeur sur PaquetOSPF invalide"
             << std::endl;
+    m_FilePaquetsOSPF.clear();
         exit(EXIT_FAILURE);
     }
 }
@@ -346,8 +346,14 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
     for (LSA lsa: LSAs) {
         bool trouve = false;
 
+        if (lsa.getIdRouteur() == m_IdRouteur) {
+            trouve = true;
+            continue;
+        }
+
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
+
             if (lsa.getIdRouteur() == routeur->getIdRouteur()) {
                 trouve = true;
             }
@@ -447,6 +453,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
 
     for (LSA lsa: LSAs) {
         bool estConnu = false;
+
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
 
@@ -474,11 +481,10 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
     if (estMisAJour) {
         for (auto iter: m_TableRoutage) {
             Routeur* routeur = iter.first;
-            std::vector<Liaison*> plusCourtChemin = ReseauGraphe::routageDynamique(
+            iter.second = ReseauGraphe::routageDynamique(
                 m_IdRouteur,
                 routeur->getIdRouteur()
             );
-            iter.second = plusCourtChemin;
         }
 
         for (Machine* machine: m_Voisins) {
@@ -566,14 +572,6 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
             // Aucun LSA manquants, rien a renvoyer
             delete ack;
         }
-    } else {
-        std::cout << "ERREUR : fichier `Routeur.cpp`\n"
-            << "\tmethode `traitementPaquetLSAck` : "
-            << "Le routeur destinataire (#" << ack->getIdRouteur() << ") n'existe pas"
-            << std::endl;
-
-        delete ack;
-        exit(EXIT_FAILURE);
     }
 }
 
