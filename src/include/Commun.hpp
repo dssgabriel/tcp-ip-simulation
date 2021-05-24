@@ -6,6 +6,20 @@
 #include <string>
 #include <iostream>
 
+#define GRAS     "\e[1m"
+#define ITALIQUE "\e[3m"
+#define SOULIGNE "\e[4m"
+#define RAYE     "\e[9m"
+
+#define ROUGE    "\e[31m"
+#define VERT     "\e[32m"
+#define JAUNE    "\e[33m"
+#define BLUE     "\e[34m"
+#define MAGENTA  "\e[35m"
+#define CYAN     "\e[36m"
+
+#define RESET    "\e[0m"
+
 // NE PAS METTRE DANS UN CPP
 
 /**
