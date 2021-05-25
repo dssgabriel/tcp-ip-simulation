@@ -33,6 +33,8 @@ class Commutateur : public Machine {
         // Getters
         uint8_t getNbrCommutateur();
         uint8_t getIdCommutateur();
+        inline void remettreIdAZero() { m_IdCommutateur = 0; }
+
         void setMemoire(const IPv4* ip, const MAC* mac);
         const std::map<const IPv4*, const MAC*>& getMemoire() const;
         

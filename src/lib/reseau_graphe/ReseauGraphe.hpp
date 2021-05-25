@@ -1,6 +1,6 @@
 /**
  * @file    ReseauGraphe.hpp
- * @brief   Declaration de la classe ReseauGraphe.
+ * @brief   Vous trouverez ici la declaration de la classe ReseauGraphe
  * @author  Florian Cambresy
  * @author  Gabriel Dos Santos
  * @author  Mickael Le Denmat
@@ -43,6 +43,8 @@ class ReseauGraphe {
         ~ReseauGraphe();
 
         // Getters & setters
+        void remettreIdAZero();
+
         void setNom(const std::string nom);
         const std::string& getNom() const;
 

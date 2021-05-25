@@ -51,7 +51,7 @@ uint8_t Commutateur::getIdCommutateur() {
  * @brief Ajout d'une paire ip/mac dans la table memoire du commutateur.
  *
  * @param ip de la machine destination.
- * @param mac de la machine voisine.
+ * @param mac de la machine voisine pour aller a la destination.
  */
 void Commutateur::setMemoire(const IPv4* ip, const MAC* mac) {
     m_CacheMem.insert(std::pair<const IPv4*, const MAC*>(ip, mac));
@@ -77,8 +77,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
         std::cout << m_Nom << " : Debut envoie\n";
     }
 
-    // Utilise pour le retour.
-    if (estAck) {
+    if (estAck) { // Partie envoie des accuses de reception
         if (DEBUG) {
             std::cout << m_Nom << " : Retour\n";
         }
@@ -102,7 +101,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
         paquet = coucheInt.encapsuler(segment);
         donneeRecu = couchePhy.encapsuler(paquet);
 
-        // Trouve le voisin.
+        // Trouver le voisin.
         Machine* voisine = getVoisin(trouverMacDest(coucheInt.getIpSrc()));
 
         // Ajout de trame dans la file de donnee de la machine voisine.
@@ -114,7 +113,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
         }
         return;
     }
-    else {
+    else { // Partie envoie des paquets.
         if (DEBUG) {
             std::cout << m_Nom << " : Aller\n";
         }
@@ -148,6 +147,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
 
         // Envoie des cwnd trames.
         for (int i = 1; i < int(cwnd); ++i) {
+
             // Vide la file de donnees.
             std::stack<std::bitset<16>> donneeRecu = suppDonnee();
 
@@ -168,7 +168,7 @@ void Commutateur::envoyer(const uint32_t cwnd, const bool estAck) {
             voisine->setDonnee(donneeRecu);
         }
 
-        //
+        // Reception de la/des trames.
         voisine->recevoir(cwnd, false);
         if (DEBUG) {
             std::cout << m_Nom << " : Fin envoie\n";

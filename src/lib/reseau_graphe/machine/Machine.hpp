@@ -60,6 +60,7 @@ class Machine {
         // Getters & setters
         const uint16_t& getNbMachine() const;
         const uint16_t& getIdMachine() const;
+        inline void remettreIdAZero() { m_IdMachine = 0; }
 
         void setNom(const std::string& nom);
         const std::string& getNom() const;

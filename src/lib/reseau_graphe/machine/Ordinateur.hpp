@@ -33,6 +33,7 @@ class Ordinateur : public Machine {
         // Getters
         const uint8_t& getNbrOrdinateur() const;
         const uint8_t& getIdOrdinateur() const;
+        inline void remettreIdAZero() { m_IdOrdinateur = 0; }
         
         const std::vector<ElementControleCongestion>& 
             getControleCongestion() const;

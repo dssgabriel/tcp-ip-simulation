@@ -1,3 +1,12 @@
+/**
+ * @file Commun.hpp
+ * @brief Vous trouverez ici des fonctions de manipulations de std::bitset
+ * @date 2021-05-25
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #include <queue>
@@ -6,6 +15,10 @@
 #include <string>
 #include <iostream>
 
+/**
+ * @brief Definition de couleur pour l'affichage dans le terminal.
+ * 
+ */
 #define GRAS     "\e[1m"
 #define ITALIQUE "\e[3m"
 #define SOULIGNE "\e[4m"
@@ -22,7 +35,7 @@
 
 #define DEBUG 0
 
-// NE PAS METTRE DANS UN CPP
+// NE PAS METTRE DANS UN CPP //
 
 /**
  * @brief Permet de separer un bitset en deux bitset de taille egale.
@@ -30,7 +43,6 @@
  * @param orginal Le bitset que l'on veut diviser en deux.
  * @param gauche Il s'agit du bitset qui va contenir la partie gauche de original.
  * @param droite Il s'agit du bitset qui va contenir la partie droite de original.
- * @return void.
  **/
 template <size_t N>
 void diviser(const std::bitset <N>& original,
@@ -47,7 +59,6 @@ void diviser(const std::bitset <N>& original,
  * @param gauche Il s'agit du bitset qui va contenir la partie gauche de original.
  * @param droite Il s'agit du bitset qui va contenir la partie droite de original.
  * @param milieur Il d'agit du bitset qui va contenir la partie central de original.
- * @return void.
  **/
 template <size_t N>
 void diviser(std::bitset <N> original, std::bitset <N/3>& gauche,
