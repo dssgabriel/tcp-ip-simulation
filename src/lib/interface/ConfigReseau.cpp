@@ -63,9 +63,9 @@ void ConfigReseau::rafraichirTexte(){
 	auto vector = Contexte::GetInstance().getTab();
 	QString m_Texte;
 	std::string m_Valeur;
-	int m_Tempo = Contexte::GetInstance().getTemps()/200;
+    double m_Tempo = Contexte::GetInstance().getTemps()/2000;
 	for (std::size_t i = 0; i < vector->size(); ++i) {
-		if (m_Tempo >= (*vector)[i].m_Temps && m_Tempo - 1 < (*vector)[i].m_Temps) {
+        if (m_Tempo >= (*vector)[i].m_Temps && m_Tempo - 0.1 < (*vector)[i].m_Temps) {
 			if ((*vector)[i].m_Mode == SlowStart) {
                 m_Valeur = "SlowStart - Taille de la fenetre cwnd: "+std::to_string((*vector)[i].m_ValeurCwnd)+
                 ", Temps: "+std::to_string((*vector)[i].m_Temps)+" ms";

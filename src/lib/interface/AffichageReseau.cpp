@@ -261,7 +261,7 @@ void AffichageReseau::initialiserGraphe()
 void AffichageReseau::rafraichirGraphe()
 {
     // Variable pour le fonctionnement de la fonction //
-    int timer_act = Contexte::GetInstance().getTemps() / 200;
+    double timer_act = Contexte::GetInstance().getTemps() / 2000;
     auto vector = Contexte::GetInstance().getTab();
 
     // Définition des couleurs + formes des QPen pour dessiner le graphique //
@@ -283,7 +283,7 @@ void AffichageReseau::rafraichirGraphe()
 
     for(std::size_t i =0; i < vector->size(); i++)
     {
-        if(timer_act >= (*vector)[i].m_Temps && timer_act - 1 < (*vector)[i].m_Temps)
+        if(timer_act >= (*vector)[i].m_Temps && timer_act - 0.1 < (*vector)[i].m_Temps)
         {
             // Le premier point sera toujours dans le mode Slow Start //
             if(i == 0)
