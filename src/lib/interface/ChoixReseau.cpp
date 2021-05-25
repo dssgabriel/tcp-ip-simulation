@@ -1,8 +1,9 @@
 /**
  * @file        ChoixReseau.cpp
  * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe ChoixReseau.
- * 
+ *
  * @author      Jean-Christophe CHALAUD
+ * @author      Raphael LIN
  * @date        2021
  **/
 
@@ -12,14 +13,13 @@
   * @brief Constructeur de la classe ChoixReseau.
   * 
   * Le constructeur contient :
-  * Un ensemble de parametre necesaire au fonctionnement de la simulation(machine de depart, machine d'arrivee,
+  * Un ensemble de parametres necesaires au fonctionnement de la simulation(machine de depart, machine d'arrivee,
   * taille de la fenetre, nombre de paquet, type de paquet).
-  * Un bouton valide qui va recuperer toutes les information selectioner pour les envoiyer au different module qui 
-  * appele la fonction verifConfigMessage().
-  * Les boutons permetant de choisir le reseau voulu qui vont appele respectivement les fonctions selectConfigSimple(),
+  * Un bouton valider qui va recuperer toutes les informations selectionees pour les envoiyer aux differents modules qui
+  * appelent la fonction verifConfigMessage().
+  * Les boutons permetant de choisir le reseau voulu qui vont appeler respectivement les fonctions selectConfigSimple(),
   * sectConfigMaison(), selectConfigPme(), selectConfigEntreprise().
   **/
-
 ChoixReseau::ChoixReseau() : QVBoxLayout()
 {
 
@@ -51,9 +51,6 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_LabelDepart->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     m_Depart = new QComboBox();
     m_Depart->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
-    for(int i = 0; i<15; i++){
-        m_Depart->addItem("Machine "+ QString::number(i));
-    }
     Framelayout->addWidget(m_LabelDepart);
     Framelayout->addWidget(m_Depart);
 
@@ -61,9 +58,6 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_LabelArriver->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     m_Arrive = new QComboBox();
     m_Arrive->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
-    for(int i = 0; i<15; i++){
-        m_Arrive->addItem("Machine "+ QString::number(i));
-    }
     Framelayout->addWidget(m_LabelArriver);
     Framelayout->addWidget(m_Arrive);
 
@@ -81,7 +75,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_LabelPaquetNombre->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     Framelayout->addWidget(m_LabelPaquetNombre);
     m_PaquetNombre = new QSpinBox;
-    m_PaquetNombre->setRange(1,65536);
+    m_PaquetNombre->setRange(1,1000000);
     m_PaquetNombre->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     Framelayout->addWidget(m_PaquetNombre);
 
@@ -160,7 +154,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     connect(m_ConfigPme,SIGNAL(clicked()),this, SLOT(selectConfigPme()));
     connect(m_ConfigEntreprise,SIGNAL(clicked()),this, SLOT(selectConfigEntreprise()));
 
-
+    analyseConfig();
 }
 
 /**
@@ -176,57 +170,70 @@ ChoixReseau::~ChoixReseau()
 }
 
 /**
-  * @brief Permet d'envoiyer toutes les informations concernant le reseau.
+  * @brief Permet d'envoyer toutes les informations concernant le reseau.
   * 
-  * Verfication de si un reseau a bien ete choisi avant la validation.
-  * Creation d'une QMessageBox pour demander de choisir un reseau.
-  * creation d'une deuxieme QMessageBox pour s'assurer que l'utilisateur est sur de ces choix.
-  * Utilisation de la fonction getConfig() de la classe contexte pour envoyer les information
-  * necessaire au bon fonctionnement de tcp/ip.
-  * Creation d'une troisieme QMessageBox pour informer l'utilissateur que les information 
-  * choisi on bien ete valider et envoyer.
-  * 
+  * @return void
   **/
 
 void ChoixReseau::verifConfigMessage(){
 
-    if("contexte" == 0){
-        QMessageBox m_Information;
-        m_Information.setText("Veuillez choisir un reseau");
-        m_Information.exec();
-
+    if (m_Depart->currentText() == m_Arrive->currentText()) {
+        QMessageBox::information(qobject_cast<QWidget*>(this), "Erreur", "Veuillez choisir une machine de depart et une machine d'arrivee differentes");
+        return;
     }
-    else{
-        QMessageBox m_VerifConfig;
-        m_VerifConfig.setText("Voulez-vous vraiment valider vos choix ?");
-        m_VerifConfig.setStandardButtons(QMessageBox::Yes);
-        m_VerifConfig.addButton(QMessageBox::No);
-        m_VerifConfig.setDefaultButton(QMessageBox::No);
-        if(m_VerifConfig.exec() == QMessageBox::Yes){
-            Contexte::GetInstance().getConfig().m_Source;
-            Contexte::GetInstance().getConfig().m_Destination;
-            Contexte::GetInstance().getConfig().m_Ssthresh;
-            Contexte::GetInstance().getConfig().m_NbPaquet;
-            Contexte::GetInstance().getConfig().m_TypeFichier;
-            QMessageBox m_Information;
-            m_Information.setText("Vos choix ont ete valides");
-            m_Information.exec();
+    QMessageBox m_VerifConfig;
+    m_VerifConfig.setText("Voulez-vous vraiment valider vos choix ?");
+    m_VerifConfig.setStandardButtons(QMessageBox::Yes);
+    m_VerifConfig.addButton(QMessageBox::No);
+    m_VerifConfig.setDefaultButton(QMessageBox::No);
+    if(m_VerifConfig.exec() == QMessageBox::Yes){
+        QString m_Tempo1,m_Tempo2;
+        m_Tempo1 = m_Depart->currentText();
+        m_Tempo2 = m_Arrive->currentText();
+
+        int m_Indice = m_PaquetType->currentIndex();
+
+        auto vector = Contexte::GetInstance().getReseau()->getMachines();
+        for(std::size_t i =0; i < vector.size(); i++){
+            QString m_StringToQstring;
+            if(m_StringToQstring.fromStdString(vector[i]->getNom()) == m_Tempo1){
+                Contexte::GetInstance().getConfig().m_Source = vector[i]->getIp(); 
+            }
+            if(m_StringToQstring.fromStdString(vector[i]->getNom()) == m_Tempo2){
+                Contexte::GetInstance().getConfig().m_Destination = vector[i]->getIp();
+            }
+        } 
+        Contexte::GetInstance().getConfig().m_Ssthresh = m_Ssthresh->value() ;
+        Contexte::GetInstance().getConfig().m_NbPaquet = m_PaquetNombre->value();
+        if(m_Indice == 0){
+            Contexte::GetInstance().getConfig().m_TypeFichier = FTP;
         }
+        else if(m_Indice == 1){
+            Contexte::GetInstance().getConfig().m_TypeFichier = HTTP;
+        }
+        else if(m_Indice == 2){
+            Contexte::GetInstance().getConfig().m_TypeFichier = SMTP;
+        }
+        else if(m_Indice == 3){
+            Contexte::GetInstance().getConfig().m_TypeFichier = VTP;
+        }
+        QMessageBox m_Information;
+        m_Information.setText("Vos choix ont ete valides");
+        m_Information.exec();
     }
 }
 
  /**
   * @brief Permet de selectionner le reseau simple.
   * 
-  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
-  * utiliser ce reseau. 
-  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
-  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  * 
+  * @return void
+  * 
   **/
 
 void ChoixReseau::selectConfigSimple(){
     QMessageBox m_Simple;
-    m_Simple.setText("choix du reseau Simple");
+    m_Simple.setText("Choix du Reseau Simple");
     m_Simple.setStandardButtons(QMessageBox::Yes);
     m_Simple.addButton(QMessageBox::No);
     m_Simple.setDefaultButton(QMessageBox::No);
@@ -235,24 +242,22 @@ void ChoixReseau::selectConfigSimple(){
     }
     else{
         QMessageBox m_Simple;
-        m_Simple.setText("choix du reseau");
+        m_Simple.setText("Veuillez choisir un reseau");
         m_Simple.exec();
     }
 }
 
  /**
   * @brief Permet de selectionner le reseau maison.
+  *  
   * 
-  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
-  * utiliser ce reseau. 
-  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
-  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  * @return void
   **/
 
 void ChoixReseau::selectConfigMaison(){
 
     QMessageBox m_Maison;
-    m_Maison.setText("choix du reseau Maison");
+    m_Maison.setText("Choix du Reseau Maison");
     m_Maison.setStandardButtons(QMessageBox::Yes);
     m_Maison.addButton(QMessageBox::No);
     m_Maison.setDefaultButton(QMessageBox::No);
@@ -261,7 +266,7 @@ void ChoixReseau::selectConfigMaison(){
     }
     else{
         QMessageBox m_Maison;
-        m_Maison.setText("choix du reseau");
+        m_Maison.setText("Veuillez choisir un reseau");
         m_Maison.exec();
     }
 
@@ -269,17 +274,15 @@ void ChoixReseau::selectConfigMaison(){
 
  /**
   * @brief Permet de selectionner le reseau Pme.
+  *  
   * 
-  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
-  * utiliser ce reseau. 
-  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
-  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  * @return void
   **/
 
 void ChoixReseau::selectConfigPme(){
 
     QMessageBox m_Pme;
-    m_Pme.setText("choix du reseau Pme");
+    m_Pme.setText("Choix du Reseau Pme");
     m_Pme.setStandardButtons(QMessageBox::Yes);
     m_Pme.addButton(QMessageBox::No);
     m_Pme.setDefaultButton(QMessageBox::No);
@@ -288,7 +291,7 @@ void ChoixReseau::selectConfigPme(){
     }
     else{
         QMessageBox m_Pme;
-        m_Pme.setText("choix du reseau");
+        m_Pme.setText("Veuillez choisir un reseau");
         m_Pme.exec();
     }
 
@@ -296,17 +299,15 @@ void ChoixReseau::selectConfigPme(){
 
  /**
   * @brief Permet de selectionner le reseau entreprise.
+  *  
   * 
-  * Création d'une variable QMessageBox pour demander si l'utilisatuer veux vraiment 
-  * utiliser ce reseau. 
-  * Puis on appele la fonction chargerConfig() de la classe contexte pour signaler 
-  * qu'il s'agit de ce reseau a afficher dans AffichageReseau. 
+  * @return void
   **/
 
 void ChoixReseau::selectConfigEntreprise(){
 
     QMessageBox m_Entreprise;
-    m_Entreprise.setText("choix du reseau Entreprise");
+    m_Entreprise.setText("Choix du Reseau Entreprise");
     m_Entreprise.setStandardButtons(QMessageBox::Yes);
     m_Entreprise.addButton(QMessageBox::No);
     m_Entreprise.setDefaultButton(QMessageBox::No);
@@ -315,30 +316,63 @@ void ChoixReseau::selectConfigEntreprise(){
     }
     else{
         QMessageBox m_Entreprise;
-        m_Entreprise.setText("choix du reseau");
+        m_Entreprise.setText("Veuillez choisir un reseau");
         m_Entreprise.exec();
     }
 
 }
 
  /**
-  * @brief Permet d'afficher les differentes machine possible dans les QComboBox.
+  * @brief Permet d'afficher les differentes machines possibles dans les QComboBox.
+  *
+  * Permet aussi de mettre les valeurs de la configuration choisie dans les combobox et les spinbox.
   * 
-  * 
+  * @return void
   **/
 
 void ChoixReseau::analyseConfig(){
     m_Depart->clear();
     m_Arrive->clear();
-        
+
     auto vector = Contexte::GetInstance().getReseau()->getMachines();
     m_Depart->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
 
     for(std::size_t i =0; i < vector.size(); i++){
         QString m_StringToQstring;
-        m_Depart->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
-        m_Arrive->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
-    }  
+        if(vector[i]->getNom()[0] == 'O'){
+            m_Depart->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
+            m_Arrive->addItem(m_StringToQstring.fromStdString(vector[i]->getNom()));
+        }
+    }
+
+    int j = 0;
+    for(std::size_t i =0; i < vector.size(); i++){
+        if(vector[i]->getNom()[0] == 'O'){
+            if(Contexte::GetInstance().getConfig().m_Source == vector[i]->getIp()){
+                m_Depart->setCurrentIndex(j);
+            }
+            if(Contexte::GetInstance().getConfig().m_Destination == vector[i]->getIp()){
+                m_Arrive->setCurrentIndex(j);
+            }
+            j++;
+        }
+    }
+
+    m_Ssthresh->setValue(Contexte::GetInstance().getConfig().m_Ssthresh);
+    m_PaquetNombre->setValue(Contexte::GetInstance().getConfig().m_NbPaquet);
+
+    if(Contexte::GetInstance().getConfig().m_TypeFichier == FTP){
+        m_PaquetType->setCurrentIndex(0);
+    }
+    else if(Contexte::GetInstance().getConfig().m_TypeFichier == HTTP){
+        m_PaquetType->setCurrentIndex(1);
+    }
+    else if(Contexte::GetInstance().getConfig().m_TypeFichier == SMTP){
+        m_PaquetType->setCurrentIndex(2);
+    }
+    else if(Contexte::GetInstance().getConfig().m_TypeFichier == VTP){
+        m_PaquetType->setCurrentIndex(3);
+    }
 }
 
 

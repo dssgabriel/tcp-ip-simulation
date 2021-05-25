@@ -10,7 +10,7 @@
 
 #include "Chargement.hpp"
 
-#define DEBUG2 1
+#define DEBUG2 0
 
 #if DEBUG2
 #define ReseauSimple "../../src/include/configReseau/ReseauSimple.json"
