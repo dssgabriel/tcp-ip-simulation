@@ -1,5 +1,20 @@
+/**
+ * @file        MenuEntete.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe MenuEntete
+ *
+ * @author      Raphael LIN
+ * @date        2021
+ **/
+
 #include "MenuEntete.hpp"
 
+/**
+ * @brief Constructeur de la classe MenuEntete.
+ *
+ * Le constructeur contient :
+ * Le barre de menu contenant les boutons charger, sauvegarder, exporter Graphe et quitter
+ * Les boutons play, pause et stop ainsi que le chronometre qui les accompagne, puis le bouton tutoriel.
+ **/
 MenuEntete::MenuEntete() : QHBoxLayout()
 {
 
@@ -105,11 +120,22 @@ MenuEntete::MenuEntete() : QHBoxLayout()
 
 }
 
-// Destructeur //
+/**
+ * @brief Destructeur de la classe MenuEntete.
+ *
+ * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
+ *
+ **/
 MenuEntete::~MenuEntete() {
 
 }
 
+/**
+ * @brief Fonction activeExporter qui permet de d'activer le bouton exporter ou non
+ *
+ * @param la valeur vrai ou faux pour l'activation du bouton
+ * @return void
+ **/
 void MenuEntete::activeExporter(bool m_export) {
     if (m_export)
         m_ExporterGraphe->setDisabled(false);
@@ -117,6 +143,15 @@ void MenuEntete::activeExporter(bool m_export) {
         m_ExporterGraphe->setDisabled(true);
 }
 
+/**
+ * @brief Fonction charger qui permet de charger une configuration reseau.
+ *
+ * Cette fonction affiche l'explorateur de fichiers et permet de charger un fichier de config.
+ * Avec ce nom de fichier, elle appelle la fonction chargerConfig du module fichier.
+ * Puis elle appelle enfin la fonction charger du contexte.
+ *
+ * @return void
+ **/
 void MenuEntete::charger() {
 
     QMessageBox messageCharge;
@@ -145,6 +180,14 @@ void MenuEntete::charger() {
     }
 }
 
+/**
+ * @brief Fonction sauvegarder qui permet de sauvegarder une configuration reseau.
+ *
+ * Cette fonction affiche l'explorateur de fichiers et permet de sauvegarder un fichier de config.
+ * Avec ce nom de fichier, elle appelle la fonction sauvegarderConfig du module fichier.
+ *
+ * @return void
+ **/
 void MenuEntete::sauvegarder() {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -158,6 +201,14 @@ void MenuEntete::sauvegarder() {
     }
 }
 
+/**
+ * @brief Fonction exporterGraphe qui permet de sauvegarder une image du graphe de la simulation.
+ *
+ * Cette fonction affiche l'explorateur de fichiers et permet de sauvegarder une image PNG.
+ * Avec ce nom de fichier, elle appelle la fonction exporterGraphe du Contexte.
+ *
+ * @return void
+ **/
 void MenuEntete::exporterGraphe() {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -170,6 +221,13 @@ void MenuEntete::exporterGraphe() {
     }
 }
 
+/**
+ * @brief Fonction quitter qui permet de quitter l'application.
+ *
+ * Cette fonction affiche une fenetre qui demande une confirmation pour quitter l'application.
+ *
+ * @return void
+ **/
 void MenuEntete::quitter() {
     QMessageBox messageQuitter;
     messageQuitter.setText("Souhaitez-vous vraiment quitter ?");
@@ -182,24 +240,48 @@ void MenuEntete::quitter() {
     }
 }
 
+/**
+ * @brief Fonction rafraichir qui permet d'actualiser le temps.
+ *
+ * Cette fonction rajoute un intervalle de temps a la simulation et l'affiche sur le chronometre.
+ * Elle appelle aussi la fonction rafraichir du contexte.
+ * Si la simulation est finie, elle appelle la fonciton stop de MenuEnetete.
+ *
+ * @return void
+ **/
 void MenuEntete::rafraichir() {
-    Contexte::GetInstance().getTemps() += 500;
+    if (Contexte::GetInstance().getTemps()/200 > Contexte::GetInstance().getTab()->back().m_Temps) {
+        stop();
+        return;
+    }
+    Contexte::GetInstance().getTemps() += 200;
     int temp = Contexte::GetInstance().getTemps();
     //3600000 milliseconds in an hour
     long hr = temp / 3600000;
     temp = temp - 3600000 * hr;
+
     //60000 milliseconds in a minute
     long min = temp / 60000;
     temp = temp - 60000 * min;
 
     //1000 milliseconds in a second
     long sec = temp / 1000;
+
+    //rafraichissement de l'affichage
     Contexte::GetInstance().rafraichir();
     m_Montre->setText(QStringLiteral("%1").arg(hr, 2, 10, QLatin1Char('0')) + ":" +
                       QStringLiteral("%1").arg(min, 2, 10, QLatin1Char('0')) + ":" +
                       QStringLiteral("%1").arg(sec, 2, 10, QLatin1Char('0')));
 }
 
+/**
+ * @brief Fonction stop qui permet d'arreter la simulation.
+ *
+ * Cette fonction appelle la fonction stop du Contexte.
+ * Elle arrete aussi le chronometre, et met le mode actuel en Attente.
+ *
+ * @return void
+ **/
 void MenuEntete::stop() {
     Contexte::GetInstance().stopSimulation();
     m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Play.png"));
@@ -208,7 +290,20 @@ void MenuEntete::stop() {
     activeExporter(true);
 }
 
+/**
+ * @brief Fonction chargerMode qui permet de changer de mode.
+ *
+ * Cette fonction permet de changer de mode vers Lecture ou Pause.
+ * Si la simulation vient de se lancer, elle appelle la fonction executerSimulation du Contexte.
+ * Si la Pause est activée, le chronometre est mis en pause.
+ *
+ * @return void
+ **/
 void MenuEntete::changerMode(){
+    if (Contexte::GetInstance().getConfig().m_Ssthresh == 999) {
+        QMessageBox::information(qobject_cast<QWidget*>(this), "Aucune Configuration selectionnee", "Veuillez selectionner une configuration avant d'effectuer une simulation");
+        return;
+    }
     if(m_ModeActuel == Attente || m_ModeActuel == Pause) {
         if (m_ModeActuel == Attente) {
             m_Montre->setText("00:00:00");
@@ -217,7 +312,7 @@ void MenuEntete::changerMode(){
         }
         m_ChangerMode->setIcon(QIcon("../src/lib/interface/ressources/Pause.png"));
         m_ModeActuel = Lecture;
-        m_Minuteur->start(500);
+        m_Minuteur->start(200);
         activeExporter(false);
     }
     else if(m_ModeActuel == Lecture) {
@@ -230,12 +325,21 @@ void MenuEntete::changerMode(){
     }
 }
 
+/**
+ * @brief Fonction afficheTuto qui permet d'afficher un tutoriel de l'application.
+ *
+ * Cette fonction ouvre une nouvelle fenetre pour afficher une image explicative de l'application.
+ *
+ * @return void
+ **/
 void MenuEntete::afficheTuto() {
     QWidget *wdg = new QWidget;
+    wdg->setStyleSheet("background-color: rgba(44, 47, 51, 255);");
     QGridLayout* lyt = new QGridLayout();
     wdg->setLayout(lyt);
     QLabel* lbl = new QLabel();
-    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/Reseau4_Rectangle.png"));
+    lbl->setMargin(0);
+    lbl->setPixmap(QPixmap("../src/lib/interface/ressources/tutoriel.png"));
     lyt->addWidget(lbl);
     wdg->show();
 }

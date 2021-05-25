@@ -11,8 +11,8 @@
 #pragma once
 
 #include <map>
+#include <deque>
 #include <memory>
-#include <queue>
 #include <vector>
 #include <string>
 #include <bitset>
@@ -23,11 +23,11 @@
 #include "Machine.hpp"
 #include "Ordinateur.hpp"
 #include "Commutateur.hpp"
-#include "../ospf/PaquetOSPF.hpp"
-#include "../ospf/PaquetHello.hpp"
 #include "../ospf/PaquetDBD.hpp"
 #include "../ospf/PaquetLSR.hpp"
 #include "../ospf/PaquetLSU.hpp"
+#include "../ospf/PaquetOSPF.hpp"
+#include "../ospf/PaquetHello.hpp"
 #include "../ospf/PaquetLSAck.hpp"
 #include "../../../include/Liaison.hpp"
 
@@ -37,7 +37,7 @@ class Routeur : public Machine {
         static uint16_t m_NbRouteur;
         uint16_t m_IdRouteur;
         std::map<Routeur*, std::vector<Liaison*>> m_TableRoutage;
-        std::queue<PaquetOSPF*> m_FilePaquetsOSPF;
+        std::deque<PaquetOSPF*> m_FilePaquetsOSPF;
         std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSADemandes;
         std::map<Routeur*, std::vector<std::bitset<32>>> m_TableLSAEnvoyes;
 
@@ -58,9 +58,10 @@ class Routeur : public Machine {
         // Getters
         uint16_t getNbRouteur();
         uint16_t getIdRouteur();
+        inline void remettreIdAZero() { m_IdRouteur = 0; }
 
         void setTableRoutage(Routeur* r, Liaison* l);
-        const std::map<Routeur*, std::vector<Liaison*>>& getTableRoutage();
+        std::map<Routeur*, std::vector<Liaison*>>& getTableRoutage();
 
         // Methodes
         MAC trouverMacDest(const IPv4 ip);

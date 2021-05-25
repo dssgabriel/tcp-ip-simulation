@@ -15,10 +15,8 @@
   * @brief Constructeur de la classe Horloge.
   * 
   **/
-Horloge::Horloge() :
-    m_Attente(false),
-    m_Arret(true)
-{
+Horloge::Horloge() : m_Attente(false), m_Arret(true) {
+    m_TempsSec = std::chrono::steady_clock::duration::zero();
 }
 
  /**
@@ -39,20 +37,15 @@ void Horloge::lancer() {
     if (m_Arret && !m_Attente) {
         m_Debut = std::chrono::system_clock::now();
         m_Arret = false;
-    } else {
-        std::cout << "Erreur lancer." << std::endl;
-    }
-
-    if (!m_Arret && m_Attente) {
+    } else if (!m_Arret && m_Attente) {
         m_Reprendre = std::chrono::system_clock::now();
         m_TempsPause.push_back(m_Reprendre - m_Pause);
         m_Attente = false;
     } else {
-        std::cout << "Erreur reprendre" << std::endl;
+        std::cout << "ERREUR" << std::endl;
     }
 
 }
-
 
  /**
   * @brief Permet de sauvegarder les moments de pauses.
@@ -97,7 +90,11 @@ void Horloge::arreter() {
   **/
 std::chrono::duration<double> Horloge::getTempsSec() {
     if (!m_Attente) {
-        return m_TempsSec;
+        if (m_TempsSec != std::chrono::steady_clock::duration::zero()) {
+            return m_TempsSec;
+        }
+        auto tmp = std::chrono::system_clock::now();
+        return tmp - m_Debut;    
     } else {
         std::cout << "erreur getTempsSec\n";
         return std::chrono::steady_clock::duration::zero();

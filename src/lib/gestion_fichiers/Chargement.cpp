@@ -10,11 +10,9 @@
 
 #include "Chargement.hpp"
 
-#define DEBUG 1
-// #define DEBUG 1
+#define DEBUG2 0
 
-
-#if DEBUG
+#if DEBUG2
 #define ReseauSimple "../../src/include/configReseau/ReseauSimple.json"
 #define ReseauMaison "../../src/include/configReseau/ReseauMaison.json"
 #define ReseauPME "../../src/include/configReseau/ReseauPME.json"
@@ -31,7 +29,8 @@
  *
  *
  * @param nomFichier pour lire les informations.
- * @return std::unique_ptr<ReseauGraphe> initialise avec les informations du fichier.
+ * @return std::unique_ptr<ReseauGraphe> initialise avec les informations
+ *          du fichier.
  */
 std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     // Initialisation du reseau.
@@ -67,6 +66,7 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     // Remplissage de la liste des machines.
     auto listeMachineJ = j["Liste machines"];
     for (auto machineJ : listeMachineJ) {
+
         // Initialisation du type de machine.
         if (machineJ["type"] == "Ordinateur") {
             m = new Ordinateur();
@@ -79,6 +79,8 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
             auto listeMemJ = machineJ["table memoire"];
             Commutateur* c = dynamic_cast<Commutateur*>(m);
             for (auto memJ : listeMemJ) {
+
+                //
                 IPv4* ip2 = new IPv4; MAC* mac2 = new MAC;
 
                 ip2->a = std::bitset<8>(memJ["ip"][0]);
@@ -170,15 +172,12 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
     // Remplissage de la liste des liaisons.
     auto listeLiaisonsJ = j["Liste liaisons"];
     for (auto liaisonJ : listeLiaisonsJ) {
+
+        //
         Liaison* l = new Liaison;
         l->m_NumMachine1 = liaisonJ["Depart"];
-        l->m_NumMachine1 += 1;
         l->m_NumMachine2 = liaisonJ["Arrivee"];
-        l->m_NumMachine2 += 1;
         l->m_Debit = liaisonJ["Debit"];
-
-        // Ajout de la liaison dans le reseau.
-        reseau->ajouter(*l);
 
         // Configuration des voisins.
         Machine* a = reseau->getMachine(l->m_NumMachine1);
@@ -186,12 +185,21 @@ std::unique_ptr<ReseauGraphe> chargerReseau(const std::string& nomFichier) {
         a->setVoisin(*b);
         b->setVoisin(*a);
 
-        // Remplir table de routage.
+        // Initialisation exacte de la Liaison.
+        Liaison* l2 = new Liaison;
+        l2->m_NumMachine1 = l->m_NumMachine1 + 1;
+        l2->m_NumMachine2 = l->m_NumMachine2 + 1;
+        l2->m_Debit = l->m_Debit;
+
+        // Ajout de la liaison dans le reseau.
+        reseau->ajouter(*l2);
+
+        // Remplissage des tables de routage.
         Routeur* r = dynamic_cast<Routeur*>(a);
         Routeur* r2 = dynamic_cast<Routeur*>(b);
         if (r && r2) {
-            r->setTableRoutage(r2, l);
-            r2->setTableRoutage(r, l);
+            r->setTableRoutage(r2, l2);
+            r2->setTableRoutage(r, l2);
         }
     }
 

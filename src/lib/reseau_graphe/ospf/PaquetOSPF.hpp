@@ -10,7 +10,11 @@
 #include <cstdint>
 
 enum TypePaquet: uint8_t {
-    Hello = 1, DBD, LSR, LSU, LSAck
+    Hello = 1,
+    DBD = 2,
+    LSR = 3,
+    LSU = 4,
+    LSAck = 5
 };
 
 class PaquetOSPF {

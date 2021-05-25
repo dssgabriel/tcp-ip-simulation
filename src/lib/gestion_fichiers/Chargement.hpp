@@ -1,3 +1,13 @@
+/**
+ * @file Chargement.hpp
+ * @author Mickael Le Denmat
+ * @brief Vous trouverez ici la declaration des fonctions de chargement
+ * @date 2021-05-25
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #include <array>

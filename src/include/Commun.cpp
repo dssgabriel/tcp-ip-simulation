@@ -1,10 +1,19 @@
+/**
+ * @file Commun.cpp
+ * @brief Vous trouverez ici des fonctions d'affichages de differents objets
+ * @date 2021-05-25
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "Commun.hpp"
 
 /**
- * @brief Permet d'afficher le contenu d'une pile contenant des bitset de 16 bits. 
- * 
+ * @brief Permet d'afficher le contenu d'une pile contenant
+ *          des bitset de 16 bits.
+ *
  * @param pile La pile que l'on veut afficher.
- * @return void.
  **/
 void afficher(std::stack<std::bitset<16>> pile) {
     std::cout << "> debut stack <\n\n";
@@ -35,7 +44,7 @@ void afficher(std::stack<std::bitset<16>> pile) {
         pile.pop();
 
         diviser(pile.top(), a, b);
-        pile.pop(); 
+        pile.pop();
         std::cout << "m_ProtocoleId : " << b.to_ulong() << "\nm_TTL : " << a.to_ulong() << std::endl;
 
         diviser(pile.top(), c, d);
@@ -83,7 +92,7 @@ void afficher(std::stack<std::bitset<16>> pile) {
         std::cout << "m_PortSrc : " << pile.top().to_ulong() << std::endl;
         pile.pop();
 
-        std::cout << "Il reste encore " << pile.size() << " element(s)\n"; 
+        std::cout << "Il reste encore " << pile.size() << " element(s)\n";
     }
     else {
         std::cout << "ack";
@@ -93,10 +102,9 @@ void afficher(std::stack<std::bitset<16>> pile) {
 }
 
 /**
- * @brief Permet d'afficher le contenu d'une file contenant des bitset de 16 bits. 
- * 
+ * @brief Permet d'afficher le contenu d'une file contenant des bitset de 16 bits.
+ *
  * @param pile La file que l'on veut afficher.
- * @return void.
  **/
 void afficher(std::queue<std::stack<std::bitset<16>>> file) {
     std::cout << "debut queue\n";
@@ -108,10 +116,10 @@ void afficher(std::queue<std::stack<std::bitset<16>>> file) {
 }
 
 /**
- * @brief Permet d'afficher le contenu d'une double file (deque) contenant des bitset de 16 bits. 
- * 
+ * @brief Permet d'afficher le contenu d'une double file (deque)
+ *          contenant des bitset de 16 bits.
+ *
  * @param pile La double file que l'on veut afficher.
- * @return void.
  **/
 void afficher(std::deque<std::stack<std::bitset<16>>> doubleFile) {
     std::cout << "debut deque\n";

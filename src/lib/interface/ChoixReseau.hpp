@@ -1,3 +1,10 @@
+/**
+ * @file ChoixReseau.hpp
+ * @author Jean-Christophe
+ * @brief Vous trouverez ici la declaration de la classe ChoixReseau
+ * @date 2021
+ * 
+ */
 #ifndef CHOIXRESEAU_H
 #define CHOIXRESEAU_H
 

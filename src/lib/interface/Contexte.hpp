@@ -5,6 +5,10 @@
 #include "ChoixReseau.hpp"
 #include "ConfigReseau.hpp"
 #include "../reseau_graphe/ReseauGraphe.hpp"
+#include "../reseau_graphe/machine/Machine.hpp"
+#include "../reseau_graphe/machine/Ordinateur.hpp"
+#include "../reseau_graphe/machine/Commutateur.hpp"
+#include "../reseau_graphe/machine/Routeur.hpp"
 #include "../../include/ParamInterface.hpp"
 #include "../../include/MAC.hpp"
 #include "../../include/ElementControleCongestion.hpp"
@@ -20,12 +24,13 @@ class Contexte {
     private:
         // Attributs
         Contexte();
-        
+
         std::unique_ptr<ReseauGraphe> m_Reseau;
         ParamInterface m_Config;
         MAC m_Destination;
         int64_t m_Temps;
         std::vector<ElementControleCongestion>* m_TabCongestion;
+        std::map<uint32_t, double> m_map;
 
     public:
         // Singleton
@@ -40,13 +45,15 @@ class Contexte {
 
         // Destructeur
         ~Contexte();
-   
-        // Getters   
+
+        // Getters
         ReseauGraphe* getReseau();
         ParamInterface& getConfig();
         MAC& getMACArrivee();
         int64_t& getTemps();
-            
+        const std::vector<ElementControleCongestion>* getTab() const;
+        const std::map<uint32_t, double> getMap() const;
+
         // Setter
         void setReseau(std::unique_ptr<ReseauGraphe>& newRes);
 
@@ -54,11 +61,11 @@ class Contexte {
         void charger();
         void sauvegarder();
         void exporterGraphe(const QString& nomFichier);
-        
+
         std::string informationsReseau();
         void chargerConfig(int numConfig);
 
-        void executerSimulation();        
+        void executerSimulation();
         void rafraichir();
         void stopSimulation();
 };

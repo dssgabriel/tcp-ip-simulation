@@ -11,6 +11,7 @@
 #pragma once
 
 // Import des librairies deja definies.
+#include <map>
 #include <stack>
 #include <queue>
 #include <vector>
@@ -44,9 +45,10 @@ class Machine {
         IPv4 m_Masque;
         std::vector<IPv4> m_SousReseau;
 
-        // Horloge m_Chrono;
+        Horloge m_Chrono;
         std::vector<Machine*> m_Voisins;
         std::deque<std::stack<std::bitset<16>>> m_FileDonnees;
+        std::map<uint32_t, double> m_TempsTraitementPaquet;
     
     public:
         // Constructeur
@@ -58,6 +60,7 @@ class Machine {
         // Getters & setters
         const uint16_t& getNbMachine() const;
         const uint16_t& getIdMachine() const;
+        inline void remettreIdAZero() { m_IdMachine = 0; }
 
         void setNom(const std::string& nom);
         const std::string& getNom() const;
@@ -83,11 +86,17 @@ class Machine {
 
         std::deque<std::stack<std::bitset<16>>>& getDonnees();
 
+        const double& getTempsTraitementPaquet(const uint32_t& numPaquet) const;
+        const std::map<uint32_t, double>& getTempsTraitementPaquets() const;
+
         // Methodes
         // NE PAS NOMMER LES VARIABLES.
         virtual void envoyer(const uint32_t, bool) {}
         void traitement(std::stack<std::bitset<16>>&, MAC);
         virtual void recevoir(const uint32_t, bool) {}
+
+        void lancerHorloge();
+        void arreterHorloge();
 
         // Overloading
         friend std::ostream& operator<<(

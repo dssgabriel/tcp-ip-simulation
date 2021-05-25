@@ -1,3 +1,11 @@
+/**
+ * @file ConfigReseau.hpp
+ * @author Jean-Christophe
+ * @brief Vous trouverez ici la declaration de la classe ConfigReseau
+ * 
+ * @date 2021
+ * 
+ */
 #ifndef CONFIGRESEAU_H
 #define CONFIGRESEAU_H
 
