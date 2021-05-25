@@ -1,13 +1,12 @@
 /**
  * @file    ReseauGraphe.cpp
  * @brief   Vous trouverez ici toutes les fonctions implementees pour la classe ReseauGraphe.
- * @author  Florian CAMBRESY
+ * @author  Florian Cambresy
  * @author  Gabriel Dos Santos
  * @author  Mickael Le Denmat
  * @date    Mai 2021
  **/
 
-// #include <omp.h>
 #include <limits>
 #include <cstdlib>
 #include <cstdint>
@@ -21,8 +20,7 @@ std::vector<Liaison> ReseauGraphe::m_Liaisons;
 
 /**
  * @brief Constructeur de la classe ReseauGraphe.
- *
- **/
+ */
 ReseauGraphe::ReseauGraphe() {
     m_Machines.clear();
     m_Liaisons.clear();
@@ -30,14 +28,16 @@ ReseauGraphe::ReseauGraphe() {
 
 /**
  * @brief Destructeur de la classe ReseauGraphe.
- *
- **/
+ */
 ReseauGraphe::~ReseauGraphe() {
     for (Machine* m: m_Machines) {
         delete m;
     }
 }
 
+/**
+ * @brief Remet a zero les compteurs de machines.
+ */
 void ReseauGraphe::remettreIdAZero() {
     Machine* m = dynamic_cast<Machine*> (m_Machines[0]);
     m->remettreIdAZero();
@@ -55,9 +55,7 @@ void ReseauGraphe::remettreIdAZero() {
 
 /**
  * @brief Setter pour l'argument nom.
- *
- * @return void.
- **/
+ */
 void ReseauGraphe::setNom(const std::string nom) {
     m_Nom = nom;
 }
@@ -66,11 +64,18 @@ void ReseauGraphe::setNom(const std::string nom) {
  * @brief Getter pour l'argument m_nom.
  *
  * @return std::string.
- **/
+ */
 const std::string& ReseauGraphe::getNom() const {
     return m_Nom;
 }
 
+/**
+ * @brief Retourne l'identifiant d'un routeur a partir
+ * de son identifiant de machine.
+ *
+ * @param idMachine L'identifiant de la machine.
+ * @return L'identifiant du routeur.
+ */
 uint16_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t& idMachine) {
     if (m_Machines[idMachine - 1]->getIdMachine() == idMachine) {
         Routeur* r = dynamic_cast<Routeur*>(m_Machines[idMachine - 1]);
@@ -83,7 +88,12 @@ uint16_t ReseauGraphe::getIdRouteurDepuisIdMachine(const uint16_t& idMachine) {
     return 0;
 }
 
-
+/**
+ * @brief Retourne un pointeur sur le routeur a partir de son identifiant.
+ *
+ * @param idRouteur L'identifiant du routeur.
+ * @return Un pointeur sur le routeur.
+ */
 Routeur* ReseauGraphe::getPtrRouteur(const uint16_t& idRouteur) {
     for (Machine* m: m_Machines) {
         Routeur* r= dynamic_cast<Routeur*>(m);
@@ -99,6 +109,12 @@ Routeur* ReseauGraphe::getPtrRouteur(const uint16_t& idRouteur) {
     return nullptr;
 }
 
+/**
+ * @brief Retourne un pointeur sur la machine a partir de son adresse IP.
+ *
+ * @param ip L'adresse IP de la machine.
+ * @return Un pointeur sur le machine.
+ */
 Machine* ReseauGraphe::getMachine(const IPv4& ip) {
    for (Machine* m : m_Machines) {
        if (m->getIp() == ip) {
@@ -112,7 +128,12 @@ Machine* ReseauGraphe::getMachine(const IPv4& ip) {
     exit(EXIT_FAILURE);
 }
 
-
+/**
+ * @brief Retourne un pointeur sur la machine a partir de son identifiant.
+ *
+ * @param id L'identifiant de la machine.
+ * @return Un pointeur sur le machine.
+ */
 Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     if (id > m_Machines.size()) {
         std::cout << "ERREUR : Dans le fichier 'ReseauGraphe.cpp'. "
@@ -124,6 +145,13 @@ Machine* ReseauGraphe::getMachine(const uint16_t& id) {
     return m_Machines[id];
 }
 
+/**
+ * @brief Retourne l'adresse de sous reseau d'une machine a partir
+ * de son adresse IP.
+ *
+ * @param ipMachine L'adresse IP de la machine.
+ * @return L'adresse de sous reseau de la machine.
+ */
 IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
     for (Machine* iter : m_Machines) {
         if (iter->getIp() == ipMachine) {
@@ -141,7 +169,7 @@ IPv4 ReseauGraphe::getSousReseau(const IPv4& ipMachine) {
  * @brief Getter pour l'argument m_Machines.
  *
  * @return std::vector<Machine*>.
- **/
+ */
 const std::vector<Machine*>& ReseauGraphe::getMachines() const {
     return m_Machines;
 }
@@ -150,11 +178,16 @@ const std::vector<Machine*>& ReseauGraphe::getMachines() const {
  * @brief Getter pour l'argument m_Liaisons.
  *
  * @return std::vector<Liaison>.
- **/
+ */
 const std::vector<Liaison>& ReseauGraphe::getLiaisons() const {
     return m_Liaisons;
 }
 
+/**
+ * @brief Retourne la liste des identifiants des routeurs du reseau.
+ *
+ * @return La liste d'identifiants des routeurs.
+ */
 const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     std::vector<uint16_t> idsRouteurs;
 
@@ -169,6 +202,11 @@ const std::vector<uint16_t> ReseauGraphe::getIdsRouteurs() {
     return idsRouteurs;
 }
 
+/**
+ * @brief ?
+ *
+ * @return std::map<uint32_t, double>
+ */
 const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
     //
     std::map<uint32_t, double> tempsPaquet;
@@ -190,7 +228,14 @@ const std::map<uint32_t, double> ReseauGraphe::getTempsPaquet() const {
     return tempsPaquet;
 }
 
-// Methodes
+// Methodes publiques
+/**
+ * @brief Verifie qu'une machine est un routeur a partir
+ * de son identifiant.
+ *
+ * @param idMachine L'identifiant de la machine.
+ * @return Vrai si la machine est un routeur, faux sinon.
+ */
 bool ReseauGraphe::estRouteur(const uint16_t& idMachine) {
     return (dynamic_cast<Routeur*>(m_Machines[idMachine - 1])) ? true : false;
 }
@@ -199,29 +244,35 @@ bool ReseauGraphe::estRouteur(const uint16_t& idMachine) {
  * @brief Indique si un graphe est connexe ou non.
  *
  * @return bool.
- **/
+ */
 bool ReseauGraphe::estConnexe() {
     return true;
 }
 
 /**
  * @brief Ajoute une machine dans le tableau de machines.
- *
- * @return void.
- **/
+ */
 void ReseauGraphe::ajouter(Machine* m) {
     m_Machines.emplace_back(m);
 }
 
 /**
  * @brief Ajoute une liaison dans le tableau de liaisons.
- *
- * @return void.
- **/
+ */
 void ReseauGraphe::ajouter(Liaison l) {
     m_Liaisons.emplace_back(l);
 }
 
+/**
+ * @brief Retourne l'identifiant du routeur le plus proche.
+ *
+ * @param sommeMetrique La liste des sommes de bande passante
+ * entre chacun des routeurs du reseau.
+ * @param nonVisites La liste des identifiants de routeurs
+ * encore non visites par l'algorithme de plus court chemin.
+ * @param routeursVus Un compteur du nombre de routeurs deja vus.
+ * @return L'identifiant du routeur le plus proche.
+ */
 uint16_t getIdRouteurPlusProche(std::vector<double>& sommeMetrique,
                                 std::vector<uint16_t>& nonVisites,
                                 size_t& routeursVus)
@@ -246,6 +297,12 @@ uint16_t getIdRouteurPlusProche(std::vector<double>& sommeMetrique,
     return idRouteurPlusProche;
 }
 
+/**
+ * @brief Retourne la liste des liaisons vers les routeurs voisins.
+ *
+ * @param courant L'identifiant du routeur courant.
+ * @return La liste des liaisons entre le routeur et ses routeurs voisins.
+ */
 std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint16_t& courant) {
     std::vector<Liaison> cheminsVoisins;
 
@@ -263,6 +320,15 @@ std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint16_t& courant) {
     return cheminsVoisins;
 }
 
+/**
+ * @brief Remplis le vector plusCourtChemin passe en argument
+ * avec la liste des liaisons offrant le plus court chemin entre deux routeurs.
+ *
+ * @param depart L'identifiant du routeur de depart.
+ * @param arrivee L'identifiant du routeur d'arrivee.
+ * @param peres La liste des sommets peres de chaque sommets du graphe.
+ * @param plusCourtChemin La liste de liaisons a remplir.
+ */
 void ReseauGraphe::getPlusCourtChemin(const uint16_t& depart,
                                       const uint16_t& arrivee,
                                       std::vector<uint16_t>& peres,
@@ -294,6 +360,14 @@ void ReseauGraphe::getPlusCourtChemin(const uint16_t& depart,
     std::reverse(plusCourtChemin.begin(), plusCourtChemin.end());
 }
 
+/**
+ * @brief Calcule et retourne le plus court chemin a travers un reseau
+ * entre deux routeurs a partir de leur identifiants.
+ *
+ * @param depart L'identifiant du routeur de depart.
+ * @param arrivee L'identifiant du routeur de arrivee.
+ * @return La liste de liaisons de plus court chemin.
+ */
 std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
                                                      const uint16_t& arrivee)
 {
@@ -337,6 +411,9 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
     return plusCourtChemin;
 }
 
+/**
+ * @brief Execute le protocole OSPF sur le reseau.
+ */
 void ReseauGraphe::lancerOSPF() {
     for (size_t i = 0; i < m_Machines.size(); ++i) {
         Routeur* routeur = dynamic_cast<Routeur*>(m_Machines[i]);
@@ -394,6 +471,9 @@ void ReseauGraphe::lancerOSPF() {
 }
 
 // Overloading
+/**
+ * @brief Surcharge de l'operateur << pour un objet ReseauGraphe.
+ */
 std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
     flux << "Nom du réseau : " << reseau.getNom() << "\n";
 

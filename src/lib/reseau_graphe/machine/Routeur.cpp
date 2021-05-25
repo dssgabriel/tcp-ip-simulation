@@ -263,6 +263,15 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     exit(EXIT_FAILURE);
 }
 
+/**
+ * @brief Envoie un paquet OSPF a un routeur.
+ *
+ * Cette methode utilise le polymorphisme du C++ afin de prendre en
+ * arguments n'importe quel objet heritant de la classe abstraite PaquetOSPF.
+ *
+ * @param destination Un pointeur sur le routeur de destination.
+ * @param ospf Un pointeur sur un paquet OSPF.
+ */
 void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
     auto recherche = m_TableRoutage.find(destination);
 
@@ -288,11 +297,20 @@ void Routeur::envoyerOSPF(Routeur* destination, PaquetOSPF* ospf) {
     }
 }
 
+/**
+ * @brief Permet la reception et lance le traitement d'un paquet OSPF.
+ *
+ * @param ospf Le paquet OSPF a recevoir.
+ */
 void Routeur::recevoirOSPF(PaquetOSPF* ospf) {
     m_FilePaquetsOSPF.push_back(ospf);
     traitementPaquetOSPF();
 }
 
+/**
+ * @brief Traite un paquet OSPF en fonction de son type reel et
+ * appelle la methode privee adequate.
+ */
 void Routeur::traitementPaquetOSPF() {
     // Recuperation du paquet en debut de file.
     PaquetOSPF* paquet = m_FilePaquetsOSPF.front();
@@ -339,6 +357,9 @@ void Routeur::traitementPaquetOSPF() {
 }
 
 // Methodes privees
+/**
+ * @brief Traite un paquet Hello comme explique dans le cahier des specifications.
+ */
 void Routeur::traitementPaquetHello(PaquetHello* hello) {
     // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
     if (hello->getIdDestinataire() != m_IdRouteur) {
@@ -382,6 +403,9 @@ void Routeur::traitementPaquetHello(PaquetHello* hello) {
     }
 }
 
+/**
+ * @brief Traite un paquet DBD comme explique dans le cahier des specifications.
+ */
 void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
     std::vector<LSA> LSAs = dbd->getLSAs();
     std::vector<std::bitset<32>> idADemander;
@@ -435,6 +459,9 @@ void Routeur::traitementPaquetDBD(PaquetDBD* dbd) {
     }
 }
 
+/**
+ * @brief Traite un paquet LSR comme explique dans le cahier des specifications.
+ */
 void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     // L'identifiant du voisin ne correspond pas avec l'identifiant du routeur courant.
     if (lsr->getIdEmetteur() != m_IdRouteur) {
@@ -488,6 +515,9 @@ void Routeur::traitementPaquetLSR(PaquetLSR* lsr) {
     }
 }
 
+/**
+ * @brief Traite un paquet LSU comme explique dans le cahier des specifications.
+ */
 void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
     std::vector<LSA> LSAs = lsu->getLSADemandes();
     std::vector<std::bitset<32>> idLSARecus;
@@ -566,6 +596,9 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
     delete lsu;
 }
 
+/**
+ * @brief Traite un paquet LSAck comme explique dans le cahier des specifications.
+ */
 void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
     std::vector<std::bitset<32>> idLSARecus = ack->getIdLSARecus();
     std::vector<LSA> LSAManquants;
@@ -619,6 +652,9 @@ void Routeur::traitementPaquetLSAck(PaquetLSAck* ack) {
     }
 }
 
+/**
+ * @brief Surcharge de l'operateur << pour un objet Routeur.
+ */
 std::ostream& operator<<(std::ostream& flux, Routeur& r) {
     Machine& m = dynamic_cast<Machine&>(r);
     flux << m;
