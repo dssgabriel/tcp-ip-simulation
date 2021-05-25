@@ -28,7 +28,7 @@ class Contexte {
         std::unique_ptr<ReseauGraphe> m_Reseau;
         ParamInterface m_Config;
         MAC m_Destination;
-        int64_t m_Temps;
+        double m_Temps;
         std::vector<ElementControleCongestion>* m_TabCongestion;
         std::map<uint32_t, double> m_map;
 
@@ -50,7 +50,7 @@ class Contexte {
         ReseauGraphe* getReseau();
         ParamInterface& getConfig();
         MAC& getMACArrivee();
-        int64_t& getTemps();
+        double& getTemps();
         const std::vector<ElementControleCongestion>* getTab() const;
         const std::map<uint32_t, double> getMap() const;
 
@@ -64,6 +64,7 @@ class Contexte {
 
         std::string informationsReseau();
         void chargerConfig(int numConfig);
+        void chargementSimulation();
 
         void executerSimulation();
         void rafraichir();
