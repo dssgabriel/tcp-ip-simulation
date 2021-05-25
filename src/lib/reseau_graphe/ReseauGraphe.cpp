@@ -15,6 +15,7 @@
 
 #include "ReseauGraphe.hpp"
 
+
 std::vector<Machine*> ReseauGraphe::m_Machines;
 std::vector<Liaison> ReseauGraphe::m_Liaisons;
 
@@ -384,7 +385,7 @@ void ReseauGraphe::lancerOSPF() {
                 for (auto iter : r->getTableRoutage()) {
                     std::cout << "\tVers routeur " << iter.first->getIdRouteur() << std::endl;
                     for (Liaison* l: iter.second) {
-                        std::cout << *l << std::endl;
+                        std::cout << "\t\t" << *l << std::endl;
                     }
                 }
             }
@@ -411,3 +412,4 @@ std::ostream& operator<<(std::ostream& flux, const ReseauGraphe& reseau) {
 
     return flux;
 }
+
