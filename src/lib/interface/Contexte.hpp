@@ -26,6 +26,7 @@ class Contexte {
         MAC m_Destination;
         int64_t m_Temps;
         std::vector<ElementControleCongestion>* m_TabCongestion;
+        std::map<uint32_t, double> m_map;
 
     public:
         // Singleton
@@ -47,6 +48,7 @@ class Contexte {
         MAC& getMACArrivee();
         int64_t& getTemps();
         const std::vector<ElementControleCongestion>* getTab() const;
+        const std::map<uint32_t, double> getMap() const;
             
         // Setter
         void setReseau(std::unique_ptr<ReseauGraphe>& newRes);
