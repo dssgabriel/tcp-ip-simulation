@@ -24,6 +24,7 @@ Contexte::Contexte() {
     m_Reseau->lancerOSPF();
 
     AffichageReseau::GetInstance().configEntreprise();
+    m_Reseau->lancerOSPF();
     m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
 
