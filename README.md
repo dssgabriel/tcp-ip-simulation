@@ -32,10 +32,18 @@ Afin de compiler l'application, vous devrez vous assurez que les logiciels suiva
 - L'outil de compilation CMake (version 3.8 ou supérieure)
 - Les modules `Qt Core`, `Qt Widgets` et `Qt Charts` de l'environnement de développement d'interface graphique Qt (version 5)
 
-Pour compiler et exécuter l'application, il vous suffit de taper la commande suivante à la racine du depot cloné :
+Pour exécuter l'application, il vous faudra exécuter l'ensemble des commandes suivante au sein de la racine du projet :
+```sh
+cd build/
+
+./Sim-TCP_IP
+```
+
+Si vous désirez recompiler le programme dans sa globalité, il vous faut taper la commande suivante à la racine du projet :
 ```sh
 ./build.sh
-```
+ ```
+
 -------
 
 ## Contributeurs
