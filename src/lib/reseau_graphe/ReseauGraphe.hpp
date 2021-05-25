@@ -31,7 +31,7 @@ class ReseauGraphe {
         static void getPlusCourtChemin(
             const uint16_t& depart,
             const uint16_t& arrivee,
-            std::vector<int32_t>& peres,
+            std::vector<uint16_t>& peres,
             std::vector<Liaison*>& plusCourtChemin
         );
 

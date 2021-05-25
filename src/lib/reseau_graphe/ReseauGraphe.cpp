@@ -7,9 +7,11 @@
  * @date    Mai 2021
  **/
 
-#include <algorithm>
-#include <cstdlib>
 // #include <omp.h>
+#include <limits>
+#include <cstdlib>
+#include <cstdint>
+#include <algorithm>
 
 #include "ReseauGraphe.hpp"
 
@@ -200,11 +202,11 @@ void ReseauGraphe::ajouter(Liaison l) {
     m_Liaisons.emplace_back(l);
 }
 
-uint16_t getIdRouteurPlusProche(std::vector<uint64_t>& sommeMetrique,
+uint16_t getIdRouteurPlusProche(std::vector<double>& sommeMetrique,
                                 std::vector<uint16_t>& nonVisites,
                                 size_t& routeursVus)
 {
-    uint64_t metriqueMinimale = UINT32_MAX;
+    double metriqueMinimale = std::numeric_limits<double>::max();
     uint16_t idRouteurPlusProche = 0;
 
     for (size_t i = 0; i < nonVisites.size(); ++i) {
@@ -241,10 +243,9 @@ std::vector<Liaison> ReseauGraphe::getCheminsVoisins(const uint16_t& courant) {
     return cheminsVoisins;
 }
 
-// TODO: Check memory adressing
 void ReseauGraphe::getPlusCourtChemin(const uint16_t& depart,
                                       const uint16_t& arrivee,
-                                      std::vector<int32_t>& peres,
+                                      std::vector<uint16_t>& peres,
                                       std::vector<Liaison*>& plusCourtChemin)
 {
     uint16_t courant = arrivee;
@@ -252,16 +253,18 @@ void ReseauGraphe::getPlusCourtChemin(const uint16_t& depart,
     while (courant != depart) {
         uint16_t suivant = peres[courant - 1];
 
-        Routeur* routeur1 = getPtrRouteur(courant);
-        Routeur* routeur2 = getPtrRouteur(suivant);
-        uint16_t idMachine1 = routeur1->getIdMachine();
-        uint16_t idMachine2 = routeur2->getIdMachine();
+        uint16_t idMachine1 = getPtrRouteur(courant)->getIdMachine();
+        uint16_t idMachine2 = getPtrRouteur(suivant)->getIdMachine();
 
         for (Liaison chemin: m_Liaisons) {
             if ((chemin.m_NumMachine1 == idMachine1 && chemin.m_NumMachine2 == idMachine2) ||
                 (chemin.m_NumMachine1 == idMachine2 && chemin.m_NumMachine2 == idMachine1))
             {
-                plusCourtChemin.push_back(&chemin);
+                Liaison* c = new Liaison;
+                c->m_NumMachine1 = chemin.m_NumMachine1;
+                c->m_NumMachine2 = chemin.m_NumMachine2;
+                c->m_Debit = chemin.m_Debit;
+                plusCourtChemin.push_back(c);
             }
         }
 
@@ -275,11 +278,12 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
                                                      const uint16_t& arrivee)
 {
     std::vector<uint16_t> nonVisites = getIdsRouteurs();
-    std::vector<uint64_t> sommeMetrique(nonVisites.size(), UINT32_MAX);
-    std::vector<int32_t> peres(nonVisites.size(), -1);
+    std::vector<double> sommeMetrique(nonVisites.size(), std::numeric_limits<double>::max());
+    std::vector<uint16_t> peres(nonVisites.size(), UINT16_MAX);
     std::vector<Liaison*> plusCourtChemin;
-    size_t nbRouteur = nonVisites.size(), routeursVus = 0, debitReference = 100;
-    sommeMetrique[depart - 1] = 0;
+    size_t nbRouteur = nonVisites.size(), routeursVus = 0;
+    double debitReference = 100.0;
+    sommeMetrique[depart - 1] = 0.0;
 
     while (routeursVus < nbRouteur) {
         uint16_t courant = getIdRouteurPlusProche(sommeMetrique, nonVisites, routeursVus);
@@ -288,15 +292,20 @@ std::vector<Liaison*> ReseauGraphe::routageDynamique(const uint16_t& depart,
         for (Liaison suivante: cheminsVoisins) {
             uint16_t r1 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine1);
             uint16_t r2 = getIdRouteurDepuisIdMachine(suivante.m_NumMachine2);
+            double debit = (double)(suivante.m_Debit);
 
-            if (r2 != 0 && r1 == courant) {
-                if (sommeMetrique[r2 - 1] > sommeMetrique[courant - 1] + (debitReference / suivante.m_Debit)) {
-                    sommeMetrique[r2 - 1] = sommeMetrique[courant - 1] + (debitReference / suivante.m_Debit);
+            double debitAncienR2 = sommeMetrique[r2 - 1];
+            double debitAncienR1 = sommeMetrique[r1 - 1];
+            double debitNouveau = sommeMetrique[courant - 1] + (debitReference / debit);
+
+            if (r1 == courant) {
+                if (debitAncienR2 > debitNouveau) {
+                    sommeMetrique[r2 - 1] = debitNouveau;
                     peres[r2 - 1] = courant;
                 }
-            } else if (r1 != 0 && r2 == courant) {
-                if (sommeMetrique[r1 - 1] > sommeMetrique[courant - 1] + (debitReference / suivante.m_Debit)) {
-                    sommeMetrique[r1 - 1] = sommeMetrique[courant - 1] + (debitReference / suivante.m_Debit);
+            } else if (r2 == courant) {
+                if (debitAncienR1 > debitNouveau) {
+                    sommeMetrique[r1 - 1] = debitNouveau;
                     peres[r1 - 1] = courant;
                 }
             }
@@ -325,6 +334,26 @@ void ReseauGraphe::lancerOSPF() {
                     routeur->envoyerOSPF(routeurVoisin, hello);
                 }
             }            
+        }
+    }
+
+    for (size_t i = 0; i < m_Machines.size(); ++i) {
+        Routeur* r1 = dynamic_cast<Routeur*>(m_Machines[i]);
+
+        if (r1) {
+            for (size_t j = 0; j < m_Machines.size(); ++j) {
+                Routeur* r2 = dynamic_cast<Routeur*>(m_Machines[j]);
+
+                if (r2) {
+                    if (r1 != r2) {
+                        std::map<Routeur*, std::vector<Liaison*>>& table = r1->getTableRoutage();
+                        table[r2] = ReseauGraphe::routageDynamique(
+                            r1->getIdRouteur(),
+                            r2->getIdRouteur()
+                        );
+                    }
+                }
+            }
         }
     }
 }

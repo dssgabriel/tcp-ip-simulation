@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17 -Wall -Wextra -g3 -O1 #-fopenmp
+CFLAGS = -std=c++17 -Wall -Wextra -g3 -Ofast #-fopenmp
 
 TEST = TestMachine.cpp
 COMMUN = ../../src/include/Commun.cpp
@@ -13,8 +13,6 @@ FILES = $(COMMUN) $(FICHIER) $(HORLOGE) $(PROTOCOLE) $(RESEAU) $(TEST)
 
 all:
 	$(CC) $(CFLAGS) $(FILES) -o test
-	@clear
-	./test
 
 clean:
 	@rm -Rf test
