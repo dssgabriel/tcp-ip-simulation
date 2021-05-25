@@ -375,6 +375,21 @@ void ReseauGraphe::lancerOSPF() {
             }
         }
     }
+
+    if (DEBUG) {
+        for (Machine* m: m_Machines) {
+            Routeur* r = dynamic_cast<Routeur*>(m);
+            if (r) {
+                std::cout << "Table de routage du routeur " << r->getIdRouteur() << std::endl;
+                for (auto iter : r->getTableRoutage()) {
+                    std::cout << "\tVers routeur " << iter.first->getIdRouteur() << std::endl;
+                    for (Liaison* l: iter.second) {
+                        std::cout << *l << std::endl;
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Overloading

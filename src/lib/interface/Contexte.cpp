@@ -19,11 +19,15 @@ Contexte::Contexte() {
     // Chargement du reseau Simple par defaut
     m_Reseau = nullptr;
     m_Config.m_Ssthresh = UINT16_MAX;
+
     m_Reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
+    m_Reseau->lancerOSPF();
+
     AffichageReseau::GetInstance().configEntreprise();
     m_Reseau->lancerOSPF();
     m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
+
     ElementControleCongestion a; a.m_Mode = SlowStart; a.m_Temps=1; a.m_ValeurCwnd = 1;
     m_TabCongestion->push_back(a);
     ElementControleCongestion b; b.m_Mode = SlowStart; b.m_Temps=2; b.m_ValeurCwnd = 2;
@@ -201,15 +205,21 @@ std::string Contexte::informationsReseau() {
     for(std::size_t i = 0; i < v.size(); ++i) {
         s += v[i]->getNom() + "\n";
 
-        s += "ip: " + std::to_string(v[i]->getIp().a.to_ulong()) + "." + std::to_string(v[i]->getIp().b.to_ulong()) + "." +
-                std::to_string(v[i]->getIp().c.to_ulong()) + "." + std::to_string(v[i]->getIp().d.to_ulong()) + "\n";
+        s += "IP : " +
+            std::to_string(v[i]->getIp().a.to_ulong()) + "." + std::to_string(v[i]->getIp().b.to_ulong()) + "." +
+            std::to_string(v[i]->getIp().c.to_ulong()) + "." + std::to_string(v[i]->getIp().d.to_ulong()) + "\n"
+        ;
 
-        s += "mac: " + std::to_string(v[i]->getMac().a.to_ulong()) + ":" + std::to_string(v[i]->getMac().b.to_ulong()) + ":" +
-                std::to_string(v[i]->getMac().c.to_ulong()) + ":" + std::to_string(v[i]->getMac().d.to_ulong()) + ":" +
-                std::to_string(v[i]->getMac().e.to_ulong()) + ":" + std::to_string(v[i]->getMac().f.to_ulong()) + "\n";
+        s += "MAC : " +
+            std::to_string(v[i]->getMac().a.to_ulong()) + ":" + std::to_string(v[i]->getMac().b.to_ulong()) + ":" +
+            std::to_string(v[i]->getMac().c.to_ulong()) + ":" + std::to_string(v[i]->getMac().d.to_ulong()) + ":" +
+            std::to_string(v[i]->getMac().e.to_ulong()) + ":" + std::to_string(v[i]->getMac().f.to_ulong()) + "\n"
+        ;
 
-        s += "masque: " + std::to_string(v[i]->getMasque().a.to_ulong()) + "." + std::to_string(v[i]->getMasque().b.to_ulong()) + "." +
-                std::to_string(v[i]->getMasque().c.to_ulong()) + "." + std::to_string(v[i]->getMasque().d.to_ulong()) + "\n\n";
+        s += "Masque : " +
+            std::to_string(v[i]->getMasque().a.to_ulong()) + "." + std::to_string(v[i]->getMasque().b.to_ulong()) + "." +
+            std::to_string(v[i]->getMasque().c.to_ulong()) + "." + std::to_string(v[i]->getMasque().d.to_ulong()) + "\n\n"
+        ;
     }
     return s;
 }

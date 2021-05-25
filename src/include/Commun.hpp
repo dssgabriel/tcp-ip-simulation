@@ -2,9 +2,9 @@
  * @file Commun.hpp
  * @brief Vous trouverez ici des fonctions de manipulations de std::bitset
  * @date 2021-05-25
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #pragma once
@@ -17,7 +17,7 @@
 
 /**
  * @brief Definition de couleur pour l'affichage dans le terminal.
- * 
+ *
  */
 #define GRAS     "\e[1m"
 #define ITALIQUE "\e[3m"
