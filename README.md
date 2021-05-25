@@ -18,7 +18,7 @@ Pour cela, l’application présentera toutes les étapes que subit une donnée 
 Le rendu final sera supporté par tous les systèmes d’exploitation basé sur le noyau Linux et offrira un moyen de compilation simple (`cmake`).
 
 ## Installation
-Pour installer cette application sur votre ordinateur, il vous suffit de cloner ce dépot GitHub sur votre machine.
+Pour installer cette application sur votre ordinateur, il vous suffit de cloner ce dépôt GitHub sur votre machine.
 
 Depuis un terminal, exécuter la commande suivante :
 ```sh
