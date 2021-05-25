@@ -229,7 +229,7 @@ void ChoixReseau::verifConfigMessage(){
         wdg->setLayout(lyt);
         QLabel* lbl = new QLabel("Chargement...");
         lbl->setMinimumSize(150,70);
-        lbl->setStyleSheet("background-color: rgba(88, 101, 242, 255); font: bold; border-radius: 5px; color: White;");
+        lbl->setStyleSheet("background-color: rgba(255, 0, 0, 0); font: bold; border-radius: 5px; color: White;");
         lbl->setAlignment(Qt::AlignCenter);
         lyt->addWidget(lbl);
         wdg->show();
