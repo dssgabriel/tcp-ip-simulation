@@ -1,7 +1,7 @@
 /**
  * @file        AffichageReseau.cpp
  * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe AffichageReseau.
- * 
+ *
  * @author      Johann RAMANANDRAITSIORY
  * @author      Raphael LIN
  * @date        2021
@@ -11,7 +11,7 @@
 
  /**
   * @brief Constructeur de la classe AffichageReseau.
-  * 
+  *
   * Le constructeur contient :
   * Le bouton affichant le réseau de configuration (ici on affiche le réseau Simple).
   * Le graphique composé des légendes(titre + axes) et des couleurs qui le représentent.
@@ -105,7 +105,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
 
  /**
   * @brief Destructeur de la classe AffichageReseau.
-  * 
+  *
   * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
   *
   * @return void
@@ -116,8 +116,8 @@ AffichageReseau::~AffichageReseau() {
 
  /**
   * @brief Permet d'afficher le Réseau de configuration Simple.
-  * 
-  * On cherche l'image dans le dossier ressource. 
+  *
+  * On cherche l'image dans le dossier ressource.
   * Puis on ajoute celle-ci au QPushButton m_Image.
   *
   * @return void
@@ -132,9 +132,9 @@ void AffichageReseau::configSimple()
 
  /**
   * @brief Permet d'afficher le Réseau de configuration Maison.
-  * 
-  * On cherche l'image dans le dossier ressource. 
-  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  *
+  * On cherche l'image dans le dossier ressource.
+  * Puis on ajoute celle-ci au QPushButton m_Image.
   *
   * @return void
   **/
@@ -147,9 +147,9 @@ void AffichageReseau::configMaison()
 
  /**
   * @brief Permet d'afficher le Réseau de configuration Pme.
-  * 
-  * On cherche l'image dans le dossier ressource. 
-  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  *
+  * On cherche l'image dans le dossier ressource.
+  * Puis on ajoute celle-ci au QPushButton m_Image.
   *
   * @return void
   **/
@@ -162,9 +162,9 @@ void AffichageReseau::configPme()
 
  /**
   * @brief Permet d'afficher le Réseau de configuration Entreprise.
-  * 
-  * On cherche l'image dans le dossier ressource. 
-  * Puis on ajoute celle-ci au QPushButton m_Image. 
+  *
+  * On cherche l'image dans le dossier ressource.
+  * Puis on ajoute celle-ci au QPushButton m_Image.
   *
   * @return void
   **/
@@ -177,9 +177,9 @@ void AffichageReseau::configEntreprise()
 
  /**
   * @brief Permet d'initialiser le graphique.
-  * 
-  * On ajoute la légende au deux axes abscisses et ordonnées. 
-  * Puis on définit la taille des deux axes. 
+  *
+  * On ajoute la légende au deux axes abscisses et ordonnées.
+  * Puis on définit la taille des deux axes.
   *
   * @return void
   **/
@@ -196,6 +196,7 @@ void AffichageReseau::initialiserGraphe()
         if ((*vector)[it].m_ValeurCwnd > max)
             max = (*vector)[it].m_ValeurCwnd;
     }
+    max *= 1.3;
 
     // Déclaration des différents modes du contrôle de congestion //
     // a) Slow Start //
@@ -251,7 +252,7 @@ void AffichageReseau::initialiserGraphe()
 
  /**
   * @brief Permet de tracer et dessiner le graphique du contrôle de congestion.
-  * 
+  *
   * On trace une courbe de couleur définie selon le mode du contrôle de congestion.
   *
   * @return void
@@ -268,21 +269,21 @@ void AffichageReseau::rafraichirGraphe()
     pen1.setWidth(3);
     pen1.setStyle(Qt::DashLine);
 
-    QPen pen2(QColor(Qt::cyan));   
+    QPen pen2(QColor(Qt::cyan));
     pen2.setWidth(3);
     pen2.setStyle(Qt::DashLine);
-    
+
     QPen pen3(QColor(138,43,226,255));
     pen3.setWidth(3);
     pen3.setStyle(Qt::DashLine);
-    
+
     QPen pen4(QColor(Qt::green));
     pen4.setWidth(3);
     pen4.setStyle(Qt::DashLine);
 
     for(std::size_t i =0; i < vector->size(); i++)
-    {   
-        if(timer_act == (*vector)[i].m_Temps)
+    {
+        if(timer_act >= (*vector)[i].m_Temps && timer_act - 1 < (*vector)[i].m_Temps)
         {
             // Le premier point sera toujours dans le mode Slow Start //
             if(i == 0)
@@ -301,7 +302,7 @@ void AffichageReseau::rafraichirGraphe()
                 {
                     for(std::size_t it1 = m_Lignes.size()-1; it1 >= 0; it1--)
                     {
-                        if (m_Lignes[it1]->name() == "Slow Start") 
+                        if (m_Lignes[it1]->name() == "Slow Start")
                         {
                             *m_Lignes[it1] << QPointF((*vector)[i].m_Temps, (*vector)[i].m_ValeurCwnd);
                             m_Lignes[it1]->setPen(pen1);
@@ -313,9 +314,9 @@ void AffichageReseau::rafraichirGraphe()
 
                 if ((*vector)[i].m_Mode == CongestionAvoidance)
                 {
-                    for(std::size_t it2 = m_Lignes.size()-1; it2 >= 0; it2--) 
+                    for(std::size_t it2 = m_Lignes.size()-1; it2 >= 0; it2--)
                     {
-                        if (m_Lignes[it2]->name() == "Congestion Avoidance") 
+                        if (m_Lignes[it2]->name() == "Congestion Avoidance")
                         {
                             *m_Lignes[it2] << QPointF((*vector)[i].m_Temps, (*vector)[i].m_ValeurCwnd);
                             m_Lignes[it2]->setPen(pen2);
@@ -327,9 +328,9 @@ void AffichageReseau::rafraichirGraphe()
 
                 if ((*vector)[i].m_Mode == FastRetransmit)
                 {
-                    for(std::size_t it3 = m_Lignes.size()-1; it3 >= 0; it3--) 
+                    for(std::size_t it3 = m_Lignes.size()-1; it3 >= 0; it3--)
                     {
-                        if (m_Lignes[it3]->name() == "Fast Retransmit") 
+                        if (m_Lignes[it3]->name() == "Fast Retransmit")
                         {
                             *m_Lignes[it3] << QPointF((*vector)[i].m_Temps, (*vector)[i].m_ValeurCwnd);
                             m_Lignes[it3]->setPen(pen3);
@@ -341,9 +342,9 @@ void AffichageReseau::rafraichirGraphe()
 
                 if ((*vector)[i].m_Mode == FastRecovery)
                 {
-                    for(std::size_t it4 = m_Lignes.size()-1; it4 >= 0; it4--) 
+                    for(std::size_t it4 = m_Lignes.size()-1; it4 >= 0; it4--)
                     {
-                        if (m_Lignes[it4]->name() == "Fast Recovery") 
+                        if (m_Lignes[it4]->name() == "Fast Recovery")
                         {
                             *m_Lignes[it4] << QPointF((*vector)[i].m_Temps, (*vector)[i].m_ValeurCwnd);
                             m_Lignes[it4]->setPen(pen4);
@@ -419,8 +420,8 @@ void AffichageReseau::rafraichirGraphe()
                     m_Lignes[m_Lignes.size()-1]->setPen(pen4);
                 }
             }
-            break;
-        }          
+            // break;
+        }
     }
 }
 
@@ -429,7 +430,7 @@ void AffichageReseau::rafraichirGraphe()
   *
   * Création d'une variable QImage pour transporter le résultat du graphique.
   * Puis on sauvegarde l'image au format PNG.
-  * 
+  *
   * @param const QString& nomFichier souhaité.
   * @return void
   **/
@@ -442,12 +443,12 @@ void AffichageReseau::sauvegarderGraphe(const QString& nomFichier)
 
  /**
   * @brief Permet d'afficher les informations concernant le réseau étudié.
-  * 
+  *
   * Création d'une nouvelle fenêtre pour afficher les informations manquantes
   * à la configuration du réseau.
-  * Ajout d'une variable QLabel pour présenter le réseau accompagné du débit. 
+  * Ajout d'une variable QLabel pour présenter le réseau accompagné du débit.
   * Puis on instancie un QTextEdit pour pouvoir y instaurer les caractéristiques
-  * de chaque machine (ip,mac,masque). 
+  * de chaque machine (ip,mac,masque).
   *
   * @return void
   **/
@@ -485,7 +486,7 @@ void AffichageReseau::informationsReseau()
         lbl->setPixmap(QPixmap("../src/lib/interface/ressources/entreprise.png"));
         lyt->addWidget(lbl,0,0);
     }
-    
+
     // QTextEdit pour exposer la fenêtre du texte //
     QTextEdit * m_InfoReseau = new QTextEdit();
     m_InfoReseau->setStyleSheet("background-color: rgba(64, 68, 75, 255); font: bold; border-radius: 5px;");

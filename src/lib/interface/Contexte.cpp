@@ -19,8 +19,8 @@ Contexte::Contexte() {
     // Chargement du reseau Simple par defaut
     m_Reseau = nullptr;
     m_Config.m_Ssthresh = 999;
-    m_Reseau = chargerReseau("../src/include/configReseau/ReseauSimple.json");
-    AffichageReseau::GetInstance().configSimple();
+    m_Reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
+    AffichageReseau::GetInstance().configEntreprise();
     m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
     ElementControleCongestion a; a.m_Mode = SlowStart; a.m_Temps=1; a.m_ValeurCwnd = 1;
@@ -224,6 +224,7 @@ std::string Contexte::informationsReseau() {
  * @return le texte correspondant a la liste des machines du reseau et leurs informations.
  **/
 void Contexte::chargerConfig(int numConfig) {
+    m_Reseau = nullptr;
     if(numConfig == 1) {
         m_Reseau = chargerReseau("../src/include/configReseau/ReseauSimple.json");
         AffichageReseau::GetInstance().configSimple();
@@ -254,14 +255,15 @@ void Contexte::chargerConfig(int numConfig) {
 void Contexte::executerSimulation() {
     m_TabCongestion->clear();
     m_map.clear();
+
     m_Reseau->lancerOSPF();
 
     Machine* m = m_Reseau->getMachine(m_Config.m_Source);
-    Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
+    Ordinateur* pc = dynamic_cast<Ordinateur*>(m);
 
     //
     Machine* m2 = m_Reseau->getMachine(m_Config.m_Destination);
-    Ordinateur* pc2 = dynamic_cast<Ordinateur*> (m2);
+    Ordinateur* pc2 = dynamic_cast<Ordinateur*>(m2);
 
     //
     pc->remplirFileDonnees(m_Config, pc2->getMac());
