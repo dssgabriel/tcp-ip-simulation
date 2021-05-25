@@ -1,3 +1,11 @@
+/**
+ * @file        main.cpp
+ * @brief       Voici le main de l'application
+ *
+ * @author      Raphael LIN
+ * @date        2021
+ **/
+
 #include <QApplication>
 #include <QIcon>
 

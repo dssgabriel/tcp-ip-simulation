@@ -1,6 +1,19 @@
+/**
+ * @file        MyWindow.cpp
+ * @brief       Vous trouverez ici toutes les fonctions implementées pour la classe MyWindow
+ *
+ * @author      Raphael LIN
+ * @date        2021
+ **/
+
 #include "MyWindow.hpp"
 
-// Constructeur //
+/**
+ * @brief Constructeur de la classe MyWindow.
+ *
+ * Le constructeur permet de créer deux fenêtres pour afficher toutes les classes necessaires.
+ * Il initialise aussi le Contexte.
+ **/
 MyWindow::MyWindow() : QWidget()
 {
     //Contexte
@@ -24,7 +37,12 @@ MyWindow::MyWindow() : QWidget()
 
 }
 
-// Destructeur //
+/**
+ * @brief Destructeur de la classe MyWindow.
+ *
+ * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
+ *
+ **/
 MyWindow::~MyWindow() {
 
 }
