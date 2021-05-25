@@ -33,7 +33,7 @@
 
 #define RESET    "\e[0m"
 
-#define DEBUG 1
+#define DEBUG 0
 
 // NE PAS METTRE DANS UN CPP //
 
