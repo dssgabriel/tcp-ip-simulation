@@ -339,29 +339,34 @@ void test8() {
 
     //
     pc->remplirFileDonnees(p, pc2->getMac());
+    
     //
-    //
-    reseau->lancerOSPF();
-
-    //
-    std::bitset<16> cwnd = 1;
-    pc->lancerHorloge();
-    pc->slowStart(cwnd, p.m_Ssthresh);
-    pc->arreterHorloge();
-    std::cout << "\n\nAffichage tableau controle congestion : \n";
-    for (auto element : pc->getControleCongestion()){
-        std::cout << "temps : " << element.m_Temps
-            << ", valeur cwnd " << element.m_ValeurCwnd
-            << " mode : " << element.m_Mode << std::endl;
+    // std::cout << *reseau;
+    // reseau->lancerOSPF();
+    std::cout << "Chemin de 1 a 5 : \n";
+    for (Liaison* l : ReseauGraphe::routageDynamique(1, 5)) {
+        std::cout << *l << std::endl;
     }
 
     //
-    std::cout << "\n\nAffichage tableau temps traitement : \n";
-    auto tempsPaquet = reseau->getTempsPaquet();
-    for (auto elt : tempsPaquet) {
-        std::cout << "numpaquet : " << elt.first
-            << ", temps : " << elt.second << " s\n";
-    }
+    // std::bitset<16> cwnd = 1;
+    // pc->lancerHorloge();
+    // pc->slowStart(cwnd, p.m_Ssthresh);
+    // pc->arreterHorloge();
+    // std::cout << "\n\nAffichage tableau controle congestion : \n";
+    // for (auto element : pc->getControleCongestion()){
+    //     std::cout << "temps : " << element.m_Temps
+    //         << ", valeur cwnd " << element.m_ValeurCwnd
+    //         << " mode : " << element.m_Mode << std::endl;
+    // }
+
+    // //
+    // std::cout << "\n\nAffichage tableau temps traitement : \n";
+    // auto tempsPaquet = reseau->getTempsPaquet();
+    // for (auto elt : tempsPaquet) {
+    //     std::cout << "numpaquet : " << elt.first
+    //         << ", temps : " << elt.second << " s\n";
+    // }
 }
 
 int main(void) {

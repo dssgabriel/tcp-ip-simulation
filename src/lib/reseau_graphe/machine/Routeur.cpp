@@ -494,11 +494,15 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             );
             LSAMisAJour.emplace_back(misAJour);
 
+            std::cout << "lsa.getIdRouteur() : " << lsa.getIdRouteur() << std::endl;
             Routeur* routeur = ReseauGraphe::getPtrRouteur(lsa.getIdRouteur());
+            std::cout << "getPtrRouteur : " << routeur->getNom() << std::endl;
+
             std::vector<Liaison*> chemin = ReseauGraphe::routageDynamique(
                     m_IdRouteur,
                     lsa.getIdRouteur()
             );
+
             std::cout << "BEFORE ADD: Routing Table of R" << m_IdRouteur << std::endl;
             for (auto it: m_TableRoutage) {
                 std::vector<Liaison*> vec = it.second;
@@ -506,6 +510,7 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
                     std::cout << *l << std::endl;
                 }
             }
+
             m_TableRoutage.emplace(routeur, chemin);
             std::cout << "AFTER ADD: Routing Table of R" << m_IdRouteur << std::endl;
             for (auto it: m_TableRoutage) {
