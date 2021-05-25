@@ -199,7 +199,8 @@ void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
  * @return MAC correspondante.
  */
 MAC Routeur::trouverMacDest(const IPv4 ip) {
-    //
+
+    // On regarde la machine possedant l'adresse IP.
     Machine* m = ReseauGraphe::getMachine(ip);
 
     // Le routeur est il dans le meme sous reseau que l'ip ?

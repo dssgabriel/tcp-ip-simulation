@@ -29,6 +29,10 @@ IPv4 ipMax = {
     .d = std::bitset<8>(255)
 };
 
+/**
+ * @brief Variables prédéfinies pour initialiser des adresses MAC.
+ * 
+ */
 MAC macZero = {
     .a = std::bitset<8>(0),
     .b = std::bitset<8>(0),
@@ -71,12 +75,16 @@ Machine::Machine() {
     }
 }
 
+/**
+ * @brief Destructeur de la classe Machine.
+ * 
+ */
 Machine::~Machine() {}
 
 /**
  * @brief Accesseur du nombre de machine.
  *
- * @return const uint16_t& nombre de machine.
+ * @return const uint16_t& le nombre de machine.
  */
 const uint16_t& Machine::getNbMachine() const {
     return m_NbMachine;
@@ -85,7 +93,7 @@ const uint16_t& Machine::getNbMachine() const {
 /**
  * @brief Accesseur de l'identifiant de la machine.
  *
- * @return const uint16_t& identifiant de la machine.
+ * @return const uint16_t& l'identifiant de la machine.
  */
 const uint16_t& Machine::getIdMachine() const {
     return m_IdMachine;
@@ -103,7 +111,7 @@ void Machine::setNom(const std::string& nom) {
 /**
  * @brief Accesseur du nom de la machine.
  *
- * @return const std::string& nom de la machine.
+ * @return const std::string& le nom de la machine.
  */
 const std::string& Machine::getNom() const {
     return m_Nom;
@@ -112,7 +120,7 @@ const std::string& Machine::getNom() const {
 /**
  * @brief Mutateur de l'adresse IP de la machine.
  *
- * @param ip adresse IP de la machine.
+ * @param ip de la machine.
  */
 void Machine::setIp(const IPv4& ip) {
     m_Ip = ip;
@@ -121,7 +129,7 @@ void Machine::setIp(const IPv4& ip) {
 /**
  * @brief Accesseur de l'adresse IP de la machine.
  *
- * @return const IPv4& adresse IP de la machine.
+ * @return const IPv4& l'adresse IP de la machine.
  */
 const IPv4& Machine::getIp() const {
     return m_Ip;
@@ -139,7 +147,7 @@ void Machine::setMasque(const IPv4& masque) {
 /**
  * @brief Accesseur du masque du reseau.
  *
- * @return const IPv4& masque du reseau.
+ * @return const IPv4& le masque du reseau.
  */
 const IPv4& Machine::getMasque() const {
     return m_Masque;
@@ -191,7 +199,7 @@ void Machine::setVoisin(Machine& voisin) {
 }
 
 /**
- * @brief Accesseur du voisin possedant l'adresse MAC reseigne.
+ * @brief Accesseur du voisin possedant l'adresse MAC renseigne.
  *
  * @param adresseVoisin adresse MAC pour trouver le voisin.
  * @return Machine* le voisin.
@@ -228,7 +236,7 @@ void Machine::setDonnee(const std::stack<std::bitset<16>>& trame) {
 }
 
 /**
- * @brief Accesseur de la liste de d'attente.
+ * @brief Accesseur de la liste d'attente.
  *
  * @return std::queue<std::stack<std::bitset<16>>>& la liste d'attente.
  */
@@ -237,15 +245,15 @@ std::deque<std::stack<std::bitset<16>>>& Machine::getDonnees() {
 }
 
 /**
- * @brief Supprime une trame dans la file d'attente.
+ * @brief Supprime la premiere trame dans la file d'attente.
  *
- * @return std::stack<std::bitset<16>> la donnee supprime.
+ * @return std::stack<std::bitset<16>> la trame supprime.
  */
 std::stack<std::bitset<16>> Machine::suppDonnee() {
     if (!m_FileDonnees.empty()) {
-        std::stack<std::bitset<16>> donnee = m_FileDonnees.front();
+        std::stack<std::bitset<16>> premiereTrame = m_FileDonnees.front();
         m_FileDonnees.pop_front();
-        return donnee;
+        return premiereTrame;
     } else {
         std::cout << "ERREUR : Dans le fichier 'Machine.cpp'. "
             << "Dans la fonction 'suppDonnee'. "
@@ -294,8 +302,11 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     if (DEBUG) {
         std::cout << m_Nom << BLUE << " : Debut traitement\n" << RESET;
     }
+
+    // Debut temps traitement.
     Horloge o;
     o.lancer();
+    
     // Recuperation du paquet et desencapsulation.
     Physique couchePhy;
     Internet coucheInt;
@@ -306,7 +317,8 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     std::stack<std::bitset<16>> segment = coucheInt.desencapsuler(paquet);
     std::bitset<16> donnee = coucheTrans.desencapsuler(segment);
 
-    coucheInt.setTTL(std::bitset<8>(coucheInt.getTTL().to_ulong() - 1));
+    // FONCTIONNALITE NON PRISE EN CHARGE.
+    // coucheInt.setTTL(std::bitset<8>(coucheInt.getTTL().to_ulong() - 1));
 
     // Recuperation adresse MAC destination.
     MAC ancienneDest = couchePhy.getMacDest();
@@ -320,18 +332,28 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     paquet = coucheInt.encapsuler(segment);
     trame = couchePhy.encapsuler(paquet);
 
-    //
+    // Ajout temps traitement dans la 'map'.
     o.arreter();
     m_TempsTraitementPaquet.emplace(coucheTrans.getSeq().to_ulong(), o.getTempsSec().count());
+    
+    //
     if (DEBUG) {
         std::cout << m_Nom << BLUE << " : fin traitement\n" << RESET;
     }
 }
 
+/**
+ * @brief Lance le chrono de l'horloge.
+ * 
+ */
 void Machine::lancerHorloge() {
     m_Chrono.lancer();
 }
 
+/**
+ * @brief Arrete le chrono de l'horloge.
+ * 
+ */
 void Machine::arreterHorloge() {
     m_Chrono.arreter();
 }
