@@ -46,6 +46,7 @@ class Contexte {
         ParamInterface& getConfig();
         MAC& getMACArrivee();
         int64_t& getTemps();
+        const std::vector<ElementControleCongestion>* getTab() const;
             
         // Setter
         void setReseau(std::unique_ptr<ReseauGraphe>& newRes);
