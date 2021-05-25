@@ -2,6 +2,7 @@
 build/
 target/
 .vscode/
+docs/
 
 # Test executables
 tests/**/test
@@ -9,3 +10,4 @@ tests/**/test
 # Files to ignore
 CMakeLists.txt.user
 *.o
+Doxyfile
