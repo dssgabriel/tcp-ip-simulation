@@ -18,7 +18,7 @@
 Contexte::Contexte() {
     // Chargement du reseau Simple par defaut
     m_Reseau = nullptr;
-    m_Config.m_Ssthresh = 999;
+    m_Config.m_Ssthresh = UINT16_MAX;
     m_Reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
     AffichageReseau::GetInstance().configEntreprise();
     m_Temps = 0;
@@ -224,7 +224,8 @@ std::string Contexte::informationsReseau() {
  * @return le texte correspondant a la liste des machines du reseau et leurs informations.
  **/
 void Contexte::chargerConfig(int numConfig) {
-    m_Reseau = nullptr;
+    m_Reseau->remettreIdAZero();
+    m_Reseau.reset();
     if(numConfig == 1) {
         m_Reseau = chargerReseau("../src/include/configReseau/ReseauSimple.json");
         AffichageReseau::GetInstance().configSimple();

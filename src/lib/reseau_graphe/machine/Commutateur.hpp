@@ -3,9 +3,9 @@
  * @author Mickael Le Denmat
  * @brief Vous trouverez ici la declaration de la classe Commutateur
  * @date 2021-05-22
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #pragma once
@@ -15,21 +15,21 @@
 
 /**
  * @brief Declaration de la classe Commutateur.
- * 
+ *
  */
 class Commutateur : public Machine {
     private:
-        static uint8_t m_NbrCommutateur;
+        static uint8_t m_NbCommutateur;
         uint8_t m_IdCommutateur;
         std::map<const IPv4*, const MAC*> m_CacheMem;
-    	
+
     public:
         // Constructeurs
         Commutateur();
-        
+
         // Destructeur
         ~Commutateur();
-        
+
         // Getters
         uint8_t getNbrCommutateur();
         uint8_t getIdCommutateur();
@@ -37,7 +37,7 @@ class Commutateur : public Machine {
 
         void setMemoire(const IPv4* ip, const MAC* mac);
         const std::map<const IPv4*, const MAC*>& getMemoire() const;
-        
+
         // Methode
         virtual void envoyer(const uint32_t cwnd, const bool isAck);
         virtual void recevoir(const uint32_t cwnd, const bool isAck);
@@ -45,7 +45,7 @@ class Commutateur : public Machine {
 
         // Overloading
         friend std::ostream& operator<<(
-            std::ostream& flux, 
+            std::ostream& flux,
             Commutateur& c
         );
 };

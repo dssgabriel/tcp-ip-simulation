@@ -31,7 +31,7 @@ IPv4 ipMax = {
 
 /**
  * @brief Variables prédéfinies pour initialiser des adresses MAC.
- * 
+ *
  */
 MAC macZero = {
     .a = std::bitset<8>(0),
@@ -77,9 +77,11 @@ Machine::Machine() {
 
 /**
  * @brief Destructeur de la classe Machine.
- * 
+ *
  */
-Machine::~Machine() {}
+Machine::~Machine() {
+    m_NbMachine--;
+}
 
 /**
  * @brief Accesseur du nombre de machine.
@@ -306,7 +308,7 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Debut temps traitement.
     Horloge o;
     o.lancer();
-    
+
     // Recuperation du paquet et desencapsulation.
     Physique couchePhy;
     Internet coucheInt;
@@ -335,7 +337,7 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     // Ajout temps traitement dans la 'map'.
     o.arreter();
     m_TempsTraitementPaquet.emplace(coucheTrans.getSeq().to_ulong(), o.getTempsSec().count());
-    
+
     //
     if (DEBUG) {
         std::cout << m_Nom << BLUE << " : fin traitement\n" << RESET;
@@ -344,7 +346,7 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
 
 /**
  * @brief Lance le chrono de l'horloge.
- * 
+ *
  */
 void Machine::lancerHorloge() {
     m_Chrono.lancer();
@@ -352,7 +354,7 @@ void Machine::lancerHorloge() {
 
 /**
  * @brief Arrete le chrono de l'horloge.
- * 
+ *
  */
 void Machine::arreterHorloge() {
     m_Chrono.arreter();

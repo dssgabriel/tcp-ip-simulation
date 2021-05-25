@@ -10,15 +10,15 @@
  */
 #include "Ordinateur.hpp"
 
-uint8_t Ordinateur::m_NbrOrdinateur = 0;
+uint8_t Ordinateur::m_NbOrdinateur = 0;
 
 /**
  * @brief Constructeur de la classe Ordinateur.
  *
  */
 Ordinateur::Ordinateur() : Machine() {
-    m_NbrOrdinateur++;
-    m_IdOrdinateur = m_NbrOrdinateur;
+    m_NbOrdinateur++;
+    m_IdOrdinateur = m_NbOrdinateur;
 
     m_Nom = "Ordinateur" + std::to_string(m_IdOrdinateur);
 
@@ -30,7 +30,9 @@ Ordinateur::Ordinateur() : Machine() {
  * @brief Destructeur de la classe Ordinateur.
  *
  */
-Ordinateur::~Ordinateur() {}
+Ordinateur::~Ordinateur() {
+    m_NbOrdinateur--;
+}
 
 /**
  * @brief Accesseur du nombre d'ordinateur.
@@ -38,7 +40,7 @@ Ordinateur::~Ordinateur() {}
  * @return const uint8_t& le nombre d'ordinateur.
  */
 const uint8_t& Ordinateur::getNbrOrdinateur() const {
-    return m_NbrOrdinateur;
+    return m_NbOrdinateur;
 }
 
 /**
@@ -90,7 +92,7 @@ std::bitset<16> genererMessage() {
 /**
  * @brief Verifie s'il existe un tripleAck, dans notre cas un ack est different du
  *          numero de sequence de la prochaine trame a envoyer.
- * 
+ *
  * @param donnees la file d'attente de donnees.
  * @return true s'il existe un tripleACK.
  * @return false sinon.
@@ -151,7 +153,7 @@ bool tripleACK(std::deque<std::stack<std::bitset<16>>> &donnees) {
 
 /**
  * @brief Calcul le nombre de trame qu'il reste a envoyer.
- * 
+ *
  * @param donnees la file d'attente.
  * @return int le nombre de trame a envoyer.
  */
@@ -187,7 +189,7 @@ int calculerNombreEnvoye(std::deque<std::stack<std::bitset<16>>> &donnees) {
 /**
  * @brief FONCTIONNALITE NON PRISE EN CHARGE
  *          Indique si le paquet est en fin de vie ou non.
- * 
+ *
  * @param paquet pour verifier le 'flag TTL'
  * @return true sinon la vie du paquet est a 0.
  * @return false sinon.
@@ -215,7 +217,7 @@ bool timeout(std::stack<std::bitset<16>> paquet) {
 /**
  * @brief FONCTIONNALITE NON PRISE EN CHARGE
  *          Indique si le ack est duplique dans la file d'attente.
- * 
+ *
  * @param donnees la file d'attente.
  * @param ack a verifier.
  * @param pos la position du ack duplique.
@@ -264,7 +266,7 @@ bool estDuplique(
 /**
  * @brief FONCTIONNALITE NON PRISE EN CHARGE
  *          Renvoie la donnee correspondante au numero de la trame.
- * 
+ *
  * @param donnees la file d'attente.
  * @param seq le numero de la trame.
  * @return std::stack<std::bitset<16>> la donnee trouvee, exit sinon.
@@ -357,7 +359,7 @@ void Ordinateur::remplirFileDonnees(
 /**
  * @brief FONCTIONNALITE NON PRISE EN CHARGE
  *          Etablie la connexion entre la machine emetrice et receptrice.
- * 
+ *
  */
 void Ordinateur::synchroniser() {
     // TODO : A faire
@@ -366,7 +368,7 @@ void Ordinateur::synchroniser() {
 /**
  * @brief FONCTIONNALITE NON PRISE EN CHARGE
  *          Coupe la session entre la machine emetrice et receptrice.
- * 
+ *
  */
 void Ordinateur::finDeSession() {
     // TODO : A faire
@@ -389,7 +391,7 @@ void Ordinateur::envoyer(const uint32_t cwnd, const bool estAck) {
         }
 		return;
 	}
-    if (DEBUG) { 
+    if (DEBUG) {
         std::cout << m_Nom << " : Aller\n";
     }
 
@@ -594,7 +596,7 @@ void Ordinateur::recevoir([[maybe_unused]] const uint32_t cwnd,
 
 /**
  * @brief Controle de congestion : Algorithme de Slow Start.
- * 
+ *
  * @param cwnd le nombre de trame a envoyer.
  * @param ssthresh1 le nombre maximum de trame a envoyer en meme temps.
  */
@@ -667,7 +669,7 @@ void Ordinateur::slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1) {
 
 /**
  * @brief Controle de congestion : Algorithme de Congestion Avoidance.
- * 
+ *
  * @param cwnd le nombre de trame a envoyer.
  * @param ssthresh le nombre maximum de trame a envoyer en meme temps.
  */
@@ -742,7 +744,7 @@ void Ordinateur::congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh) 
 /**
  * @brief FONCTIONNALITE NON PRISE EN COMPTE.
  *          Controle de congestion : Algorithme Fast Retransmit.
- * 
+ *
  * @param seq le numero de la trame.
  * @param cwnd le nombre de trame a envoyer.
  * @param ssthresh le nombre maximum de trame a envoyer en meme temps.
@@ -764,7 +766,7 @@ void Ordinateur::fastRetransmit([[maybe_unused]] const std::bitset<32>& seq,[[ma
 /**
  * @brief FONCTIONNALITE NON PRISE EN COMPTE.
  *          Controle de congestion : Algorithme Fast Recovery.
- * 
+ *
  * @param cwnd le nombre de trame a envoyer.
  * @param ssthresh le nombre maximum de trame a envoyer en meme temps.
  */

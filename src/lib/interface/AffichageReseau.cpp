@@ -58,7 +58,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Lignes.push_back(slow_start);
     m_Graphique->addSeries(slow_start);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
@@ -70,7 +70,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Lignes.push_back(cong_avoid);
     m_Graphique->addSeries(cong_avoid);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
@@ -82,7 +82,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Lignes.push_back(fast_retransmit);
     m_Graphique->addSeries(fast_retransmit);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
@@ -94,7 +94,7 @@ AffichageReseau::AffichageReseau() : QHBoxLayout()
     m_Lignes.push_back(fast_recovery);
     m_Graphique->addSeries(fast_recovery);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, 200);
@@ -205,7 +205,7 @@ void AffichageReseau::initialiserGraphe()
     m_Lignes.push_back(slow_start);
     m_Graphique->addSeries(slow_start);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, max);
@@ -217,7 +217,7 @@ void AffichageReseau::initialiserGraphe()
     m_Lignes.push_back(cong_avoid);
     m_Graphique->addSeries(cong_avoid);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, max);
@@ -229,7 +229,7 @@ void AffichageReseau::initialiserGraphe()
     m_Lignes.push_back(fast_retransmit);
     m_Graphique->addSeries(fast_retransmit);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, max);
@@ -241,7 +241,7 @@ void AffichageReseau::initialiserGraphe()
     m_Lignes.push_back(fast_recovery);
     m_Graphique->addSeries(fast_recovery);
     m_Graphique->createDefaultAxes();
-    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, 100);
     m_Graphique->axes(Qt::Vertical).first()->setRange(0, max);
@@ -367,7 +367,7 @@ void AffichageReseau::rafraichirGraphe()
                     m_Lignes.push_back(tmp);
                     m_Graphique->addSeries(tmp);
                     m_Graphique->createDefaultAxes();
-                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
                     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
                     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, (*vector)[i].m_Temps);
 
@@ -382,7 +382,7 @@ void AffichageReseau::rafraichirGraphe()
                     m_Lignes.push_back(tmp);
                     m_Graphique->addSeries(tmp);
                     m_Graphique->createDefaultAxes();
-                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
                     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
                     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, (*vector)[i].m_Temps);
 
@@ -397,7 +397,7 @@ void AffichageReseau::rafraichirGraphe()
                     m_Lignes.push_back(tmp);
                     m_Graphique->addSeries(tmp);
                     m_Graphique->createDefaultAxes();
-                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
                     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
                     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, (*vector)[i].m_Temps);
 
@@ -412,7 +412,7 @@ void AffichageReseau::rafraichirGraphe()
                     m_Lignes.push_back(tmp);
                     m_Graphique->addSeries(tmp);
                     m_Graphique->createDefaultAxes();
-                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en ms");
+                    m_Graphique->axes(Qt::Horizontal).first()->setTitleText("Temps en s");
                     m_Graphique->axes(Qt::Vertical).first()->setTitleText("Fenetre cwnd");
                     m_Graphique->axes(Qt::Horizontal).first()->setRange(0, (*vector)[i].m_Temps);
 

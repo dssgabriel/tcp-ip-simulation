@@ -31,12 +31,16 @@ ReseauGraphe::ReseauGraphe() {
  * @brief Destructeur de la classe ReseauGraphe.
  *
  **/
-ReseauGraphe::~ReseauGraphe() {}
+ReseauGraphe::~ReseauGraphe() {
+    for (Machine* m: m_Machines) {
+        delete m;
+    }
+}
 
 void ReseauGraphe::remettreIdAZero() {
     Machine* m = dynamic_cast<Machine*> (m_Machines[0]);
     m->remettreIdAZero();
-    
+
     for (Machine* m : m_Machines) {
         if (Ordinateur* o = dynamic_cast<Ordinateur*> (m)) {
             o->remettreIdAZero();
@@ -348,7 +352,7 @@ void ReseauGraphe::lancerOSPF() {
                     hello->setEntete(Hello, routeur->getIdRouteur());
                     routeur->envoyerOSPF(routeurVoisin, hello);
                 }
-            }            
+            }
         }
     }
 
