@@ -21,6 +21,7 @@ Contexte::Contexte() {
     m_Config.m_Ssthresh = UINT16_MAX;
     m_Reseau = chargerReseau("../src/include/configReseau/ReseauEntreprise.json");
     AffichageReseau::GetInstance().configEntreprise();
+    m_Reseau->lancerOSPF();
     m_Temps = 0;
     m_TabCongestion = new std::vector<ElementControleCongestion>();
     ElementControleCongestion a; a.m_Mode = SlowStart; a.m_Temps=1; a.m_ValeurCwnd = 1;
