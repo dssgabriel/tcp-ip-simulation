@@ -197,9 +197,8 @@ void Machine::setVoisin(Machine& voisin) {
  * @return Machine* le voisin.
  */
 Machine* Machine::getVoisin(MAC adresseVoisin) const {
-    // std::cout << "getVoisin : adresseVoisin : " << adresseVoisin << std::endl;
-    for(Machine *m : m_Voisins) {
-        if(m->getMac() == adresseVoisin) {
+    for (Machine *m : m_Voisins) {
+        if (m->getMac() == adresseVoisin) {
             return m;
         }
     }
@@ -292,7 +291,9 @@ const std::map<uint32_t, double>& Machine::getTempsTraitementPaquets() const {
  */
 void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     //
-    std::cout << m_Nom << BLUE << " : Debut traitement\n" << RESET;
+    if (DEBUG) {
+        std::cout << m_Nom << BLUE << " : Debut traitement\n" << RESET;
+    }
     Horloge o;
     o.lancer();
     // Recuperation du paquet et desencapsulation.
@@ -322,7 +323,9 @@ void Machine::traitement(std::stack<std::bitset<16>> &trame, MAC nouvelleDest) {
     //
     o.arreter();
     m_TempsTraitementPaquet.emplace(coucheTrans.getSeq().to_ulong(), o.getTempsSec().count());
-    std::cout << m_Nom << BLUE << " : fin traitement\n" << RESET;
+    if (DEBUG) {
+        std::cout << m_Nom << BLUE << " : fin traitement\n" << RESET;
+    }
 }
 
 void Machine::lancerHorloge() {

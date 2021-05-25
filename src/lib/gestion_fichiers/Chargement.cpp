@@ -10,11 +10,9 @@
 
 #include "Chargement.hpp"
 
-#define DEBUG 1
-// #define DEBUG 1
+#define DEBUG2 1
 
-
-#if DEBUG
+#if DEBUG2
 #define ReseauSimple "../../src/include/configReseau/ReseauSimple.json"
 #define ReseauMaison "../../src/include/configReseau/ReseauMaison.json"
 #define ReseauPME "../../src/include/configReseau/ReseauPME.json"

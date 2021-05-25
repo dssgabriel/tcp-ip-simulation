@@ -55,7 +55,7 @@ uint16_t Routeur::getIdRouteur() {
 
 void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
     std::vector<Liaison*> chemin(1, l);
-    m_TableRoutage.emplace(r, chemin);
+    m_TableRoutage[r] = chemin;
 }
 
 /**
@@ -63,7 +63,7 @@ void Routeur::setTableRoutage(Routeur* r, Liaison* l) {
  *
  * @return const std::map<Routeur*, std::vector<Liaison*>>& la table de routage.
  */
-const std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
+std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
     return m_TableRoutage;
 }
 
@@ -74,11 +74,15 @@ const std::map<Routeur*, std::vector<Liaison*>>& Routeur::getTableRoutage() {
  * @param estAck indique la trame est un accuse de reception ou non.
  */
 void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
-    std::cout << m_Nom << " : Debut envoie\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Debut envoie\n";
+    }
 
     // Utilise pour le retour.
     if (estAck) {
-        std::cout << m_Nom << " : Retour\n";
+        if (DEBUG) {
+            std::cout << m_Nom << " : Retour\n";
+        }
 
         // L'accuse de reception est la derniere valeur ajoute.
         std::stack<std::bitset<16>> donneeRecu = m_FileDonnees.back();
@@ -106,10 +110,14 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
         voisine->setDonnee(donneeRecu);
         voisine->recevoir(cwnd, true);
 
-        std::cout << m_Nom << " : Fin envoie\n";
+        if (DEBUG) {
+            std::cout << m_Nom << " : Fin envoie\n";
+        }
         return;
     } else {
-        std::cout << m_Nom << " : Aller\n";
+        if (DEBUG) {
+            std::cout << m_Nom << " : Aller\n";
+        }
 
         // Creation des couches pour desencapsulation.
         Physique couchePhy;
@@ -162,7 +170,9 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
 
         //
         voisine->recevoir(cwnd, false);
-        std::cout << m_Nom << " : Fin envoie\n";
+        if (DEBUG) {
+            std::cout << m_Nom << " : Fin envoie\n";
+        }
     }
 }
 
@@ -173,9 +183,13 @@ void Routeur::envoyer(const uint32_t cwnd, const bool estAck) {
  * @param estAck La trame recu est un accuse de reception ou non.
  */
 void Routeur::recevoir(const uint32_t cwnd, const bool estAck) {
-    std::cout << m_Nom << " : Debut recevoir\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Debut recevoir\n";
+    }
     envoyer(cwnd, estAck);
-    std::cout << m_Nom << " : Fin recevoir\n";
+    if (DEBUG) {
+        std::cout << m_Nom << " : Fin recevoir\n";
+    }
 }
 
 /**
@@ -215,21 +229,28 @@ MAC Routeur::trouverMacDest(const IPv4 ip) {
     for (auto iter : m_TableRoutage) {
         std::vector<Liaison*> tabLiaison = iter.second;
 
-        for (Liaison* l: tabLiaison) {
-            std::cout << *l << std::endl;
-        }
-
         size_t derniereLiaison = tabLiaison.size() - 1;
-        uint16_t machineArrive = tabLiaison[derniereLiaison]->m_NumMachine1 != getIdMachine() ?
-            tabLiaison[derniereLiaison]->m_NumMachine1 : tabLiaison[derniereLiaison]->m_NumMachine2;
-        uint16_t routeurArrive = ReseauGraphe::getIdRouteurDepuisIdMachine(machineArrive);
+        uint16_t idDerniereMachine1 = tabLiaison[derniereLiaison]->m_NumMachine1;
+        uint16_t idDerniereMachine2 = tabLiaison[derniereLiaison]->m_NumMachine2;
 
-        Routeur* r = ReseauGraphe::getPtrRouteur(routeurArrive);
+        uint16_t idDernierRouteur1 = ReseauGraphe::getIdRouteurDepuisIdMachine(idDerniereMachine1);
+        uint16_t idDernierRouteur2 = ReseauGraphe::getIdRouteurDepuisIdMachine(idDerniereMachine2);
+
+        std::vector<Routeur*> derniersRouteurs;
+        derniersRouteurs.emplace_back(ReseauGraphe::getPtrRouteur(idDernierRouteur1));
+        derniersRouteurs.emplace_back(ReseauGraphe::getPtrRouteur(idDernierRouteur2));
 
         // Renvoie du routeur voisin.
-        for (IPv4 sousRes : r->getSousReseaux()) {
-            if (sousRes == ReseauGraphe::getSousReseau(ip)) {
-                return r->getMac();
+        for (Routeur* dernierRouteur: derniersRouteurs) {
+            for (IPv4 sousRes : dernierRouteur->getSousReseaux()) {
+                if (sousRes == ReseauGraphe::getSousReseau(ip)) {
+                    uint16_t idMachineDepart = tabLiaison[0]->m_NumMachine1 != getIdMachine() ?
+                        tabLiaison[0]->m_NumMachine1 : tabLiaison[0]->m_NumMachine2;
+                    uint16_t idRouteurDepart = ReseauGraphe::getIdRouteurDepuisIdMachine(idMachineDepart);
+                    Routeur* routeurDepart = ReseauGraphe::getPtrRouteur(idRouteurDepart);
+
+                    return routeurDepart->getMac();
+                }
             }
         }
     }
@@ -495,34 +516,25 @@ void Routeur::traitementPaquetLSU(PaquetLSU* lsu) {
             LSAMisAJour.emplace_back(misAJour);
 
             Routeur* routeur = ReseauGraphe::getPtrRouteur(lsa.getIdRouteur());
-            std::vector<Liaison*> chemin = ReseauGraphe::routageDynamique(
+            m_TableRoutage[routeur] = ReseauGraphe::routageDynamique(
                     m_IdRouteur,
                     lsa.getIdRouteur()
             );
-            std::cout << "BEFORE ADD: Routing Table of R" << m_IdRouteur << std::endl;
+            /* std::cout << "Table routage AFTER\n";
             for (auto it: m_TableRoutage) {
-                std::vector<Liaison*> vec = it.second;
-                for (Liaison* l: vec) {
-                    std::cout << *l << std::endl;
+                std::cout << "To " << it.first->getIdRouteur() << std::endl;
+                for (Liaison* vec: it.second) {
+                    std::cout << *vec << std::endl;
                 }
-            }
-            m_TableRoutage.emplace(routeur, chemin);
-            std::cout << "AFTER ADD: Routing Table of R" << m_IdRouteur << std::endl;
-            for (auto it: m_TableRoutage) {
-                std::vector<Liaison*> vec = it.second;
-                for (Liaison* l: vec) {
-                    std::cout << *l << std::endl;
-                }
-            }
+            }*/
         }
     }
 
     if (estMisAJour) {
         for (auto iter: m_TableRoutage) {
-            Routeur* routeur = iter.first;
-            iter.second = ReseauGraphe::routageDynamique(
+            m_TableRoutage[iter.first] = ReseauGraphe::routageDynamique(
                 m_IdRouteur,
-                routeur->getIdRouteur()
+                iter.first->getIdRouteur()
             );
         }
 
@@ -621,8 +633,10 @@ std::ostream& operator<<(std::ostream& flux, Routeur& r) {
     flux << "ID Routeur : " << r.getIdRouteur() << std::endl;
     flux << "Table de routage :\n";
     for (auto it : r.getTableRoutage()) {
+        std::cout << "\tVers Routeur " << it.first->getIdRouteur()
+            << " (Machine " << it.first->getIdMachine() << ")" << std::endl;
         for (Liaison* l : it.second) {
-            flux << "\t" << *l << std::endl;
+            flux << "\t\t" << *l << std::endl;
         }
     }
 
