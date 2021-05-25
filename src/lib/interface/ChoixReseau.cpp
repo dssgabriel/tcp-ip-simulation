@@ -217,9 +217,25 @@ void ChoixReseau::verifConfigMessage(){
         else if(m_Indice == 3){
             Contexte::GetInstance().getConfig().m_TypeFichier = VTP;
         }
-        QMessageBox m_Information;
-        m_Information.setText("Vos choix ont ete valides");
-        m_Information.exec();
+        QDialog *wdg = new QDialog;
+        wdg->setWindowFlag(Qt::WindowStaysOnTopHint, true);
+        wdg->setWindowFlag(Qt::FramelessWindowHint, true);
+        wdg->setWindowFlag(Qt::NoDropShadowWindowHint, true);
+        wdg->setModal(true);
+        wdg->setStyleSheet("background-color: rgba(44, 47, 51, 255);");
+        QGridLayout* lyt = new QGridLayout();
+        lyt->setMargin(0);
+        lyt->setSpacing(0);
+        wdg->setLayout(lyt);
+        QLabel* lbl = new QLabel("Chargement...");
+        lbl->setMinimumSize(150,70);
+        lbl->setStyleSheet("background-color: rgba(88, 101, 242, 255); font: bold; border-radius: 5px; color: White;");
+        lbl->setAlignment(Qt::AlignCenter);
+        lyt->addWidget(lbl);
+        wdg->show();
+        QApplication::processEvents();
+        Contexte::GetInstance().chargementSimulation();
+        wdg->close();
     }
 }
 

@@ -349,7 +349,6 @@ void Routeur::traitementPaquetHello(PaquetHello* hello) {
             << hello->getIdDestinataire() << ")" << std::endl;
 
         delete hello;
-        exit(EXIT_FAILURE);
     }
 
     Routeur* destinataire = ReseauGraphe::getPtrRouteur(hello->getIdRouteur());
