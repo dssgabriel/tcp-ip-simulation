@@ -42,4 +42,5 @@ class Horloge {
         void lancer();
         void pause();
         void arreter();
+        void remettreAZero();
 };

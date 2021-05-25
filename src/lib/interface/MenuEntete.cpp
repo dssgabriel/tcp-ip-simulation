@@ -300,7 +300,7 @@ void MenuEntete::stop() {
  * @return void
  **/
 void MenuEntete::changerMode(){
-    if (Contexte::GetInstance().getConfig().m_Ssthresh == 999) {
+    if (Contexte::GetInstance().getConfig().m_Ssthresh == UINT16_MAX) {
         QMessageBox::information(qobject_cast<QWidget*>(this), "Aucune Configuration selectionnee", "Veuillez selectionner une configuration avant d'effectuer une simulation");
         return;
     }

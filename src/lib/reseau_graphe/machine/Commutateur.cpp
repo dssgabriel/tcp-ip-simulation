@@ -10,15 +10,15 @@
  */
 #include "Commutateur.hpp"
 
-uint8_t Commutateur::m_NbrCommutateur = 0;
+uint8_t Commutateur::m_NbCommutateur = 0;
 
 /**
  * @brief Constructeur de la classe Commutateur.
  *
  */
 Commutateur::Commutateur() : Machine() {
-    m_NbrCommutateur++;
-    m_IdCommutateur = m_NbrCommutateur;
+    m_NbCommutateur++;
+    m_IdCommutateur = m_NbCommutateur;
 
     m_Nom = "Commutateur" + std::to_string(m_IdCommutateur);
 }
@@ -27,7 +27,9 @@ Commutateur::Commutateur() : Machine() {
  * @brief Destructeur de la classe Commutateur.
  *
  */
-Commutateur::~Commutateur() {}
+Commutateur::~Commutateur() {
+    m_NbCommutateur--;
+}
 
 /**
  * @brief Accesseur du nombre de commutateur.
@@ -35,7 +37,7 @@ Commutateur::~Commutateur() {}
  * @return uint8_t le nombre de commutateur.
  */
 uint8_t Commutateur::getNbrCommutateur() {
-    return m_NbrCommutateur;
+    return m_NbCommutateur;
 }
 
 /**

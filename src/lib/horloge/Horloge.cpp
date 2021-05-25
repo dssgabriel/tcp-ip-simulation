@@ -83,6 +83,11 @@ void Horloge::arreter() {
     }
 }
 
+void Horloge::remettreAZero() {
+    m_TempsSec = std::chrono::steady_clock::duration::zero();
+    m_TempsPause.clear();
+}
+
 /**
   * @brief Getter pour l'argument m_TempsSec.
   * 

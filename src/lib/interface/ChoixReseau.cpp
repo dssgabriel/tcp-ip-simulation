@@ -11,7 +11,7 @@
 
  /**
   * @brief Constructeur de la classe ChoixReseau.
-  * 
+  *
   * Le constructeur contient :
   * Un ensemble de parametres necesaires au fonctionnement de la simulation(machine de depart, machine d'arrivee,
   * taille de la fenetre, nombre de paquet, type de paquet).
@@ -67,7 +67,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_LabelSsthresh->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     Framelayout->addWidget(m_LabelSsthresh);
     m_Ssthresh = new QSpinBox;
-    m_Ssthresh->setRange(128,256);
+    m_Ssthresh->setRange(128, 255);
     m_Ssthresh->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     Framelayout->addWidget(m_Ssthresh);
 
@@ -75,7 +75,7 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
     m_LabelPaquetNombre->setStyleSheet("background-color: rgba(0, 0, 0, 0); color: rgba(142, 146, 151, 255); font: bold;");
     Framelayout->addWidget(m_LabelPaquetNombre);
     m_PaquetNombre = new QSpinBox;
-    m_PaquetNombre->setRange(1,1000000);
+    m_PaquetNombre->setRange(10, 2000);
     m_PaquetNombre->setStyleSheet("background-color: rgba(44, 47, 51, 255); color : white;");
     Framelayout->addWidget(m_PaquetNombre);
 
@@ -159,9 +159,9 @@ ChoixReseau::ChoixReseau() : QVBoxLayout()
 
 /**
   * @brief Destructeur de la classe ChoixReseau.
-  * 
+  *
   * Le destructeur est vide car les classes de Qt s'autodétruisent correctement.
-  * 
+  *
   **/
 
 ChoixReseau::~ChoixReseau()
@@ -171,7 +171,7 @@ ChoixReseau::~ChoixReseau()
 
 /**
   * @brief Permet d'envoyer toutes les informations concernant le reseau.
-  * 
+  *
   * @return void
   **/
 
@@ -197,12 +197,12 @@ void ChoixReseau::verifConfigMessage(){
         for(std::size_t i =0; i < vector.size(); i++){
             QString m_StringToQstring;
             if(m_StringToQstring.fromStdString(vector[i]->getNom()) == m_Tempo1){
-                Contexte::GetInstance().getConfig().m_Source = vector[i]->getIp(); 
+                Contexte::GetInstance().getConfig().m_Source = vector[i]->getIp();
             }
             if(m_StringToQstring.fromStdString(vector[i]->getNom()) == m_Tempo2){
                 Contexte::GetInstance().getConfig().m_Destination = vector[i]->getIp();
             }
-        } 
+        }
         Contexte::GetInstance().getConfig().m_Ssthresh = m_Ssthresh->value() ;
         Contexte::GetInstance().getConfig().m_NbPaquet = m_PaquetNombre->value();
         if(m_Indice == 0){
@@ -225,10 +225,10 @@ void ChoixReseau::verifConfigMessage(){
 
  /**
   * @brief Permet de selectionner le reseau simple.
-  * 
-  * 
+  *
+  *
   * @return void
-  * 
+  *
   **/
 
 void ChoixReseau::selectConfigSimple(){
@@ -249,8 +249,8 @@ void ChoixReseau::selectConfigSimple(){
 
  /**
   * @brief Permet de selectionner le reseau maison.
-  *  
-  * 
+  *
+  *
   * @return void
   **/
 
@@ -274,8 +274,8 @@ void ChoixReseau::selectConfigMaison(){
 
  /**
   * @brief Permet de selectionner le reseau Pme.
-  *  
-  * 
+  *
+  *
   * @return void
   **/
 
@@ -299,8 +299,8 @@ void ChoixReseau::selectConfigPme(){
 
  /**
   * @brief Permet de selectionner le reseau entreprise.
-  *  
-  * 
+  *
+  *
   * @return void
   **/
 
@@ -326,7 +326,7 @@ void ChoixReseau::selectConfigEntreprise(){
   * @brief Permet d'afficher les differentes machines possibles dans les QComboBox.
   *
   * Permet aussi de mettre les valeurs de la configuration choisie dans les combobox et les spinbox.
-  * 
+  *
   * @return void
   **/
 
