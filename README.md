@@ -32,7 +32,7 @@ Afin de compiler l'application, vous devrez vous assurez que les logiciels suiva
 - L'outil de compilation CMake (version 3.8 ou supérieure)
 - Les modules `Qt Core`, `Qt Widgets` et `Qt Charts` de l'environnement de développement d'interface graphique Qt (version 5)
 
-Pour exécuter l'application, il vous faudra exécuter l'ensemble des commandes suivante au sein de la racine du projet :
+Pour exécuter l'application, il vous faudra exécuter l'ensemble des commandes suivantes à la racine du projet :
 ```sh
 cd build/
 
