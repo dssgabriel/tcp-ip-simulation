@@ -42,6 +42,7 @@ class Ordinateur : public Machine {
             const int& position
         ) const;
 
+
         // Methodes
         void remplirFileDonnees(
             const ParamInterface& config,
@@ -53,6 +54,8 @@ class Ordinateur : public Machine {
 
         virtual void envoyer(const uint32_t cwnd, const bool isAck);
         virtual void recevoir(const uint32_t cwnd, const bool isAck);
+        
+        void freeControleCongestion();
 
         void congestionAvoidance(std::bitset<16>& cwnd, uint16_t& ssthresh);
         void slowStart(std::bitset<16>& cwnd, uint16_t& ssthresh1);

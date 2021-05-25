@@ -261,7 +261,8 @@ void Contexte::executerSimulation() {
 
     Machine* m = m_Reseau->getMachine(m_Config.m_Source);
     Ordinateur* pc = dynamic_cast<Ordinateur*>(m);
-
+    pc->freeControleCongestion();
+    
     //
     Machine* m2 = m_Reseau->getMachine(m_Config.m_Destination);
     Ordinateur* pc2 = dynamic_cast<Ordinateur*>(m2);

@@ -80,6 +80,15 @@ const ElementControleCongestion& Ordinateur::getControleCongestion(const int& po
 }
 
 /**
+ * @brief 
+ * 
+ */
+void Ordinateur::freeControleCongestion() {
+    m_ControleCongestion.clear();
+}
+
+
+/**
  * @brief Genere un message aleatoire pour les trames.
  *
  * @return std::bitset<16> le message.
