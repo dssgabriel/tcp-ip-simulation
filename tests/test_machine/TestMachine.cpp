@@ -312,23 +312,24 @@ void test7() {
 }
 
 void test8() {
-    int nbrPaquet = 15;
+    int nbrPaquet = 1024;
 
     //
     ParamInterface p;
-    p.m_Source = { 192, 168, 1, 1 };
-    p.m_Destination = { 192, 168, 1, 161 };
+    p.m_Source = { 192, 168, 1, 11 };
+    p.m_Destination = { 192, 168, 1, 40 };
     p.m_NbPaquet = nbrPaquet;
-    p.m_Ssthresh = 5;
+    p.m_Ssthresh = 256;
     p.m_TypeFichier = FTP;
-    std::cout << "p.m_NbPaquet : " << p.m_NbPaquet
-        << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
 
     //
-    sauvegarderConfig("ecriture.json", "ReseauPME", p);
+    sauvegarderConfig("ecriture.json", "ReseauEntreprise", p);
 
     std::unique_ptr<ReseauGraphe> reseau;
     chargerConfig("ecriture.json", reseau, p);
+
+    //
+    reseau->lancerOSPF();
 
     Machine* m = reseau->getMachine(p.m_Source);
     Ordinateur* pc = dynamic_cast<Ordinateur*> (m);
@@ -339,9 +340,6 @@ void test8() {
 
     //
     pc->remplirFileDonnees(p, pc2->getMac());
-    //
-    //
-    reseau->lancerOSPF();
 
     //
     std::bitset<16> cwnd = 1;
@@ -362,6 +360,34 @@ void test8() {
         std::cout << "numpaquet : " << elt.first
             << ", temps : " << elt.second << " s\n";
     }
+
+    std::cout << "Nombre de paquets : " << p.m_NbPaquet
+        << ", ssthresh : " << p.m_Ssthresh << std::endl;
+}
+
+void test9() {
+    ParamInterface p;
+    p.m_Source = { 192, 168, 1, 1 };
+    p.m_Destination = { 192, 168, 1, 161 };
+    p.m_NbPaquet = 15;
+    p.m_Ssthresh = 5;
+    p.m_TypeFichier = FTP;
+
+    std::cout << "p.m_NbPaquet : " << p.m_NbPaquet
+        << ", p.m_Ssthresh : " << p.m_Ssthresh << std::endl;
+
+    sauvegarderConfig("ecriture.json", "ReseauPME", p);
+    std::unique_ptr<ReseauGraphe> reseau;
+    chargerConfig("ecriture.json", reseau, p);
+
+    reseau->lancerOSPF();
+
+    for (Machine* m: reseau->getMachines()) {
+        Routeur* r = dynamic_cast<Routeur*>(m);
+        if (r) {
+            std::cout << *r << std::endl;
+        }
+    }
 }
 
 int main(void) {
@@ -374,6 +400,7 @@ int main(void) {
     // test6();
     // test7();
     test8();
+    // test9();
 
     return 0;
 }
