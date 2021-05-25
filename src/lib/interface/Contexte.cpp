@@ -243,6 +243,7 @@ void Contexte::chargerConfig(int numConfig) {
         AffichageReseau::GetInstance().configEntreprise();
     }
     ChoixReseau::GetInstance().analyseConfig();
+    m_Reseau->lancerOSPF();
 }
 
 /**
@@ -257,12 +258,10 @@ void Contexte::executerSimulation() {
     m_TabCongestion->clear();
     m_map.clear();
 
-    m_Reseau->lancerOSPF();
-
     Machine* m = m_Reseau->getMachine(m_Config.m_Source);
     Ordinateur* pc = dynamic_cast<Ordinateur*>(m);
     pc->freeControleCongestion();
-    
+
     //
     Machine* m2 = m_Reseau->getMachine(m_Config.m_Destination);
     Ordinateur* pc2 = dynamic_cast<Ordinateur*>(m2);
