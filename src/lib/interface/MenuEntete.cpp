@@ -250,7 +250,7 @@ void MenuEntete::quitter() {
  * @return void
  **/
 void MenuEntete::rafraichir() {
-    if (Contexte::GetInstance().getTemps()/200 > Contexte::GetInstance().getTab()->back().m_Temps) {
+    if (Contexte::GetInstance().getTemps()/2000 > Contexte::GetInstance().getTab()->back().m_Temps) {
         stop();
         return;
     }
