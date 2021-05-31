@@ -2,7 +2,9 @@
 build/
 target/
 .vscode/
-docs/
+docs/html/
+docs/latex/
+simulation_tcp-ip/
 
 # Test executables
 tests/**/test
@@ -11,3 +13,4 @@ tests/**/test
 CMakeLists.txt.user
 *.o
 Doxyfile
+*.tar.gz
