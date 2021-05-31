@@ -65,25 +65,29 @@ void ConfigReseau::rafraichirTexte(){
 	std::string m_Valeur;
     double m_Tempo = Contexte::GetInstance().getTemps()/2000;
 	for (std::size_t i = 0; i < vector->size(); ++i) {
-        if (m_Tempo >= (*vector)[i].m_Temps && m_Tempo - 0.1 < (*vector)[i].m_Temps) {
+    	if (m_Tempo >= (*vector)[i].m_Temps && m_Tempo - 0.1 < (*vector)[i].m_Temps) {
 			if ((*vector)[i].m_Mode == SlowStart) {
+				auto m_TempsSim = ((*vector)[i].m_Temps) * 2;
                 m_Valeur = "SlowStart - Taille de la fenetre cwnd: "+std::to_string((*vector)[i].m_ValeurCwnd)+
-                ", Temps: "+std::to_string((*vector)[i].m_Temps)+" ms";
+                ", Temps: "+std::to_string(m_TempsSim)+" s";
 				m_FenetreDonnee->setTextColor(QColor(255,105,180,255));
 				m_FenetreDonnee->append(m_Texte.fromStdString(m_Valeur));
 			} else if ((*vector)[i].m_Mode == CongestionAvoidance) {
+				auto m_TempsSim = ((*vector)[i].m_Temps) * 2;
                 m_Valeur = "Congestion Avoidance - Taille de la fenetre cwnd: "+std::to_string((*vector)[i].m_ValeurCwnd)+
-                ", Temps: "+std::to_string((*vector)[i].m_Temps)+" ms";
+                ", Temps: "+std::to_string(m_TempsSim)+" s";
 				m_FenetreDonnee->setTextColor(Qt::cyan);
 				m_FenetreDonnee->append(m_Texte.fromStdString(m_Valeur));
 			} else if ((*vector)[i].m_Mode == FastRetransmit) {
+				auto m_TempsSim = ((*vector)[i].m_Temps) * 2;
                 m_Valeur = "Fast Retransmit - Taille de la fenetre cwnd: "+std::to_string((*vector)[i].m_ValeurCwnd)+
-                ", Temps: "+std::to_string((*vector)[i].m_Temps)+" ms";
+                ", Temps: "+std::to_string(m_TempsSim)+" s";
 				m_FenetreDonnee->setTextColor(QColor(138,43,226,255));
 				m_FenetreDonnee->append(m_Texte.fromStdString(m_Valeur));
 			} else if ((*vector)[i].m_Mode == FastRecovery) {
+				auto m_TempsSim = ((*vector)[i].m_Temps) * 2;
                 m_Valeur = "Fast Recovery - Taille de la fenetre cwnd: "+std::to_string((*vector)[i].m_ValeurCwnd)+
-                ", Temps: "+std::to_string((*vector)[i].m_Temps)+" ms";
+                ", Temps: "+std::to_string(m_TempsSim)+" s";
 				m_FenetreDonnee->setTextColor(Qt::green);
 				m_FenetreDonnee->append(m_Texte.fromStdString(m_Valeur));
 
