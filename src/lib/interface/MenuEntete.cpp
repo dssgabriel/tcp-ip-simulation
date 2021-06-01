@@ -252,6 +252,15 @@ void MenuEntete::quitter() {
 void MenuEntete::rafraichir() {
     if (Contexte::GetInstance().getTemps()/2000 > Contexte::GetInstance().getTab()->back().m_Temps) {
         stop();
+        QWidget *wdg = new QWidget;
+        wdg->setStyleSheet("background-color: rgba(44, 47, 51, 255);");
+        QGridLayout* lyt = new QGridLayout();
+        wdg->setLayout(lyt);
+
+        QMessageBox * m_InfoReseau = new QMessageBox();
+        m_InfoReseau->setText("FIN DE LA SIMULATION");
+        m_InfoReseau->exec();
+        lyt->addWidget(m_InfoReseau);
         return;
     }
     Contexte::GetInstance().getTemps() += 200;
