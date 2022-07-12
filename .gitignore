@@ -5,6 +5,7 @@ target/
 docs/html/
 docs/latex/
 simulation_tcp-ip/
+src/include/json-develop
 
 # Test executables
 tests/**/test
